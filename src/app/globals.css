@@ -1,0 +1,220 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════
+   林序 (Linxu) Design System
+   ═══════════════════════════════════════════ */
+
+@theme inline {
+  --color-bg-deep: var(--bg-deep);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-hover: var(--bg-hover);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-prefix: var(--prefix-color);
+  --color-root: var(--root-color);
+  --color-suffix: var(--suffix-color);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+/* ── Dark theme (default) ── */
+:root,
+[data-theme="dark"] {
+  --bg-deep: #0F1410;
+  --bg-surface: #171D18;
+  --bg-elevated: #1F2820;
+  --bg-hover: #2A352C;
+  --text-primary: #E4EDE6;
+  --text-secondary: #8FA394;
+  --text-muted: #5A6B5E;
+  --border: #2A352C;
+  --prefix-color: #E8A84C;
+  --root-color: #5BB89A;
+  --suffix-color: #9B8EC4;
+  --accent: #6AAF7B;
+  --accent-hover: #82C792;
+  --shadow: rgba(0, 0, 0, 0.4);
+
+  --sidebar-w: 260px;
+  --sidebar-collapsed-w: 64px;
+  --topbar-h: 56px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Light theme ── */
+[data-theme="light"] {
+  --bg-deep: #F5F2ED;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F0EDE7;
+  --bg-hover: #E8E4DC;
+  --text-primary: #1A2B1E;
+  --text-secondary: #5C6E60;
+  --text-muted: #9BA89E;
+  --border: #D6D0C6;
+  --prefix-color: #C4882E;
+  --root-color: #3D8B52;
+  --suffix-color: #7B6BA8;
+  --accent: #3D8B52;
+  --accent-hover: #2E7A42;
+  --shadow: rgba(0, 0, 0, 0.08);
+}
+
+/* ── Base styles ── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* ── Part tag pill styles ── */
+.part-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: opacity 0.15s var(--ease);
+}
+
+.part-tag:hover {
+  opacity: 0.85;
+}
+
+.part-tag-prefix {
+  background: color-mix(in srgb, var(--prefix-color) 18%, transparent);
+  color: var(--prefix-color);
+}
+
+.part-tag-root {
+  background: color-mix(in srgb, var(--root-color) 18%, transparent);
+  color: var(--root-color);
+}
+
+.part-tag-suffix {
+  background: color-mix(in srgb, var(--suffix-color) 18%, transparent);
+  color: var(--suffix-color);
+}
+
+/* ── Card status dot ── */
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.status-new { background: transparent; }
+.status-learning { background: var(--prefix-color); }
+.status-learned { background: var(--root-color); }
+
+/* ── Sidebar root item ── */
+.root-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.15s var(--ease);
+}
+
+.root-item:hover {
+  background: var(--bg-hover);
+}
+
+.root-item.active {
+  border-left-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+/* ── Flashcard 3D flip ── */
+.flash-card-wrapper {
+  perspective: 1000px;
+}
+
+.flash-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s var(--ease);
+  transform-style: preserve-3d;
+}
+
+.flash-card-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.flash-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 10px;
+}
+
+.flash-card-back {
+  transform: rotateY(180deg);
+}
+
+/* ── Skeleton loading ── */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+.skeleton {
+  background: var(--bg-elevated);
+  border-radius: 4px;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
