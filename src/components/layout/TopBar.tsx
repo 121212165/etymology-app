@@ -23,6 +23,12 @@ export function TopBar() {
 
       {/* Actions */}
       <div className="flex items-center gap-2 shrink-0">
+        <Link
+          href="/speed"
+          className="text-xs text-text-muted hover:text-accent transition-colors px-2 py-1 rounded hover:bg-bg-elevated"
+        >
+          速览
+        </Link>
         <ThemeToggle />
       </div>
     </header>
