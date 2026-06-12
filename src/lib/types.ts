@@ -25,6 +25,12 @@ export interface SidebarRoot {
   c: number; // count
 }
 
+export interface SidebarGroup {
+  label: string;      // 分组中文名
+  icon: string;       // 图标标识
+  roots: SidebarRoot[];
+}
+
 export interface SearchIndex {
   data: VocabEntry[];
   rootIndex: RootIndex;

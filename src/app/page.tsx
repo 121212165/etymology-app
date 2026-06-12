@@ -10,9 +10,9 @@ import { useSearch } from "@/hooks/useSearch";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useSpeak } from "@/hooks/useSpeak";
 import { useAppStore } from "@/store/app-store";
-import { buildSidebarData } from "@/lib/search-engine";
+import { buildSidebarGroups } from "@/lib/search-engine";
 import { PAGE_SIZE } from "@/lib/constants";
-import type { SidebarRoot } from "@/lib/types";
+import type { SidebarGroup } from "@/lib/types";
 
 export default function HomePage() {
   const { loading } = useSearch();
@@ -26,9 +26,9 @@ export default function HomePage() {
   } = useAppStore();
 
   // Build sidebar data from search index
-  const sidebarRoots: SidebarRoot[] = useMemo(() => {
+  const sidebarGroups: SidebarGroup[] = useMemo(() => {
     if (!searchIndex) return [];
-    return buildSidebarData(searchIndex.rootIndex);
+    return buildSidebarGroups(searchIndex.rootIndex);
   }, [searchIndex]);
 
   // Current page entries
@@ -60,7 +60,7 @@ export default function HomePage() {
 
       <div className="flex">
         {/* Sidebar */}
-        <Sidebar roots={sidebarRoots} />
+        <Sidebar groups={sidebarGroups} />
 
         {/* Main content */}
         <main className="flex-1 min-w-0 p-4 lg:p-6">

@@ -1,5 +1,6 @@
-import type { VocabEntry, RootIndex, SearchIndex } from "./types";
+import type { VocabEntry, RootIndex, SearchIndex, SidebarGroup } from "./types";
 import { MIN_SEARCH_LEN } from "./constants";
+import { ROOT_GROUPS } from "./root-groups";
 
 /** Binary search: find first index where arr[i].w >= target */
 function lowerBound(
@@ -109,4 +110,38 @@ export function buildSidebarData(
   return Object.entries(rootIndex)
     .map(([t, v]) => ({ t, m: v.m, c: v.w.length }))
     .sort((a, b) => b.c - a.c);
+}
+
+/** Build grouped sidebar data from root index */
+export function buildSidebarGroups(rootIndex: RootIndex): SidebarGroup[] {
+  const assigned = new Set<string>();
+  const groups: SidebarGroup[] = [];
+
+  for (const group of ROOT_GROUPS) {
+    const roots = group.members
+      .filter((key) => rootIndex[key] !== undefined)
+      .map((key) => {
+        assigned.add(key);
+        return { t: key, m: rootIndex[key].m, c: rootIndex[key].w.length };
+      })
+      .sort((a, b) => b.c - a.c);
+
+    if (roots.length > 0) {
+      groups.push({ label: group.label, icon: group.icon, roots });
+    }
+  }
+
+  // Collect ungrouped roots into "其他"
+  const otherRoots: { t: string; m: string; c: number }[] = [];
+  for (const key in rootIndex) {
+    if (!assigned.has(key)) {
+      otherRoots.push({ t: key, m: rootIndex[key].m, c: rootIndex[key].w.length });
+    }
+  }
+  otherRoots.sort((a, b) => b.c - a.c);
+  if (otherRoots.length > 0) {
+    groups.push({ label: "其他", icon: "more", roots: otherRoots });
+  }
+
+  return groups;
 }
