@@ -29,7 +29,22 @@ export interface SearchIndex {
   data: VocabEntry[];
   rootIndex: RootIndex;
   wordSorted: { w: string; i: number }[];
+  prefixIndex: Record<string, string>;
+  suffixIndex: Record<string, string>;
 }
 
 export type ViewMode = "list" | "flashcard" | "stats";
-export type LearnStatus = "new" | "learning" | "learned";
+
+export type LearnStatus = "unseen" | "learning" | "reviewing" | "mastered";
+
+export interface RootProgress {
+  status: LearnStatus;
+  easeFactor: number;
+  interval: number;
+  nextReview: string;
+  reviewCount: number;
+  lastReview: string | null;
+  correctStreak: number;
+}
+
+export type ProgressMap = Record<string, RootProgress>;

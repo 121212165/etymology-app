@@ -1,8 +1,7 @@
 import type { VocabEntry, RootIndex, SearchIndex } from "./types";
-import { MIN_SEARCH_LEN } from "./constants";
+import { getLoadedIndices, isIndexLoaded } from "./data-loader";
 
-/** Binary search: find first index where arr[i].w >= target */
-function lowerBound(
+export function lowerBound(
   arr: { w: string; i: number }[],
   target: string
 ): number {
@@ -16,12 +15,6 @@ function lowerBound(
   return lo;
 }
 
-/**
- * Three-level search engine:
- * 1. Binary prefix search on wordSorted
- * 2. Root inverted index lookup
- * 3. Full-text scan on definitions
- */
 export function executeSearch(
   index: SearchIndex,
   query: string,
@@ -30,41 +23,35 @@ export function executeSearch(
   const results = new Set<number>();
   const q = query.trim().toLowerCase();
 
-  // If active root is set, show only words with that root
   if (activeRoot) {
     const entry = index.rootIndex[activeRoot];
-    if (entry) return entry.w;
-    return [];
+    if (entry) {
+      for (const idx of entry.w) {
+        if (isIndexLoaded(idx)) results.add(idx);
+      }
+    }
+    return Array.from(results);
   }
 
   if (!q) {
-    return index.data.map((_, i) => i);
+    return getLoadedIndices();
   }
 
-  // Level 1: Binary prefix search on words
+  if (index.wordSorted.length === 0) return [];
+
   const start = lowerBound(index.wordSorted, q);
   for (let k = start; k < index.wordSorted.length; k++) {
     if (!index.wordSorted[k].w.startsWith(q)) break;
     results.add(index.wordSorted[k].i);
   }
 
-  // Level 2: Root inverted index match
+  if (results.size === index.data.length) return Array.from(results);
+
   for (const rootText in index.rootIndex) {
     if (rootText.includes(q)) {
       const entry = index.rootIndex[rootText];
-      for (const idx of entry.w) results.add(idx);
-    }
-  }
-
-  // Level 3: Full definition scan (only for queries >= MIN_SEARCH_LEN)
-  if (q.length >= MIN_SEARCH_LEN) {
-    for (let i = 0; i < index.data.length; i++) {
-      const item = index.data[i];
-      if (
-        item.definition.toLowerCase().includes(q) ||
-        item.word.toLowerCase().includes(q)
-      ) {
-        results.add(i);
+      for (const idx of entry.w) {
+        if (isIndexLoaded(idx)) results.add(idx);
       }
     }
   }
@@ -72,14 +59,66 @@ export function executeSearch(
   return Array.from(results);
 }
 
-/** Build word sorted index from data */
+export interface MorphemeMatch {
+  type: "prefix" | "root" | "suffix";
+  text: string;
+  meaning: string;
+}
+
+export interface DecomposeResult {
+  prefix?: MorphemeMatch;
+  root?: MorphemeMatch;
+  suffix?: MorphemeMatch;
+  matched: boolean;
+}
+
+export function quickDecompose(
+  index: SearchIndex,
+  query: string
+): DecomposeResult {
+  const q = query.trim().toLowerCase();
+  const result: DecomposeResult = { matched: false };
+
+  for (const rootText in index.rootIndex) {
+    const rt = rootText.toLowerCase();
+    if (rt.includes(q) || q.includes(rt)) {
+      result.root = { type: "root", text: rootText, meaning: index.rootIndex[rootText].m };
+      result.matched = true;
+      break;
+    }
+  }
+
+  if (!result.matched) {
+    for (const [text, meaning] of Object.entries(index.prefixIndex)) {
+      const t = text.toLowerCase();
+      if (t.includes(q) || q.includes(t)) {
+        result.prefix = { type: "prefix", text, meaning };
+        result.matched = true;
+        break;
+      }
+    }
+  }
+
+  if (!result.matched) {
+    for (const [text, meaning] of Object.entries(index.suffixIndex)) {
+      const t = text.toLowerCase();
+      if (t.includes(q) || q.includes(t)) {
+        result.suffix = { type: "suffix", text, meaning };
+        result.matched = true;
+        break;
+      }
+    }
+  }
+
+  return result;
+}
+
 export function buildWordSorted(data: VocabEntry[]): { w: string; i: number }[] {
   return data
     .map((entry, i) => ({ w: entry.word.toLowerCase(), i }))
     .sort((a, b) => a.w.localeCompare(b.w));
 }
 
-/** Build root inverted index from data */
 export function buildRootIndex(data: VocabEntry[]): RootIndex {
   const rootMap: Record<string, { m: string; w: number[] }> = {};
 
@@ -94,7 +133,6 @@ export function buildRootIndex(data: VocabEntry[]): RootIndex {
     }
   }
 
-  // Filter: only roots with >= 2 occurrences
   const filtered: RootIndex = {};
   for (const [key, val] of Object.entries(rootMap)) {
     if (val.w.length >= 2) filtered[key] = val;
@@ -102,7 +140,6 @@ export function buildRootIndex(data: VocabEntry[]): RootIndex {
   return filtered;
 }
 
-/** Build sidebar data from root index */
 export function buildSidebarData(
   rootIndex: RootIndex
 ): { t: string; m: string; c: number }[] {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { TopBar } from "@/components/layout/TopBar";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { CardGrid } from "@/components/word/CardGrid";
@@ -12,7 +12,10 @@ import { useSpeak } from "@/hooks/useSpeak";
 import { useAppStore } from "@/store/app-store";
 import { buildSidebarData } from "@/lib/search-engine";
 import { PAGE_SIZE } from "@/lib/constants";
+import { loadChunk, getLoadedChunkLevels } from "@/lib/data-loader";
 import type { SidebarRoot } from "@/lib/types";
+
+const CHUNK_ORDER = ["warm", "cool", "cold"] as const;
 
 export default function HomePage() {
   const { loading } = useSearch();
@@ -23,15 +26,28 @@ export default function HomePage() {
     searchIndex,
     filteredIndices,
     currentPage,
+    query,
   } = useAppStore();
 
-  // Build sidebar data from search index
+  const loadedRef = useRef(false);
+
+  useEffect(() => {
+    if (!searchIndex || loadedRef.current) return;
+    loadedRef.current = true;
+    const levels = getLoadedChunkLevels();
+    for (const level of CHUNK_ORDER) {
+      if (!levels.has(level)) {
+        loadChunk(level);
+        break;
+      }
+    }
+  }, [searchIndex]);
+
   const sidebarRoots: SidebarRoot[] = useMemo(() => {
     if (!searchIndex) return [];
     return buildSidebarData(searchIndex.rootIndex);
   }, [searchIndex]);
 
-  // Current page entries
   const pageEntries = useMemo(() => {
     if (!searchIndex) return [];
     const start = (currentPage - 1) * PAGE_SIZE;
@@ -42,7 +58,6 @@ export default function HomePage() {
     }));
   }, [searchIndex, filteredIndices, currentPage]);
 
-  // Loading state
   if (loading || !searchIndex) {
     return (
       <div className="min-h-screen bg-bg-deep flex items-center justify-center">
@@ -59,28 +74,25 @@ export default function HomePage() {
       <TopBar />
 
       <div className="flex">
-        {/* Sidebar */}
         <Sidebar roots={sidebarRoots} />
 
-        {/* Main content */}
         <main className="flex-1 min-w-0 p-4 lg:p-6">
-          {/* Filter chips */}
           <div className="mb-4">
             <FilterChips />
           </div>
 
-          {/* Card grid */}
           <CardGrid
             entries={pageEntries}
             favorites={favorites}
             onToggleFavorite={toggleFav}
             onSpeak={speak}
+            emptyHint={query ? "试试输入词根，如 port-, duct-, spect-" : undefined}
           />
 
-          {/* Pagination */}
           <Pagination />
         </main>
       </div>
     </div>
   );
 }
+

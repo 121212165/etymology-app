@@ -1,13 +1,15 @@
 "use client";
 
 import { useAppStore } from "@/store/app-store";
-import type { SidebarRoot } from "@/lib/types";
+import type { LearnStatus, SidebarRoot } from "@/lib/types";
+import { Check } from "lucide-react";
 
 interface SidebarProps {
   roots: SidebarRoot[];
+  getRootStatus?: (rootText: string) => LearnStatus;
 }
 
-export function Sidebar({ roots }: SidebarProps) {
+export function Sidebar({ roots, getRootStatus }: SidebarProps) {
   const { activeRoot, setActiveRoot } = useAppStore();
 
   return (
@@ -33,9 +35,21 @@ export function Sidebar({ roots }: SidebarProps) {
                 <span className="font-mono text-sm text-root truncate">
                   {root.t}
                 </span>
-                <span className="text-xs text-text-muted shrink-0">
-                  {root.c}
-                </span>
+                <div className="flex items-center gap-1 shrink-0">
+                  {getRootStatus && (() => {
+                    const s = getRootStatus(root.t);
+                    if (s === "mastered") {
+                      return <Check size={12} className="text-green-500" />;
+                    }
+                    if (s === "learning" || s === "reviewing") {
+                      return <span className="w-2 h-2 rounded-full bg-yellow-400" />;
+                    }
+                    return null;
+                  })()}
+                  <span className="text-xs text-text-muted">
+                    {root.c}
+                  </span>
+                </div>
               </div>
               <p className="text-xs text-text-muted truncate mt-0.5">
                 {root.m}
