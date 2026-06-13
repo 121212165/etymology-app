@@ -146,18 +146,23 @@ export async function loadSearchIndex(): Promise<SearchIndex> {
   if (initialLoadPromise) return initialLoadPromise;
 
   initialLoadPromise = (async () => {
-    const [m, ri] = await Promise.all([
-      fetchJSON<Manifest>("/data/chunks/manifest.json"),
-      fetchJSON<RootIndex>("/data/roots-index.json"),
-    ]);
-    manifest = m;
-    rootIndex = ri;
+    try {
+      const [m, ri] = await Promise.all([
+        fetchJSON<Manifest>("/data/chunks/manifest.json"),
+        fetchJSON<RootIndex>("/data/roots-index.json"),
+      ]);
+      manifest = m;
+      rootIndex = ri;
 
-    totalWords = Object.values(m).reduce((sum, c) => sum + c.count, 0);
-    allData = new Array(totalWords).fill(null);
+      totalWords = Object.values(m).reduce((sum, c) => sum + c.count, 0);
+      allData = new Array(totalWords).fill(null);
 
-    await loadChunkFile("hot");
-    return cachedIndex!;
+      await loadChunkFile("hot");
+      return cachedIndex!;
+    } catch (e) {
+      initialLoadPromise = null;
+      throw e;
+    }
   })();
 
   return initialLoadPromise;

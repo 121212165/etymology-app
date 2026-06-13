@@ -54,3 +54,24 @@ export interface RootProgress {
 }
 
 export type ProgressMap = Record<string, RootProgress>;
+
+export type TrainPhase = 'observe' | 'guess' | 'decompose' | 'complete'
+
+export interface GuessQuestion {
+  entry: VocabEntry
+  options: string[]
+  correctIndex: number
+}
+
+export interface DecomposeQuestion {
+  entry: VocabEntry
+  correctRoots: string[]
+  rootPool: string[]
+}
+
+export interface TrainSession {
+  rootGroup: { label: string; icon: string; members: string[] }
+  words: VocabEntry[]
+  currentPhase: TrainPhase
+  phaseIndex: number
+}

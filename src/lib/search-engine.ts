@@ -1,5 +1,6 @@
-import type { VocabEntry, RootIndex, SearchIndex } from "./types";
+import type { VocabEntry, RootIndex, SearchIndex, SidebarGroup } from "./types";
 import { getLoadedIndices, isIndexLoaded } from "./data-loader";
+import { ROOT_GROUPS } from "./root-groups";
 
 export function lowerBound(
   arr: { w: string; i: number }[],
@@ -138,6 +139,35 @@ export function buildRootIndex(data: VocabEntry[]): RootIndex {
     if (val.w.length >= 2) filtered[key] = val;
   }
   return filtered;
+}
+
+export function buildSidebarGroups(rootIndex: RootIndex): SidebarGroup[] {
+  const rootKeys = Object.keys(rootIndex);
+  const assigned = new Set<string>();
+  const groups: SidebarGroup[] = [];
+
+  for (const def of ROOT_GROUPS) {
+    const roots = def.members
+      .filter((m) => m in rootIndex && !assigned.has(m))
+      .map((m) => {
+        assigned.add(m);
+        return { t: m, m: rootIndex[m].m, c: rootIndex[m].w.length };
+      })
+      .sort((a, b) => b.c - a.c);
+    if (roots.length > 0) {
+      groups.push({ label: def.label, icon: def.icon, roots });
+    }
+  }
+
+  const ungrouped = rootKeys
+    .filter((k) => !assigned.has(k))
+    .map((k) => ({ t: k, m: rootIndex[k].m, c: rootIndex[k].w.length }))
+    .sort((a, b) => b.c - a.c);
+  if (ungrouped.length > 0) {
+    groups.push({ label: "其他", icon: "misc", roots: ungrouped });
+  }
+
+  return groups;
 }
 
 export function buildSidebarData(
