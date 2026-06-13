@@ -13,7 +13,7 @@ export function SearchInput() {
   const [rawInput, setRawInput] = useState(query);
 
   useEffect(() => {
-    if (rawInput.length < 3 || !searchIndex) {
+    if (rawInput.length < 1 || !searchIndex) {
       setDecompose(null);
       return;
     }

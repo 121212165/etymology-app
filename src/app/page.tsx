@@ -6,9 +6,12 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { CardGrid } from "@/components/word/CardGrid";
 import { FilterChips } from "@/components/search/FilterChips";
 import { Pagination } from "@/components/ui/Pagination";
+import { StatsBar } from "@/components/stats/StatsBar";
 import { useSearch } from "@/hooks/useSearch";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useSpeak } from "@/hooks/useSpeak";
+import { useProgress } from "@/hooks/useProgress";
+import { useLearnStore } from "@/store/learn-store";
 import { useAppStore } from "@/store/app-store";
 import { buildSidebarData } from "@/lib/search-engine";
 import { PAGE_SIZE } from "@/lib/constants";
@@ -21,6 +24,9 @@ export default function HomePage() {
   const { loading } = useSearch();
   const { favorites, toggle: toggleFav } = useFavorites();
   const speak = useSpeak();
+  const { getStats } = useProgress();
+  const stats = useMemo(() => getStats(), [getStats]);
+  const todayDue = useLearnStore((s) => s.todayDue);
 
   const {
     searchIndex,
@@ -77,6 +83,13 @@ export default function HomePage() {
         <Sidebar roots={sidebarRoots} />
 
         <main className="flex-1 min-w-0 p-4 lg:p-6">
+          <StatsBar
+            learned={stats.learning + stats.reviewing}
+            mastered={stats.mastered}
+            dueToday={todayDue.length}
+            coveragePercent={stats.coveragePercent}
+          />
+
           <div className="mb-4">
             <FilterChips />
           </div>
@@ -95,4 +108,3 @@ export default function HomePage() {
     </div>
   );
 }
-
