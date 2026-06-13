@@ -23,7 +23,6 @@ export function ObservePhase({
   const [expandedRoot, setExpandedRoot] = useState<string | null>(null)
 
   const word = words[currentIndex]
-  if (!word) return null
   const isLast = currentIndex === words.length - 1
 
   const handleNext = useCallback(() => {
@@ -44,6 +43,8 @@ export function ObservePhase({
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [handleNext])
+
+  if (!word) return null
 
   const toggleRoot = (text: string) => {
     setExpandedRoot(prev => (prev === text ? null : text))

@@ -19,11 +19,10 @@ export function DecomposePhase({ questions, onComplete }: DecomposePhaseProps) {
     if (questions.length === 0) onComplete(0, 0)
   }, [questions.length, onComplete])
 
-  if (questions.length === 0) return null
-
   const question = questions[currentIndex]
   const isCorrect =
     submitted &&
+    question &&
     selectedRoots.length === question.correctRoots.length &&
     selectedRoots.every((r) => question.correctRoots.includes(r))
 
@@ -38,7 +37,7 @@ export function DecomposePhase({ questions, onComplete }: DecomposePhaseProps) {
   )
 
   const handleSubmit = useCallback(() => {
-    if (selectedRoots.length === 0 || submitted) return
+    if (!question || selectedRoots.length === 0 || submitted) return
     setSubmitted(true)
 
     const correct =
@@ -70,6 +69,8 @@ export function DecomposePhase({ questions, onComplete }: DecomposePhaseProps) {
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
   }, [selectedRoots.length, submitted, handleSubmit])
+
+  if (questions.length === 0 || !question) return null
 
   return (
     <div className="flex flex-col items-center gap-6">

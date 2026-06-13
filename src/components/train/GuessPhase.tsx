@@ -20,11 +20,9 @@ export default function GuessPhase({ questions, onComplete }: GuessPhaseProps) {
     if (questions.length === 0) onComplete(0, 0)
   }, [questions.length, onComplete])
 
-  if (questions.length === 0) return null
-
   const current = questions[index]
   const isAnswered = selected !== null
-  const isCorrect = selected === current.correctIndex
+  const isCorrect = current ? selected === current.correctIndex : false
 
   const advance = useCallback(() => {
     const nextIndex = index + 1
@@ -47,7 +45,7 @@ export default function GuessPhase({ questions, onComplete }: GuessPhaseProps) {
   }, [isAnswered, isCorrect, advance])
 
   useEffect(() => {
-    if (isAnswered) return
+    if (isAnswered || !current) return
     const handler = (e: KeyboardEvent) => {
       const num = parseInt(e.key)
       if (num >= 1 && num <= current.options.length) {
@@ -56,7 +54,9 @@ export default function GuessPhase({ questions, onComplete }: GuessPhaseProps) {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [isAnswered, current.options.length])
+  }, [isAnswered, current])
+
+  if (questions.length === 0 || !current) return null
 
   return (
     <div className="flex flex-col items-center gap-6 p-6">
