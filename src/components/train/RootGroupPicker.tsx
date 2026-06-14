@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Eye, MessageSquare, Footprints, Hand, Brain, Building2, RotateCcw, Scale, ArrowRight, ChevronDown } from 'lucide-react'
+import { Eye, MessageSquare, Footprints, Hand, Brain, Building2, RotateCcw, Scale, ArrowRight, ChevronDown, Accessibility } from 'lucide-react'
 import { ROOT_GROUPS, type RootGroupDef } from '@/lib/root-groups'
 import type { RootIndex } from '@/lib/types'
 import type { LucideIcon } from 'lucide-react'
@@ -15,6 +15,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   mind: Brain,
   build: Building2,
   turn: RotateCcw,
+  stand: Accessibility,
   scales: Scale,
   prefix: ArrowRight,
 }
@@ -78,7 +79,7 @@ export function RootGroupPicker({ rootIndex }: RootGroupPickerProps) {
             {isExpanded && (
               <div className="mt-2 flex flex-wrap gap-1">
                 {group.members.map((m) => (
-                  <span key={m} className="font-mono text-xs bg-bg-muted rounded px-1.5 py-0.5">
+                  <span key={m} className="font-mono text-xs bg-bg-elevated rounded px-1.5 py-0.5">
                     {m}
                   </span>
                 ))}

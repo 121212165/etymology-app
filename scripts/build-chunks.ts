@@ -67,37 +67,27 @@ for (let i = 0; i < vocab.length; i++) {
 
 mkdirSync(CHUNKS_DIR, { recursive: true });
 
-const manifestChunks: {
-  name: string;
-  roots: string[];
-  wordCount: number;
-}[] = [];
-
 for (const tier of TIERS) {
   const indices = chunkMap[tier.name];
   const entries = indices.map((i) => vocab[i]);
 
-  const tierRoots = rootsByFreq
-    .slice(tier.start, tier.end === Infinity ? rootsByFreq.length : tier.end)
-    .map((r) => r.root);
-
-  manifestChunks.push({
-    name: `chunk-${tier.name}`,
-    roots: tierRoots,
-    wordCount: indices.length,
-  });
-
   writeFileSync(
     join(CHUNKS_DIR, `chunk-${tier.name}.json`),
-    JSON.stringify(entries)
+    JSON.stringify({ indices, entries })
   );
 
   console.log(
-    `chunk-${tier.name}: ${indices.length} words, ${tierRoots.length} roots`
+    `chunk-${tier.name}: ${indices.length} words`
   );
 }
 
-const manifest = { chunks: manifestChunks, totalWords: vocab.length };
+const manifest: Record<string, { roots: string[]; count: number }> = {};
+for (const tier of TIERS) {
+  const tierRoots = rootsByFreq
+    .slice(tier.start, tier.end === Infinity ? rootsByFreq.length : tier.end)
+    .map((r) => r.root);
+  manifest[tier.name] = { roots: tierRoots, count: chunkMap[tier.name].length };
+}
 
 writeFileSync(join(CHUNKS_DIR, "manifest.json"), JSON.stringify(manifest, null, 2));
 console.log(`manifest.json written. Total: ${vocab.length} words`);

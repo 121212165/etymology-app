@@ -19,8 +19,7 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
 
-  --font-sans: var(--font-body);
-  --font-display: var(--font-display);
+  --font-sans: var(--font-inter), var(--font-body);
   --font-mono: var(--font-mono);
 }
 
@@ -79,7 +78,7 @@ html {
 }
 
 body {
-  font-family: var(--font-body);
+  font-family: var(--font-inter), var(--font-body), system-ui, sans-serif;
   background: var(--bg-deep);
   color: var(--text-primary);
   line-height: 1.6;
