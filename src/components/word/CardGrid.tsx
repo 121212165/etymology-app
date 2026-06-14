@@ -4,9 +4,7 @@ import type { VocabEntry } from "@/lib/types";
 import { WordCard } from "./WordCard";
 
 interface CardGridProps {
-  entries: { entry: VocabEntry; index: number }[];
-  favorites?: Set<number>;
-  onToggleFavorite?: (index: number) => void;
+  entries: { entry: VocabEntry }[];
   onSpeak?: (word: string) => void;
   emptyMessage?: string;
   emptyHint?: string;
@@ -14,8 +12,6 @@ interface CardGridProps {
 
 export function CardGrid({
   entries,
-  favorites,
-  onToggleFavorite,
   onSpeak,
   emptyMessage,
   emptyHint,
@@ -31,13 +27,10 @@ export function CardGrid({
 
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-4">
-      {entries.map(({ entry, index }) => (
+      {entries.map(({ entry }) => (
         <WordCard
           key={entry.word}
           entry={entry}
-          index={index}
-          isFavorite={favorites?.has(index)}
-          onToggleFavorite={onToggleFavorite}
           onSpeak={onSpeak}
         />
       ))}

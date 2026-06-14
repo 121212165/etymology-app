@@ -1,26 +1,33 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { TopBar } from '@/components/layout/TopBar'
-import { RootGroupPicker } from '@/components/train/RootGroupPicker'
 import { CardGrid } from '@/components/word/CardGrid'
-import { FilterChips } from '@/components/search/FilterChips'
+import { RootCloud } from '@/components/search/RootCloud'
 import { useSearch } from '@/hooks/useSearch'
+import { useSpeak } from '@/hooks/useSpeak'
 import { useAppStore } from '@/store/app-store'
-import Link from 'next/link'
-import { Swords, Zap, Search } from 'lucide-react'
+
+const PAGE_SIZE = 50
 
 export default function HomePage() {
   const { loading } = useSearch()
-  const { searchIndex, query, filteredIndices } = useAppStore()
+  const { searchIndex, query, activeRoot, filteredIndices } = useAppStore()
+  const speak = useSpeak()
+  const [showCount, setShowCount] = useState(PAGE_SIZE)
+
+  const hasQuery = query.trim().length > 0 || activeRoot !== null
 
   const pageEntries = useMemo(() => {
     if (!searchIndex) return []
-    return filteredIndices.slice(0, 24).map((idx) => ({
+    return filteredIndices.slice(0, showCount).map((idx) => ({
       entry: searchIndex.data[idx],
-      index: idx,
     }))
-  }, [searchIndex, filteredIndices])
+  }, [searchIndex, filteredIndices, showCount])
+
+  const handleLoadMore = useCallback(() => {
+    setShowCount((c) => c + PAGE_SIZE)
+  }, [])
 
   if (loading || !searchIndex) {
     return (
@@ -33,69 +40,44 @@ export default function HomePage() {
     )
   }
 
-  const showSearch = query.trim().length > 0
-
   return (
     <div className="min-h-screen bg-bg-deep">
       <TopBar />
 
-      {showSearch && (
-        <div className="max-w-5xl mx-auto p-6">
-          <div className="mb-4">
-            <FilterChips />
+      <main className="max-w-5xl mx-auto p-6">
+        {!hasQuery && (
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-2">掌握词根拆解，读懂英语世界</h1>
+            <p className="text-text-secondary mb-6">点击词根浏览相关单词，或在上方搜索</p>
+            <RootCloud rootIndex={searchIndex.rootIndex} />
           </div>
-          <CardGrid
-            entries={pageEntries}
-            emptyHint="试试输入词根，如 port-, duct-, spect-"
-          />
-        </div>
-      )}
+        )}
 
-      {!showSearch && (
-        <main className="max-w-5xl mx-auto p-6">
-          <h1 className="text-3xl font-bold mb-2">掌握词根拆解，读懂英语世界</h1>
-          <p className="text-text-secondary mb-8">选择一个词根组开始学习</p>
-
-          <RootGroupPicker rootIndex={searchIndex.rootIndex} />
-
-          <hr className="my-8 border-border" />
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Link
-              href="/challenge"
-              className="bg-bg-surface border border-border rounded-xl p-4 hover:border-accent/30 transition-all"
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <Swords className="w-4 h-4 text-accent" />
-                <span className="font-medium">挑战模式</span>
-              </div>
-              <p className="text-sm text-text-secondary">测试你的词根掌握程度</p>
-            </Link>
-
-            <Link
-              href="/speed"
-              className="bg-bg-surface border border-border rounded-xl p-4 hover:border-accent/30 transition-all"
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <Zap className="w-4 h-4 text-accent" />
-                <span className="font-medium">Speed 速览</span>
-              </div>
-              <p className="text-sm text-text-secondary">快速浏览词根与单词</p>
-            </Link>
-
-            <Link
-              href="/"
-              className="bg-bg-surface border border-border rounded-xl p-4 hover:border-accent/30 transition-all"
-            >
-              <div className="flex items-center gap-2 mb-1">
-                <Search className="w-4 h-4 text-accent" />
-                <span className="font-medium">搜索</span>
-              </div>
-              <p className="text-sm text-text-secondary">在顶部搜索栏查找单词</p>
-            </Link>
+        {hasQuery && (
+          <div className="mb-4 flex items-center gap-3">
+            <span className="text-sm text-text-muted">
+              {filteredIndices.length.toLocaleString()} 个结果
+            </span>
           </div>
-        </main>
-      )}
+        )}
+
+        <CardGrid
+          entries={pageEntries}
+          onSpeak={speak}
+          emptyHint="试试输入词根，如 port-, duct-, spect-"
+        />
+
+        {hasQuery && showCount < filteredIndices.length && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={handleLoadMore}
+              className="px-6 py-2 rounded-lg bg-bg-surface border border-border text-sm text-text-secondary hover:text-text-primary hover:border-accent/30 transition-all"
+            >
+              加载更多 ({filteredIndices.length - showCount} 剩余)
+            </button>
+          </div>
+        )}
+      </main>
     </div>
   )
 }

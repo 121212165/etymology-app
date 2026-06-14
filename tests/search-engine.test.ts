@@ -1,172 +1,76 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
-  lowerBound,
-  buildWordSorted,
-  buildRootIndex,
   executeSearch,
   quickDecompose,
 } from "@/lib/search-engine";
 import type { VocabEntry, SearchIndex } from "@/lib/types";
-
-vi.mock("@/lib/data-loader", () => ({
-  getLoadedIndices: vi.fn(() => []),
-  isIndexLoaded: vi.fn(() => false),
-}));
-
-import { getLoadedIndices, isIndexLoaded } from "@/lib/data-loader";
-
-const mockGetLoadedIndices = vi.mocked(getLoadedIndices);
-const mockIsIndexLoaded = vi.mocked(isIndexLoaded);
-
-beforeEach(() => {
-  vi.clearAllMocks();
-  mockGetLoadedIndices.mockReturnValue([]);
-  mockIsIndexLoaded.mockReturnValue(false);
-});
 
 const sampleData: VocabEntry[] = [
   {
     word: "Biology",
     definition: "the study of life",
     parts: [
-      { type: "root", text: "bio", meaning: "life", decomposed: false },
-      { type: "suffix", text: "logy", meaning: "study of", decomposed: false },
+      { type: "root", text: "bio", meaning: "life" },
+      { type: "suffix", text: "logy", meaning: "study of" },
     ],
   },
   {
     word: "Biography",
     definition: "a written account of someone's life",
     parts: [
-      { type: "root", text: "bio", meaning: "life", decomposed: false },
-      { type: "root", text: "graph", meaning: "write", decomposed: false },
+      { type: "root", text: "bio", meaning: "life" },
+      { type: "root", text: "graph", meaning: "write" },
     ],
   },
   {
     word: "Geography",
     definition: "the study of earth's surface",
     parts: [
-      { type: "root", text: "geo", meaning: "earth", decomposed: false },
-      { type: "root", text: "graph", meaning: "write", decomposed: false },
+      { type: "root", text: "geo", meaning: "earth" },
+      { type: "root", text: "graph", meaning: "write" },
     ],
   },
   {
     word: "Telephone",
     definition: "a device for transmitting sound over distance",
     parts: [
-      { type: "root", text: "phone", meaning: "sound", decomposed: false },
+      { type: "root", text: "phone", meaning: "sound" },
     ],
   },
 ];
 
 function buildIndex(data: VocabEntry[]): SearchIndex {
+  const rootMap: Record<string, { m: string; w: number[] }> = {};
+  for (let i = 0; i < data.length; i++) {
+    for (const part of data[i].parts) {
+      if (part.type === "root") {
+        if (!rootMap[part.text]) rootMap[part.text] = { m: "", w: [] };
+        if (!rootMap[part.text].m) rootMap[part.text].m = part.meaning;
+        rootMap[part.text].w.push(i);
+      }
+    }
+  }
+  const rootIndex: Record<string, { m: string; w: number[] }> = {};
+  for (const [key, val] of Object.entries(rootMap)) {
+    if (val.w.length >= 2) rootIndex[key] = val;
+  }
   return {
     data,
-    rootIndex: buildRootIndex(data),
-    wordSorted: buildWordSorted(data),
+    rootIndex,
     prefixIndex: { un: "not", re: "again" },
     suffixIndex: { tion: "act of", ment: "result of" },
   };
 }
 
-describe("lowerBound", () => {
-  const arr = [
-    { w: "apple", i: 0 },
-    { w: "banana", i: 1 },
-    { w: "cherry", i: 2 },
-    { w: "date", i: 3 },
-  ];
-
-  it("returns 0 for empty array", () => {
-    expect(lowerBound([], "anything")).toBe(0);
-  });
-
-  it("returns 0 when target is less than all elements", () => {
-    expect(lowerBound(arr, "a")).toBe(0);
-  });
-
-  it("returns length when target is greater than all elements", () => {
-    expect(lowerBound(arr, "zzz")).toBe(4);
-  });
-
-  it("returns correct index for exact match", () => {
-    expect(lowerBound(arr, "cherry")).toBe(2);
-  });
-
-  it("returns first index for multiple identical elements", () => {
-    const dupes = [
-      { w: "aaa", i: 0 },
-      { w: "aaa", i: 1 },
-      { w: "aaa", i: 2 },
-      { w: "bbb", i: 3 },
-    ];
-    expect(lowerBound(dupes, "aaa")).toBe(0);
-  });
-});
-
-describe("buildWordSorted", () => {
-  it("returns sorted array", () => {
-    const sorted = buildWordSorted(sampleData);
-    expect(sorted.map((s) => s.w)).toEqual([
-      "biography",
-      "biology",
-      "geography",
-      "telephone",
-    ]);
-  });
-
-  it("converts words to lowercase", () => {
-    const sorted = buildWordSorted(sampleData);
-    for (const entry of sorted) {
-      expect(entry.w).toBe(entry.w.toLowerCase());
-    }
-  });
-
-  it("index i maps to original data position", () => {
-    const sorted = buildWordSorted(sampleData);
-    for (const entry of sorted) {
-      expect(sampleData[entry.i].word.toLowerCase()).toBe(entry.w);
-    }
-  });
-});
-
-describe("buildRootIndex", () => {
-  it("correctly builds inverted index", () => {
-    const rootIndex = buildRootIndex(sampleData);
-    expect(rootIndex["bio"].w).toEqual([0, 1]);
-    expect(rootIndex["graph"].w).toEqual([1, 2]);
-  });
-
-  it("filters out roots with < 2 occurrences", () => {
-    const rootIndex = buildRootIndex(sampleData);
-    expect(rootIndex["geo"]).toBeUndefined();
-    expect(rootIndex["phone"]).toBeUndefined();
-  });
-
-  it("correctly records meaning", () => {
-    const rootIndex = buildRootIndex(sampleData);
-    expect(rootIndex["bio"].m).toBe("life");
-    expect(rootIndex["graph"].m).toBe("write");
-  });
-
-  it("keeps roots with count >= 2", () => {
-    const rootIndex = buildRootIndex(sampleData);
-    for (const key of Object.keys(rootIndex)) {
-      expect(rootIndex[key].w.length).toBeGreaterThanOrEqual(2);
-    }
-  });
-});
-
 describe("executeSearch", () => {
   const index = buildIndex(sampleData);
 
-  it("returns all loaded indices for empty query", () => {
-    mockGetLoadedIndices.mockReturnValue([0, 1, 2, 3]);
+  it("returns all indices for empty query", () => {
     const results = executeSearch(index, "", null);
     expect(results).toEqual([0, 1, 2, 3]);
   });
 
   it("returns only activeRoot words when activeRoot is set", () => {
-    mockIsIndexLoaded.mockImplementation((idx: number) => idx === 0 || idx === 1);
     const results = executeSearch(index, "", "bio");
     expect(results).toEqual([0, 1]);
   });
@@ -180,7 +84,6 @@ describe("executeSearch", () => {
   });
 
   it("root match works correctly", () => {
-    mockIsIndexLoaded.mockImplementation((idx: number) => idx === 1 || idx === 2);
     const results = executeSearch(index, "graph", null);
     expect(results).toContain(1);
     expect(results).toContain(2);
