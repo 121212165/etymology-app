@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack=false",
-    "build": "next build",
+    "build:chunks": "tsx scripts/build-chunks.ts",
+    "build": "npm run build:chunks && next build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
