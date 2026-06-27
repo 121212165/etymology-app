@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Noto_Sans_SC, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const notoSans = Noto_Sans_SC({
-  variable: "--font-body",
   subsets: ["latin"],
   display: "swap",
 });
@@ -35,7 +29,7 @@ export default function RootLayout({
     <html
       lang="zh-CN"
       suppressHydrationWarning
-      className={`${inter.variable} ${notoSans.variable} ${jetbrains.variable}`}
+      className={`${inter.variable} ${jetbrains.variable}`}
     >
       <body className="antialiased">
         <ThemeProvider

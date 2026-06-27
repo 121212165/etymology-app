@@ -41,8 +41,6 @@
   --accent-hover: #82C792;
   --shadow: rgba(0, 0, 0, 0.4);
 
-  --sidebar-w: 260px;
-  --sidebar-collapsed-w: 64px;
   --topbar-h: 56px;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -135,79 +133,6 @@ body {
 .part-tag-suffix {
   background: color-mix(in srgb, var(--suffix-color) 18%, transparent);
   color: var(--suffix-color);
-}
-
-/* ── Card status dot ── */
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  position: absolute;
-  top: 12px;
-  right: 12px;
-}
-
-.status-new { background: transparent; }
-.status-learning { background: var(--prefix-color); }
-.status-learned { background: var(--root-color); }
-
-/* ── Sidebar root item ── */
-.root-item {
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-  cursor: pointer;
-  border-left: 3px solid transparent;
-  transition: all 0.15s var(--ease);
-}
-
-.root-item:hover {
-  background: var(--bg-hover);
-}
-
-.root-item.active {
-  border-left-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
-}
-
-/* ── Flashcard 3D flip ── */
-.flash-card-wrapper {
-  perspective: 1000px;
-}
-
-.flash-card-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.5s var(--ease);
-  transform-style: preserve-3d;
-}
-
-.flash-card-inner.flipped {
-  transform: rotateY(180deg);
-}
-
-.flash-card-face {
-  position: absolute;
-  inset: 0;
-  backface-visibility: hidden;
-  border-radius: 10px;
-}
-
-.flash-card-back {
-  transform: rotateY(180deg);
-}
-
-/* ── Skeleton loading ── */
-@keyframes skeleton-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
-}
-
-.skeleton {
-  background: var(--bg-elevated);
-  border-radius: 4px;
-  animation: skeleton-pulse 1.5s ease-in-out infinite;
 }
 
 /* ── Reduced motion ── */
