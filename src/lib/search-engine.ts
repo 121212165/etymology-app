@@ -41,16 +41,23 @@ export interface DecomposeResult {
   matched: boolean;
 }
 
+function matchesMorpheme(morpheme: string, query: string): boolean {
+  const m = morpheme.toLowerCase();
+  if (m.startsWith(query) || query.startsWith(m)) return true;
+  return query.length >= 3 && m.includes(query);
+}
+
 export function quickDecompose(
   index: SearchIndex,
   query: string
 ): DecomposeResult {
   const q = query.trim().toLowerCase();
+  if (q.length < 2) return { matched: false };
+
   const result: DecomposeResult = { matched: false };
 
   for (const rootText in index.rootIndex) {
-    const rt = rootText.toLowerCase();
-    if (rt.includes(q) || q.includes(rt)) {
+    if (matchesMorpheme(rootText, q)) {
       result.root = { type: "root", text: rootText, meaning: index.rootIndex[rootText].m };
       result.matched = true;
       break;
@@ -59,8 +66,7 @@ export function quickDecompose(
 
   if (!result.matched) {
     for (const [text, meaning] of Object.entries(index.prefixIndex)) {
-      const t = text.toLowerCase();
-      if (t.includes(q) || q.includes(t)) {
+      if (matchesMorpheme(text, q)) {
         result.prefix = { type: "prefix", text, meaning };
         result.matched = true;
         break;
@@ -70,8 +76,7 @@ export function quickDecompose(
 
   if (!result.matched) {
     for (const [text, meaning] of Object.entries(index.suffixIndex)) {
-      const t = text.toLowerCase();
-      if (t.includes(q) || q.includes(t)) {
+      if (matchesMorpheme(text, q)) {
         result.suffix = { type: "suffix", text, meaning };
         result.matched = true;
         break;

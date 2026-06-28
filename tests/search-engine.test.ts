@@ -132,4 +132,22 @@ describe("quickDecompose", () => {
     expect(result.root).toBeUndefined();
     expect(result.suffix).toBeUndefined();
   });
+
+  it("rejects single character queries", () => {
+    const result = quickDecompose(index, "b");
+    expect(result.matched).toBe(false);
+  });
+
+  it("matches when query starts with morpheme (typing a word)", () => {
+    const result = quickDecompose(index, "biology");
+    expect(result.matched).toBe(true);
+    expect(result.root).toBeDefined();
+    expect(result.root!.text).toBe("bio");
+  });
+
+  it("matches when morpheme contains query (3+ chars)", () => {
+    const result = quickDecompose(index, "graph");
+    expect(result.matched).toBe(true);
+    expect(result.root!.text).toBe("graph");
+  });
 });
