@@ -19,8 +19,6 @@ jobs:
 
       - run: npm ci
 
-      - run: npm run build:chunks
-
       - run: npm run lint
 
       - run: npm run test
