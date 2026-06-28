@@ -11,7 +11,7 @@ import { useAppStore } from '@/store/app-store'
 const PAGE_SIZE = 50
 
 export default function HomePage() {
-  const { loading } = useSearch()
+  const { loading, error, retry } = useSearch()
   const { searchIndex, query, activeRoot, filteredIndices } = useAppStore()
   const speak = useSpeak()
   const [showCount, setShowCount] = useState(PAGE_SIZE)
@@ -35,6 +35,22 @@ export default function HomePage() {
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
           <p className="text-text-secondary text-sm">加载数据中...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-bg-deep flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4 text-center">
+          <p className="text-text-secondary">{error}</p>
+          <button
+            onClick={retry}
+            className="px-6 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent-hover transition-colors"
+          >
+            重试
+          </button>
         </div>
       </div>
     )

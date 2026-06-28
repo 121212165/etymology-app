@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import Link from "next/link";
-import { InlineSpeakButton } from "@/components/ui/InlineSpeakButton";
+import { SpeakButton } from "@/components/word/SpeakButton";
 import { ArrowLeft } from "lucide-react";
 import type { VocabEntry, RootIndex } from "@/lib/types";
 
@@ -89,7 +89,7 @@ export default async function WordPage({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <InlineSpeakButton word={entry.word} />
+              <SpeakButton word={entry.word} />
             </div>
           </div>
         </div>
