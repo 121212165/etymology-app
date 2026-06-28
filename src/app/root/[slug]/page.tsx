@@ -47,7 +47,7 @@ export default async function RootPage({
     );
   }
 
-  const words = rootEntry.w.map((idx) => ({ entry: vocab[idx], index: idx }));
+  const words = rootEntry.w.map((idx) => ({ entry: vocab[idx] }));
 
   return (
     <div className="min-h-screen bg-bg-deep">

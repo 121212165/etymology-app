@@ -1,14 +1,19 @@
 "use client";
 
+import { useMemo } from "react";
 import type { RootIndex } from "@/lib/types";
 import { useAppStore } from "@/store/app-store";
 
 export function RootCloud({ rootIndex }: { rootIndex: RootIndex }) {
   const { activeRoot, setActiveRoot } = useAppStore();
-  const topRoots = Object.entries(rootIndex)
-    .map(([t, v]) => ({ t, m: v.m, c: v.w.length }))
-    .sort((a, b) => b.c - a.c)
-    .slice(0, 30);
+  const topRoots = useMemo(
+    () =>
+      Object.entries(rootIndex)
+        .map(([t, v]) => ({ t, m: v.m, c: v.w.length }))
+        .sort((a, b) => b.c - a.c)
+        .slice(0, 30),
+    [rootIndex]
+  );
 
   return (
     <div className="flex flex-wrap gap-2">
