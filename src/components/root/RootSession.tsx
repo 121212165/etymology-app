@@ -8,6 +8,7 @@ import { PartTags } from '@/components/word/PartTags'
 import { SpeakButton } from '@/components/word/SpeakButton'
 import { useProgressStore } from '@/store/progress-store'
 import type { VocabEntry } from '@/lib/types'
+import { MicroCelebrate } from '@/components/feedback/MicroCelebrate'
 
 interface RootSessionProps {
   rootText: string
@@ -148,6 +149,7 @@ export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) 
           <ArrowRight size={16} />
         </button>
       </div>
+      <MicroCelebrate trigger={currentIndex + 1} message={`已看 ${currentIndex + 1}/${words.length}`} />
     </div>
   )
 }
