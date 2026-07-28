@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "build:mindmap": "tsx scripts/build-mindmap-data.ts"
   },
   "dependencies": {
     "lucide-react": "^1.17.0",
@@ -29,6 +30,7 @@
     "eslint-config-next": "^15.3.3",
     "jsdom": "^26.1.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.1",
     "typescript": "^5",
     "vitest": "^3.2.1"
   }
