@@ -17,11 +17,11 @@ interface RootSessionProps {
 
 export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const { markWordViewed, markRootCompleted, setCurrentRoot, isRootCompleted } = useProgressStore()
+  const [sessionFinished, setSessionFinished] = useState(false)
+  const { markWordViewed, markRootCompleted, setCurrentRoot } = useProgressStore()
 
   const current = words[currentIndex]
   const isLast = currentIndex === words.length - 1
-  const completed = isRootCompleted(rootText)
 
   useEffect(() => {
     setCurrentRoot(rootText)
@@ -34,6 +34,7 @@ export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) 
   const handleNext = () => {
     if (isLast) {
       markRootCompleted(rootText)
+      setSessionFinished(true)
       return
     }
     setCurrentIndex(i => i + 1)
@@ -43,7 +44,24 @@ export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) 
     if (currentIndex > 0) setCurrentIndex(i => i - 1)
   }
 
-  if (isLast && completed) {
+  if (words.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 lg:p-10 text-center">
+        <h1 className="text-2xl font-semibold text-text-primary mb-2">
+          {rootText}
+        </h1>
+        <p className="text-text-secondary mb-8">这组词还没有内容</p>
+        <Link
+          href="/"
+          className="text-accent hover:underline text-sm"
+        >
+          回首页
+        </Link>
+      </div>
+    )
+  }
+
+  if (sessionFinished) {
     return (
       <div className="max-w-2xl mx-auto p-6 lg:p-10 text-center">
         <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-accent/20 flex items-center justify-center">
