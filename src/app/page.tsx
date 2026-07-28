@@ -14,13 +14,11 @@ export default function HomePage() {
   const { loading, error, retry } = useSearch()
   const { searchIndex } = useAppStore()
   const { currentRoot, setCurrentRoot, completedRoots, getViewedCountForRoot } = useProgressStore()
-  const [coreRoots, setCoreRoots] = useState<EnhancedRootNode[]>([])
   const [focusRoot, setFocusRoot] = useState<EnhancedRootNode | null>(null)
 
   useEffect(() => {
     loadMindMapData().then(data => {
       const cores = getCoreRoots(data)
-      setCoreRoots(cores)
 
       if (currentRoot) {
         const found = cores.find(r => r.primaryText === currentRoot)
