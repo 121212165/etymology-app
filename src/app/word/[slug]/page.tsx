@@ -47,9 +47,7 @@ export default async function WordPage({
     return (
       <div className="min-h-screen bg-bg-deep flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-text-primary mb-2">
-            未找到单词
-          </h1>
+          <h1 className="text-2xl text-text-primary mb-2">未找到单词</h1>
           <p className="text-text-secondary mb-4">{word}</p>
           <Link href="/" className="text-accent hover:underline">
             返回首页
@@ -74,6 +72,16 @@ export default async function WordPage({
     if (relatedWords.size >= 20) break;
   }
 
+  const partTypeLabel = (type: string) =>
+    type === "prefix" ? "前缀" : type === "root" ? "词根" : "后缀";
+
+  const partColorClass = (type: string) =>
+    type === "prefix"
+      ? "text-prefix"
+      : type === "root"
+      ? "text-root"
+      : "text-suffix";
+
   return (
     <div className="min-h-screen bg-bg-deep">
       {/* Header */}
@@ -87,107 +95,86 @@ export default async function WordPage({
         </Link>
       </header>
 
-      <main className="max-w-3xl mx-auto p-6 lg:p-10">
-        {/* Word header */}
-        <div className="mb-8">
+      <main className="max-w-3xl mx-auto px-6 py-10 lg:py-14">
+        {/* ── Word header ── */}
+        <div className="mb-10">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold text-text-primary mb-2">
+              <h1 className="text-4xl lg:text-5xl text-text-primary mb-2">
                 {entry.word}
               </h1>
-              <p className="text-lg text-text-secondary">
+              <p className="text-lg text-text-secondary leading-relaxed">
                 {entry.definition}
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <SpeakButton word={entry.word} />
-            </div>
+            <SpeakButton word={entry.word} />
           </div>
         </div>
 
-        {/* Part decomposition */}
-        <section className="mb-8">
-          <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-4">
-            词素拆解
-          </h2>
-          <div className="flex flex-wrap gap-2">
+        <hr className="editorial-divider mb-8" />
+
+        {/* ── 词素拆解 timeline ── */}
+        <section className="mb-10">
+          <p className="editorial-label mb-4">词素拆解</p>
+          <div className="morpheme-timeline">
             {entry.parts.map((part, i) => (
-              <div
-                key={i}
-                className={`flex flex-col items-center p-3 rounded-lg border min-w-[80px] ${
-                  part.type === "prefix"
-                    ? "border-prefix/30 bg-prefix/5"
-                    : part.type === "root"
-                    ? "border-root/30 bg-root/5"
-                    : "border-suffix/30 bg-suffix/5"
-                }`}
-              >
-                <span
-                  className={`font-mono text-lg font-semibold mb-1 ${
-                    part.type === "prefix"
-                      ? "text-prefix"
-                      : part.type === "root"
-                      ? "text-root"
-                      : "text-suffix"
-                  }`}
-                >
-                  {part.text}
-                </span>
-                <span className="text-xs text-text-muted">{part.type}</span>
-                <span className="text-xs text-text-secondary mt-1 text-center">
-                  {part.meaning}
-                </span>
+              <div key={i} className="contents">
+                {i > 0 && <div className="morpheme-plus">+</div>}
+                <div className="morpheme-node">
+                  <span className={`font-mono text-xl font-semibold mb-1 ${partColorClass(part.type)}`}>
+                    {part.text}
+                  </span>
+                  <span className="text-xs text-text-muted uppercase tracking-wider">
+                    {partTypeLabel(part.type)}
+                  </span>
+                  <span className="text-xs text-text-secondary mt-1 text-center">
+                    {part.meaning}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Etymology story */}
-        <section className="mb-8">
-          <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-3">
-            词源故事
-          </h2>
-          <p className="text-text-primary leading-relaxed">
+        {/* ── 词源故事 ── */}
+        <section className="mb-10">
+          <p className="editorial-label mb-4">词源故事</p>
+          <p className="text-text-primary leading-loose text-[15px]">
             <span className="text-text-secondary">{entry.word}</span>
-            {" "}由{" "}
+            {" 由 "}
             {entry.parts.map((part, i) => (
               <span key={i}>
-                {i > 0 && i < entry.parts.length - 1 && " + "}
-                {i === entry.parts.length - 1 && i > 0 && " + "}
-                <span
-                  className={`font-mono font-medium ${
-                    part.type === "prefix"
-                      ? "text-prefix"
-                      : part.type === "root"
-                      ? "text-root"
-                      : "text-suffix"
-                  }`}
-                >
+                {i > 0 && " + "}
+                <span className={`font-mono font-medium ${partColorClass(part.type)}`}>
                   {part.text}
                 </span>
-                ({part.meaning})
+                <span className="text-text-muted">（{part.meaning}）</span>
               </span>
-            ))}{" "}
-            组成，字面意思为&ldquo;
-            {entry.parts.map((p) => p.meaning).join(" + ")}
-            &rdquo;，引申为&ldquo;{entry.definition}&rdquo;。
+            ))}
+            {" 组成，字面意思为「"}
+            <span className="text-text-secondary italic">
+              {entry.parts.map((p) => p.meaning).join(" + ")}
+            </span>
+            」，引申为「{entry.definition}」。
           </p>
         </section>
 
-        {/* Related words */}
+        <hr className="editorial-divider mb-8" />
+
+        {/* ── 同根词 ── */}
         {relatedWords.size > 0 && (
           <section>
-            <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wider mb-4">
-              同根词 ({relatedWords.size})
-            </h2>
-            <div className="flex flex-wrap gap-2">
+            <p className="editorial-label mb-4">
+              同根词 · {relatedWords.size}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
               {[...relatedWords].map((w) => (
                 <Link
                   key={w}
                   href={`/word/${encodeURIComponent(w)}`}
-                  className="px-3 py-1.5 rounded-lg bg-bg-elevated text-sm text-text-secondary hover:text-accent hover:bg-bg-hover transition-colors"
+                  className="root-cloud-item"
                 >
-                  {w}
+                  <span className="text-sm font-medium">{w}</span>
                 </Link>
               ))}
             </div>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono, Noto_Serif_SC } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 
@@ -11,6 +11,13 @@ const inter = Inter({
 
 const jetbrains = JetBrains_Mono({
   variable: "--font-mono",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const notoSerifSC = Noto_Serif_SC({
+  variable: "--font-serif-display",
+  weight: ["400", "600", "700"],
   subsets: ["latin"],
   display: "swap",
 });
@@ -29,7 +36,7 @@ export default function RootLayout({
     <html
       lang="zh-CN"
       suppressHydrationWarning
-      className={`${inter.variable} ${jetbrains.variable}`}
+      className={`${inter.variable} ${jetbrains.variable} ${notoSerifSC.variable}`}
     >
       <body className="antialiased">
         <ThemeProvider

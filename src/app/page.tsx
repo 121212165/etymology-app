@@ -2,25 +2,30 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import { TopBar } from '@/components/layout/TopBar'
-import { FocusCard } from '@/components/home/FocusCard'
 import { useSearch } from '@/hooks/useSearch'
 import { useAppStore } from '@/store/app-store'
 import { useProgressStore } from '@/store/progress-store'
 import { loadMindMapData, getCoreRoots } from '@/lib/mindmap-loader'
 import type { EnhancedRootNode } from '@/lib/mindmap-types'
 
+const ROOT_CLOUD_LIMIT = 24
+const WORD_GRID_LIMIT = 12
+
 export default function HomePage() {
   const { loading, error, retry } = useSearch()
   const { searchIndex } = useAppStore()
-  const { getViewedCountForRoot } = useProgressStore()
+  const { getViewedCountForRoot, isRootCompleted } = useProgressStore()
   const [focusRoot, setFocusRoot] = useState<EnhancedRootNode | null>(null)
+  const [coreRoots, setCoreRoots] = useState<EnhancedRootNode[]>([])
 
   useEffect(() => {
     loadMindMapData().then(data => {
       const cores = getCoreRoots(data)
+      setCoreRoots(cores)
       // 在异步回调里读取最新 store 状态，避免闭包捕获 rehydrate 前的初始值
-      // （reload 场景下 persist 从 localStorage rehydrate 晚于首次渲染闭包）
       const { currentRoot, completedRoots, setCurrentRoot } = useProgressStore.getState()
 
       // 仅当当前词根尚未完成时才继续它；已完成则前进到下一个未完成词根
@@ -69,13 +74,148 @@ export default function HomePage() {
     focusRoot.wordIndices,
     searchIndex.data
   )
+  const isFirstTime = viewedCount === 0
+  const completedCount = coreRoots.filter(r => isRootCompleted(r.primaryText)).length
+
+  // 焦点词根下的词汇预览
+  const focusWords = focusRoot.wordIndices
+    .filter(idx => idx < searchIndex.data.length)
+    .slice(0, WORD_GRID_LIMIT)
+    .map(idx => searchIndex.data[idx])
+    .filter(Boolean)
 
   return (
     <div className="min-h-screen bg-bg-deep">
       <TopBar />
 
-      <main className="max-w-5xl mx-auto p-6 pt-16">
-        <FocusCard root={focusRoot} viewedCount={viewedCount} />
+      <main className="max-w-5xl mx-auto px-6 pt-16 pb-20">
+        {/* ── Hero ── */}
+        <section className="mb-12">
+          <p className="editorial-label mb-3">英语词根词缀拆解</p>
+          <h1 className="text-4xl lg:text-5xl text-text-primary mb-3">
+            林序
+          </h1>
+          <p className="text-text-secondary text-base lg:text-lg max-w-xl leading-relaxed">
+            5011 个单词，按词根分组。从核心词根出发，三分钟看懂一组关联词。
+          </p>
+        </section>
+
+        <hr className="editorial-divider mb-10" />
+
+        {/* ── 焦点词根 ── */}
+        <section className="mb-12">
+          <div className="flex items-baseline justify-between mb-4">
+            <p className="editorial-label">
+              {isFirstTime ? '从这里开始' : '继续'}
+            </p>
+            <p className="text-xs text-text-muted">
+              {completedCount} / {coreRoots.length} 组已完成
+            </p>
+          </div>
+
+          <div className="editorial-card p-6 lg:p-8">
+            <div className="flex items-baseline gap-4 mb-3">
+              <h2 className="text-3xl lg:text-4xl font-mono text-root">
+                {focusRoot.primaryText}
+              </h2>
+              <span className="text-lg text-text-secondary">
+                {focusRoot.meaning}
+              </span>
+            </div>
+
+            <p className="text-sm text-text-muted mb-5">
+              {isFirstTime
+                ? `${focusRoot.wordCount} 个关联词 · 3 分钟看完`
+                : `已看 ${viewedCount} / ${focusRoot.wordCount} 个词`}
+            </p>
+
+            {/* 进度条 */}
+            {!isFirstTime && (
+              <div className="h-0.5 bg-bg-elevated rounded-full overflow-hidden mb-5">
+                <div
+                  className="h-full bg-accent transition-all duration-300"
+                  style={{
+                    width: `${focusRoot.wordCount > 0
+                      ? (viewedCount / focusRoot.wordCount) * 100
+                      : 0}%`,
+                  }}
+                />
+              </div>
+            )}
+
+            <Link
+              href={`/root/${encodeURIComponent(focusRoot.primaryText)}`}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-white text-sm hover:bg-accent-hover transition-colors"
+            >
+              {isFirstTime ? '开始看' : '继续看'}
+              <ArrowRight size={16} />
+            </Link>
+          </div>
+        </section>
+
+        {/* ── 焦点词根下的词汇预览 ── */}
+        {focusWords.length > 0 && (
+          <section className="mb-12">
+            <p className="editorial-label mb-4">这组词</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              {focusWords.map((word) => (
+                <Link
+                  key={word.word}
+                  href={`/word/${encodeURIComponent(word.word)}`}
+                  className="word-grid-item"
+                >
+                  <div className="flex items-baseline justify-between gap-2 mb-1">
+                    <span className="text-sm font-medium text-text-primary truncate">
+                      {word.word}
+                    </span>
+                    {word.parts
+                      .filter(p => p.type === 'root')
+                      .slice(0, 1)
+                      .map((p, i) => (
+                        <span
+                          key={i}
+                          className="text-xs font-mono text-root shrink-0"
+                        >
+                          {p.text}
+                        </span>
+                      ))}
+                  </div>
+                  <p className="text-xs text-text-secondary truncate">
+                    {word.definition}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <hr className="editorial-divider mb-10" />
+
+        {/* ── 词根云 ── */}
+        <section>
+          <p className="editorial-label mb-4">核心词根</p>
+          <div className="flex flex-wrap gap-1.5">
+            {coreRoots.slice(0, ROOT_CLOUD_LIMIT).map((root) => {
+              const completed = isRootCompleted(root.primaryText)
+              return (
+                <Link
+                  key={root.primaryText}
+                  href={`/root/${encodeURIComponent(root.primaryText)}`}
+                  className="root-cloud-item"
+                >
+                  <span className="root-cloud-text">{root.primaryText}</span>
+                  <span className="text-xs text-text-muted">
+                    {root.wordCount}
+                    {completed && ' ·'}
+                    {completed && (
+                      <span className="text-accent ml-0.5">✓</span>
+                    )}
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
+        </section>
       </main>
     </div>
   )

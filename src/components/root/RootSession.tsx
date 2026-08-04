@@ -74,8 +74,8 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
 
   if (words.length === 0) {
     return (
-      <div className="max-w-2xl mx-auto p-6 lg:p-10 text-center">
-        <h1 className="text-2xl font-semibold text-text-primary mb-2">
+      <div className="max-w-2xl mx-auto px-6 py-10 lg:py-14 text-center">
+        <h1 className="text-2xl text-text-primary mb-2 font-mono text-root">
           {rootText}
         </h1>
         <p className="text-text-secondary mb-8">这组词还没有内容</p>
@@ -91,12 +91,12 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
 
   if (sessionFinished) {
     return (
-      <div className="max-w-2xl mx-auto p-6 lg:p-10 text-center">
+      <div className="max-w-2xl mx-auto px-6 py-10 lg:py-14 text-center">
         <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-accent/20 flex items-center justify-center">
           <Check size={32} className="text-accent" />
         </div>
-        <h1 className="text-2xl font-semibold text-text-primary mb-2">
-          看完 {rootText}
+        <h1 className="text-2xl text-text-primary mb-2">
+          看完 <span className="font-mono text-root">{rootText}</span>
         </h1>
         <p className="text-text-secondary mb-8">
           这组词你都看过了
@@ -113,52 +113,65 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 lg:p-10">
+    <div className="max-w-2xl mx-auto px-6 py-10 lg:py-14">
+      {/* ── 词根标题 ── */}
       <div className="mb-8">
-        <div className="flex items-baseline gap-3 mb-2">
-          <h1 className="text-3xl font-bold font-mono text-root">{rootText}</h1>
-          <span className="text-text-secondary">{rootMeaning}</span>
+        <p className="editorial-label mb-3">词根</p>
+        <div className="flex items-baseline gap-3 mb-4">
+          <h1 className="text-3xl lg:text-4xl font-mono text-root">
+            {rootText}
+          </h1>
+          <span className="text-lg text-text-secondary">{rootMeaning}</span>
         </div>
         {/* 进度条：只显示比例，不显示 X/Y 数字，避免暴露总数造成压迫感 */}
-        <div className="flex items-center gap-3">
-          <div className="flex-1 h-1 bg-bg-elevated rounded-full overflow-hidden">
-            <div
-              className="h-full bg-accent transition-all duration-300"
-              style={{ width: `${((currentIndex + 1) / words.length) * 100}%` }}
-            />
-          </div>
+        <div className="h-0.5 bg-bg-elevated rounded-full overflow-hidden">
+          <div
+            className="h-full bg-accent transition-all duration-300"
+            style={{ width: `${((currentIndex + 1) / words.length) * 100}%` }}
+          />
         </div>
       </div>
 
-      <div className="bg-bg-surface border border-border rounded-2xl p-6 mb-6">
+      <hr className="editorial-divider mb-8" />
+
+      {/* ── 当前单词卡片 ── */}
+      <div className="editorial-card p-6 lg:p-8 mb-6">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
-            <h2 className="text-3xl font-bold text-text-primary mb-2">{current.word}</h2>
-            <p className="text-text-secondary">{current.definition}</p>
+            <h2 className="text-3xl lg:text-4xl text-text-primary mb-2">
+              {current.word}
+            </h2>
+            <p className="text-text-secondary leading-relaxed">
+              {current.definition}
+            </p>
           </div>
           <SpeakButton word={current.word} />
         </div>
-        <PartTags parts={current.parts} />
 
-        <div className="mt-6 pt-6 border-t border-border">
-          <p className="text-sm text-text-secondary leading-relaxed">
-            <span className="text-text-primary font-medium">{current.word}</span>
-            {' '}由{' '}
-            {current.parts.map((part, i) => (
-              <span key={i}>
-                {i > 0 && ' + '}
-                <span className="font-mono text-root">{part.text}</span>
-                <span className="text-text-muted">({part.meaning})</span>
-              </span>
-            ))}
-            {' '}组成
-          </p>
+        <div className="mt-5">
+          <PartTags parts={current.parts} />
         </div>
+
+        <hr className="editorial-divider my-6" />
+
+        <p className="text-sm text-text-secondary leading-relaxed">
+          <span className="text-text-primary font-medium">{current.word}</span>
+          {' 由 '}
+          {current.parts.map((part, i) => (
+            <span key={i}>
+              {i > 0 && ' + '}
+              <span className="font-mono text-root">{part.text}</span>
+              <span className="text-text-muted">（{part.meaning}）</span>
+            </span>
+          ))}
+          {' 组成'}
+        </p>
       </div>
 
       {/* 思维导图：辅助可视化当前词根的关联网络 */}
       {enhancedRoot && mindmapData && searchIndex?.data && (
         <div className="mb-6">
+          <p className="editorial-label mb-3">关联网络</p>
           <MindMap
             data={mindmapData}
             vocab={searchIndex.data}
@@ -167,6 +180,7 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
         </div>
       )}
 
+      {/* ── 导航 ── */}
       <div className="flex items-center justify-between">
         <button
           onClick={handlePrev}

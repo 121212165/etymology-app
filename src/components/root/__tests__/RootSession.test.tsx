@@ -117,8 +117,9 @@ describe("RootSession", () => {
     fireEvent.click(screen.getByText("完成"));
 
     expect(useProgressStore.getState().isRootCompleted("act")).toBe(true);
-    // 完成页文案
-    expect(screen.getByText("看完 act")).toBeInTheDocument();
+    // 完成页文案（"看完" 和词根文本 "act" 被分别包裹在不同元素中）
+    expect(screen.getByText(/看完/)).toBeInTheDocument();
+    expect(screen.getByText("act")).toBeInTheDocument();
   });
 
   it("disables '上一个' on first word", () => {
