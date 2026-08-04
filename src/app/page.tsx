@@ -20,7 +20,8 @@ export default function HomePage() {
     loadMindMapData().then(data => {
       const cores = getCoreRoots(data)
 
-      if (currentRoot) {
+      // 仅当当前词根尚未完成时才继续它；已完成则前进到下一个未完成词根
+      if (currentRoot && !completedRoots.includes(currentRoot)) {
         const found = cores.find(r => r.primaryText === currentRoot)
         if (found) {
           setFocusRoot(found)
