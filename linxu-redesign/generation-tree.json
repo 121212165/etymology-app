@@ -1,0 +1,33 @@
+{
+  "root": {
+    "id": "root",
+    "type": "root",
+    "status": "generated",
+    "children": [
+      {
+        "id": "page-index",
+        "type": "leaf",
+        "status": "generated",
+        "htmlSrc": "pages/index.html",
+        "title": "首页",
+        "generationPath": ["root", "page-index"]
+      },
+      {
+        "id": "page-word-detail",
+        "type": "leaf",
+        "status": "generated",
+        "htmlSrc": "pages/word-detail.html",
+        "title": "单词详情",
+        "generationPath": ["root", "page-word-detail"]
+      },
+      {
+        "id": "page-root-detail",
+        "type": "leaf",
+        "status": "generated",
+        "htmlSrc": "pages/root-detail.html",
+        "title": "词根详情",
+        "generationPath": ["root", "page-root-detail"]
+      }
+    ]
+  }
+}

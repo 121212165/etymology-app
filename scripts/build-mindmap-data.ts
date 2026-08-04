@@ -85,7 +85,8 @@ function main() {
       coreRoots: coreCount,
       middleRoots: middleCount,
       edgeRoots: edgeCount,
-      mergedGroups: mergedGroups.length,
+      // 合并减少的词根数（原词根数 - 合并后组数），> 0 表示有同义词根被合并
+      mergedGroups: mergeInputs.length - mergedGroups.length,
       totalLinks: links.length,
     },
   }

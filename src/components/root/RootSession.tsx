@@ -1,25 +1,36 @@
 // src/components/root/RootSession.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { PartTags } from '@/components/word/PartTags'
 import { SpeakButton } from '@/components/word/SpeakButton'
+import { MindMap } from '@/components/mindmap/MindMap'
 import { useProgressStore } from '@/store/progress-store'
+import { loadMindMapData } from '@/lib/mindmap-loader'
+import { useAppStore } from '@/store/app-store'
 import type { VocabEntry } from '@/lib/types'
+import type { MindMapData, EnhancedRootNode } from '@/lib/mindmap-types'
 import { MicroCelebrate } from '@/components/feedback/MicroCelebrate'
 
 interface RootSessionProps {
   rootText: string
   rootMeaning: string
   words: VocabEntry[]
+  /** 合并后的词根节点，用于思维导图；若未传则不渲染导图 */
+  enhancedRoot?: EnhancedRootNode
 }
 
-export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) {
+export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: RootSessionProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [sessionFinished, setSessionFinished] = useState(false)
+  const [mindmapData, setMindmapData] = useState<MindMapData | null>(null)
+  // 仅在用户主动点击"下一个"时才触发微庆祝，避免首次挂载即弹出
+  const [celebrationTick, setCelebrationTick] = useState(0)
+  const firstRenderRef = useRef(true)
   const { markWordViewed, markRootCompleted, setCurrentRoot } = useProgressStore()
+  const { searchIndex } = useAppStore()
 
   const current = words[currentIndex]
   const isLast = currentIndex === words.length - 1
@@ -32,6 +43,14 @@ export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) 
     if (current) markWordViewed(current.word)
   }, [current, markWordViewed])
 
+  // 懒加载思维导图数据（仅一次）
+  useEffect(() => {
+    if (!enhancedRoot || mindmapData) return
+    loadMindMapData().then(setMindmapData).catch(() => {
+      // 思维导图是辅助可视化，加载失败不阻塞主流程
+    })
+  }, [enhancedRoot, mindmapData])
+
   const handleNext = () => {
     if (isLast) {
       markRootCompleted(rootText)
@@ -39,11 +58,19 @@ export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) 
       return
     }
     setCurrentIndex(i => i + 1)
+    setCelebrationTick(t => t + 1)
   }
 
   const handlePrev = () => {
     if (currentIndex > 0) setCurrentIndex(i => i - 1)
   }
+
+  // 首次渲染跳过庆祝触发
+  useEffect(() => {
+    if (firstRenderRef.current) {
+      firstRenderRef.current = false
+    }
+  }, [])
 
   if (words.length === 0) {
     return (
@@ -92,6 +119,7 @@ export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) 
           <h1 className="text-3xl font-bold font-mono text-root">{rootText}</h1>
           <span className="text-text-secondary">{rootMeaning}</span>
         </div>
+        {/* 进度条：只显示比例，不显示 X/Y 数字，避免暴露总数造成压迫感 */}
         <div className="flex items-center gap-3">
           <div className="flex-1 h-1 bg-bg-elevated rounded-full overflow-hidden">
             <div
@@ -99,9 +127,6 @@ export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) 
               style={{ width: `${((currentIndex + 1) / words.length) * 100}%` }}
             />
           </div>
-          <span className="text-xs text-text-muted font-mono">
-            {currentIndex + 1}/{words.length}
-          </span>
         </div>
       </div>
 
@@ -131,6 +156,17 @@ export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) 
         </div>
       </div>
 
+      {/* 思维导图：辅助可视化当前词根的关联网络 */}
+      {enhancedRoot && mindmapData && searchIndex?.data && (
+        <div className="mb-6">
+          <MindMap
+            data={mindmapData}
+            vocab={searchIndex.data}
+            centerRoot={enhancedRoot}
+          />
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <button
           onClick={handlePrev}
@@ -149,7 +185,7 @@ export function RootSession({ rootText, rootMeaning, words }: RootSessionProps) 
           <ArrowRight size={16} />
         </button>
       </div>
-      <MicroCelebrate trigger={currentIndex + 1} message={`已看 ${currentIndex + 1}/${words.length}`} />
+      <MicroCelebrate trigger={celebrationTick} message="已看" />
     </div>
   )
 }

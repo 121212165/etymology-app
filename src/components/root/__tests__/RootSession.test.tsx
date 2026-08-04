@@ -1,0 +1,154 @@
+// src/components/root/__tests__/RootSession.test.tsx
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import type React from "react";
+import { RootSession } from "../RootSession";
+import { useProgressStore } from "@/store/progress-store";
+import type { VocabEntry } from "@/lib/types";
+
+// next/link 在 jsdom 环境下渲染为普通 <a>
+vi.mock("next/link", () => ({
+  default: ({ children, href, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) => (
+    <a href={href} {...props}>{children}</a>
+  ),
+}));
+
+// SpeakButton / PartTags / MindMap / MicroCelebrate 都是子组件，mock 掉以隔离 RootSession 逻辑
+vi.mock("@/components/word/SpeakButton", () => ({
+  SpeakButton: () => <button data-testid="speak">speak</button>,
+}));
+vi.mock("@/components/word/PartTags", () => ({
+  PartTags: () => <div data-testid="parts" />,
+}));
+vi.mock("@/components/mindmap/MindMap", () => ({
+  MindMap: () => <div data-testid="mindmap" />,
+}));
+vi.mock("@/components/feedback/MicroCelebrate", () => ({
+  MicroCelebrate: ({ message }: { message?: string }) => (
+    <div data-testid="celebrate">{message ?? ""}</div>
+  ),
+}));
+// 懒加载 mindmap 数据：测试中不触发
+vi.mock("@/lib/mindmap-loader", () => ({
+  loadMindMapData: vi.fn().mockResolvedValue(null),
+}));
+
+const sampleWords: VocabEntry[] = [
+  {
+    word: "act",
+    definition: "to do",
+    parts: [{ type: "root", text: "act", meaning: "做" }],
+  },
+  {
+    word: "action",
+    definition: "something done",
+    parts: [
+      { type: "root", text: "act", meaning: "做" },
+      { type: "suffix", text: "ion", meaning: "行为" },
+    ],
+  },
+  {
+    word: "active",
+    definition: "characterized by action",
+    parts: [
+      { type: "root", text: "act", meaning: "做" },
+      { type: "suffix", text: "ive", meaning: "倾向" },
+    ],
+  },
+];
+
+describe("RootSession", () => {
+  beforeEach(() => {
+    // 每个用例前重置 store，避免相互污染
+    useProgressStore.setState({
+      viewedWords: [],
+      viewedWordSet: {},
+      completedRoots: [],
+      currentRoot: null,
+    });
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("renders first word and root title on mount", () => {
+    render(
+      <RootSession
+        rootText="act"
+        rootMeaning="做"
+        words={sampleWords}
+      />
+    );
+    // 词根标题用 heading level 1，单词用 heading level 2
+    expect(screen.getByRole("heading", { level: 1, name: "act" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "act" })).toBeInTheDocument();
+    expect(screen.getByText("to do")).toBeInTheDocument();
+    expect(screen.getByText("下一个")).toBeInTheDocument();
+  });
+
+  it("marks word as viewed in progress store on mount", () => {
+    render(
+      <RootSession rootText="act" rootMeaning="做" words={sampleWords} />
+    );
+    expect(useProgressStore.getState().isWordViewed("act")).toBe(true);
+  });
+
+  it("advances to next word on clicking '下一个'", () => {
+    render(
+      <RootSession rootText="act" rootMeaning="做" words={sampleWords} />
+    );
+    fireEvent.click(screen.getByText("下一个"));
+    // 第二个词：heading level 2 是单词标题
+    expect(screen.getByRole("heading", { level: 2, name: "action" })).toBeInTheDocument();
+    expect(screen.getByText("something done")).toBeInTheDocument();
+    expect(useProgressStore.getState().isWordViewed("action")).toBe(true);
+  });
+
+  it("marks root completed and shows celebration page after last word", () => {
+    render(
+      <RootSession rootText="act" rootMeaning="做" words={sampleWords} />
+    );
+    // 走到最后一个词
+    fireEvent.click(screen.getByText("下一个")); // -> action
+    fireEvent.click(screen.getByText("下一个")); // -> active
+    // 最后一个词的按钮文本应为"完成"
+    expect(screen.getByText("完成")).toBeInTheDocument();
+    fireEvent.click(screen.getByText("完成"));
+
+    expect(useProgressStore.getState().isRootCompleted("act")).toBe(true);
+    // 完成页文案
+    expect(screen.getByText("看完 act")).toBeInTheDocument();
+  });
+
+  it("disables '上一个' on first word", () => {
+    render(
+      <RootSession rootText="act" rootMeaning="做" words={sampleWords} />
+    );
+    const prevButton = screen.getByText("上一个").closest("button");
+    expect(prevButton).toBeDisabled();
+  });
+
+  it("can go back to previous word", () => {
+    render(
+      <RootSession rootText="act" rootMeaning="做" words={sampleWords} />
+    );
+    fireEvent.click(screen.getByText("下一个")); // -> action
+    fireEvent.click(screen.getByText("上一个")); // -> act
+    expect(screen.getByText("to do")).toBeInTheDocument();
+  });
+
+  it("renders empty state when words array is empty", () => {
+    render(
+      <RootSession rootText="act" rootMeaning="做" words={[]} />
+    );
+    expect(screen.getByText("这组词还没有内容")).toBeInTheDocument();
+  });
+
+  it("sets currentRoot in store on mount", () => {
+    render(
+      <RootSession rootText="act" rootMeaning="做" words={sampleWords} />
+    );
+    expect(useProgressStore.getState().currentRoot).toBe("act");
+  });
+});

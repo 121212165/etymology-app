@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首页</title>
+    <style id="theme-vars">
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
+
+  --color-background: var(--linxu-background);
+  --color-foreground: var(--linxu-foreground);
+  --color-card: var(--linxu-card);
+  --color-card-foreground: var(--linxu-card-foreground);
+  --color-popover: var(--linxu-popover);
+  --color-popover-foreground: var(--linxu-popover-foreground);
+  --color-primary: var(--linxu-primary);
+  --color-primary-foreground: var(--linxu-primary-foreground);
+  --color-muted: var(--linxu-muted);
+  --color-muted-foreground: var(--linxu-muted-foreground);
+  --color-border: var(--linxu-border);
+  --color-input: var(--linxu-input);
+  --color-ring: var(--linxu-ring);
+
+  --radius-sm: 2px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+:root {
+  --linxu-background: #faf9f6;
+  --linxu-foreground: #1a1a1a;
+  --linxu-card: #ffffff;
+  --linxu-card-foreground: #1a1a1a;
+  --linxu-popover: #ffffff;
+  --linxu-popover-foreground: #1a1a1a;
+  --linxu-primary: #8c6b3f;
+  --linxu-primary-foreground: #ffffff;
+  --linxu-muted: #f0eee9;
+  --linxu-muted-foreground: #6b6b6b;
+  --linxu-border: #e5e2db;
+  --linxu-input: #e5e2db;
+  --linxu-ring: #8c6b3f;
+
+  --linxu-primary-50: #f7f3ed;
+  --linxu-primary-100: #ede4d6;
+  --linxu-primary-200: #dbc8ad;
+  --linxu-primary-300: #c4a47d;
+  --linxu-primary-400: #a88156;
+  --linxu-primary-500: #8c6b3f;
+  --linxu-primary-600: #6f5231;
+  --linxu-primary-700: #553f28;
+  --linxu-primary-800: #3d2d1d;
+  --linxu-primary-900: #271d13;
+
+  --linxu-neutral-50: #faf9f6;
+  --linxu-neutral-100: #f0eee9;
+  --linxu-neutral-200: #e5e2db;
+  --linxu-neutral-300: #d1cdc3;
+  --linxu-neutral-400: #a8a39a;
+  --linxu-neutral-500: #7a766f;
+  --linxu-neutral-600: #57534e;
+  --linxu-neutral-700: #3f3b36;
+  --linxu-neutral-800: #292622;
+  --linxu-neutral-900: #1a1a1a;
+
+  --linxu-state-success: #3d6b4f;
+  --linxu-state-warning: #b87e2e;
+  --linxu-state-error: #a94442;
+  --linxu-state-info: #4a6fa5;
+
+  --linxu-shadow-xs: 0 1px 2px rgba(26, 26, 26, 0.04);
+  --linxu-shadow-sm: 0 1px 3px rgba(26, 26, 26, 0.05);
+  --linxu-shadow-md: 0 4px 12px rgba(26, 26, 26, 0.05);
+  --linxu-shadow-lg: 0 8px 24px rgba(26, 26, 26, 0.05);
+
+  --linxu-radius-sm: 2px;
+  --linxu-radius-md: 8px;
+  --linxu-radius-lg: 16px;
+  --linxu-radius-full: 9999px;
+}
+
+html.dark {
+  --linxu-background: #12110f;
+  --linxu-foreground: #f0eee9;
+  --linxu-card: #1a1816;
+  --linxu-card-foreground: #f0eee9;
+  --linxu-popover: #1a1816;
+  --linxu-popover-foreground: #f0eee9;
+  --linxu-primary: #c9a86c;
+  --linxu-primary-foreground: #1a1816;
+  --linxu-muted: #24221f;
+  --linxu-muted-foreground: #9a958c;
+  --linxu-border: #2e2b27;
+  --linxu-input: #2e2b27;
+  --linxu-ring: #c9a86c;
+
+  --linxu-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --linxu-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.30);
+  --linxu-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --linxu-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.40);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--linxu-background);
+    color: var(--linxu-foreground);
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.18;
+  }
+
+  h4, h5, h6 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+  }
+
+  code, pre {
+    font-family: var(--font-mono);
+  }
+
+  ::selection {
+    background-color: var(--linxu-primary-200);
+    color: var(--linxu-primary-900);
+  }
+
+  html.dark ::selection {
+    background-color: var(--linxu-primary-700);
+    color: var(--linxu-primary-50);
+  }
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--linxu-background);
+    --color-foreground: var(--linxu-foreground);
+    --color-card: var(--linxu-card);
+    --color-card-foreground: var(--linxu-card-foreground);
+    --color-popover: var(--linxu-popover);
+    --color-popover-foreground: var(--linxu-popover-foreground);
+    --color-primary: var(--linxu-primary);
+    --color-primary-foreground: var(--linxu-primary-foreground);
+    --color-muted: var(--linxu-muted);
+    --color-muted-foreground: var(--linxu-muted-foreground);
+    --color-border: var(--linxu-border);
+    --color-input: var(--linxu-input);
+    --color-ring: var(--linxu-ring);
+    --radius-sm: var(--linxu-radius-sm);
+    --radius-md: var(--linxu-radius-md);
+    --radius-lg: var(--linxu-radius-lg);
+  }
+  @layer base {
+    body { background: var(--linxu-background); color: var(--linxu-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--linxu-background); }
+      .text-background { color: var(--linxu-background); }
+      .border-background { border-color: var(--linxu-background); }
+      .ring-background { --tw-ring-color: var(--linxu-background); }
+      .bg-foreground { background-color: var(--linxu-foreground); }
+      .text-foreground { color: var(--linxu-foreground); }
+      .border-foreground { border-color: var(--linxu-foreground); }
+      .ring-foreground { --tw-ring-color: var(--linxu-foreground); }
+      .bg-card { background-color: var(--linxu-card); }
+      .text-card { color: var(--linxu-card); }
+      .border-card { border-color: var(--linxu-card); }
+      .ring-card { --tw-ring-color: var(--linxu-card); }
+      .bg-card-foreground { background-color: var(--linxu-card-foreground); }
+      .text-card-foreground { color: var(--linxu-card-foreground); }
+      .border-card-foreground { border-color: var(--linxu-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--linxu-card-foreground); }
+      .bg-popover { background-color: var(--linxu-popover); }
+      .text-popover { color: var(--linxu-popover); }
+      .border-popover { border-color: var(--linxu-popover); }
+      .ring-popover { --tw-ring-color: var(--linxu-popover); }
+      .bg-popover-foreground { background-color: var(--linxu-popover-foreground); }
+      .text-popover-foreground { color: var(--linxu-popover-foreground); }
+      .border-popover-foreground { border-color: var(--linxu-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--linxu-popover-foreground); }
+      .bg-primary { background-color: var(--linxu-primary); }
+      .text-primary { color: var(--linxu-primary); }
+      .border-primary { border-color: var(--linxu-primary); }
+      .ring-primary { --tw-ring-color: var(--linxu-primary); }
+      .bg-primary-foreground { background-color: var(--linxu-primary-foreground); }
+      .text-primary-foreground { color: var(--linxu-primary-foreground); }
+      .border-primary-foreground { border-color: var(--linxu-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--linxu-primary-foreground); }
+      .bg-muted { background-color: var(--linxu-muted); }
+      .text-muted { color: var(--linxu-muted); }
+      .border-muted { border-color: var(--linxu-muted); }
+      .ring-muted { --tw-ring-color: var(--linxu-muted); }
+      .bg-muted-foreground { background-color: var(--linxu-muted-foreground); }
+      .text-muted-foreground { color: var(--linxu-muted-foreground); }
+      .border-muted-foreground { border-color: var(--linxu-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--linxu-muted-foreground); }
+      .bg-border { background-color: var(--linxu-border); }
+      .text-border { color: var(--linxu-border); }
+      .border-border { border-color: var(--linxu-border); }
+      .ring-border { --tw-ring-color: var(--linxu-border); }
+      .bg-input { background-color: var(--linxu-input); }
+      .text-input { color: var(--linxu-input); }
+      .border-input { border-color: var(--linxu-input); }
+      .ring-input { --tw-ring-color: var(--linxu-input); }
+      .bg-ring { background-color: var(--linxu-ring); }
+      .text-ring { color: var(--linxu-ring); }
+      .border-ring { border-color: var(--linxu-ring); }
+      .ring-ring { --tw-ring-color: var(--linxu-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased bg-background text-foreground">
+    <header id="top-bar" class="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-sm" data-dom-id="top-bar">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+            <a href="#" class="group flex items-center gap-2" data-dom-id="brand-mark">
+                <span class="font-serif text-2xl font-semibold tracking-tight text-primary">林序</span>
+            </a>
+            <nav class="hidden items-center gap-8 md:flex" aria-label="主导航">
+                <a href="#" class="text-sm font-medium text-foreground transition-colors hover:text-primary" data-dom-id="nav-home">首页</a>
+                <a href="#root-cloud" class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary" data-dom-id="nav-roots">词根</a>
+                <a href="#footer" class="text-sm font-medium text-muted-foreground transition-colors hover:text-primary" data-dom-id="nav-about">关于</a>
+            </nav>
+            <button id="theme-toggle" type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors hover:bg-muted hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label="切换主题" data-dom-id="theme-toggle">
+                <i data-lucide="sun" class="hidden dark:block" aria-hidden="true"></i>
+                <i data-lucide="moon" class="block dark:hidden" aria-hidden="true"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="relative w-full overflow-hidden px-6 pt-20 pb-16 lg:px-8 lg:pt-28 lg:pb-24" data-dom-id="hero">
+            <div class="mx-auto max-w-3xl text-center">
+                <p class="mb-4 text-sm font-medium tracking-widest text-primary uppercase" data-dom-id="hero-eyebrow">林序 · 英语词源学习工具</p>
+                <h1 class="mb-6 font-serif text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl lg:text-6xl" data-dom-id="hero-title">
+                    从词根出发，读懂英语
+                </h1>
+                <p class="mx-auto mb-10 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg" data-dom-id="hero-subtitle">
+                    通过词根、词缀拆解，建立词汇之间的真实联系，让记忆从机械重复变成理解游戏。
+                </p>
+
+                <form class="relative mx-auto mb-4 max-w-2xl" role="search" aria-label="单词搜索" data-dom-id="search-form" onsubmit="event.preventDefault();">
+                    <div class="group relative flex items-center rounded-lg border border-border bg-card shadow-sm transition-shadow focus-within:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="search-input-wrapper">
+                        <i data-lucide="search" class="ml-4 h-5 w-5 text-muted-foreground" aria-hidden="true"></i>
+                        <input id="search-input" type="search" autocomplete="off" placeholder="搜索单词、词根或词缀…" class="h-14 w-full bg-transparent px-4 text-base text-foreground placeholder:text-muted-foreground focus:outline-none" data-dom-id="search-input" />
+                        <button type="submit" class="mr-2 inline-flex h-10 items-center justify-center rounded-md bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="search-submit">
+                            搜索
+                        </button>
+                    </div>
+                </form>
+                <p class="text-sm text-muted-foreground" data-dom-id="search-hint">试试输入 <span class="font-mono text-primary">action</span>、<span class="font-mono text-primary">transport</span>、<span class="font-mono text-primary">unhappy</span></p>
+            </div>
+        </section>
+
+        <section id="root-cloud" class="w-full px-6 py-12 lg:px-8 lg:py-16" data-dom-id="root-cloud">
+            <div class="mx-auto max-w-7xl">
+                <div class="mb-8 flex items-end justify-between">
+                    <h2 class="font-serif text-2xl font-semibold tracking-tight text-foreground sm:text-3xl" data-dom-id="root-cloud-heading">热门词根</h2>
+                    <a href="#" class="hidden text-sm font-medium text-primary hover:underline sm:inline-flex" data-dom-id="root-cloud-more">查看全部</a>
+                </div>
+                <div class="flex flex-wrap gap-3" role="list" aria-label="热门词根">
+                    <button class="root-pill group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="root-cloud-act" role="listitem">
+                        <span class="font-mono">act</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">12</span>
+                    </button>
+                    <button class="root-pill group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="root-cloud-port" role="listitem">
+                        <span class="font-mono">port</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">9</span>
+                    </button>
+                    <button class="root-pill group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="root-cloud-dict" role="listitem">
+                        <span class="font-mono">dict</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">8</span>
+                    </button>
+                    <button class="root-pill group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="root-cloud-spect" role="listitem">
+                        <span class="font-mono">spect</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">7</span>
+                    </button>
+                    <button class="root-pill group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="root-cloud-struct" role="listitem">
+                        <span class="font-mono">struct</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">6</span>
+                    </button>
+                    <button class="root-pill group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="root-cloud-aud" role="listitem">
+                        <span class="font-mono">aud</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">5</span>
+                    </button>
+                    <button class="root-pill group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="root-cloud-form" role="listitem">
+                        <span class="font-mono">form</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">6</span>
+                    </button>
+                    <button class="root-pill group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="root-cloud-miss" role="listitem">
+                        <span class="font-mono">miss</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">4</span>
+                    </button>
+                    <button class="root-pill group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="root-cloud-mit" role="listitem">
+                        <span class="font-mono">mit</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">5</span>
+                    </button>
+                    <button class="root-pill group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-foreground transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-ring" data-dom-id="root-cloud-rupt" role="listitem">
+                        <span class="font-mono">rupt</span>
+                        <span class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary">4</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="word-grid" class="w-full px-6 py-12 lg:px-8 lg:py-16" data-dom-id="word-grid">
+            <div class="mx-auto max-w-7xl">
+                <div class="mb-8 flex items-end justify-between">
+                    <h2 class="font-serif text-2xl font-semibold tracking-tight text-foreground sm:text-3xl" data-dom-id="word-grid-heading">全部单词</h2>
+                    <span class="text-sm text-muted-foreground" data-dom-id="word-grid-count">共 10 个</span>
+                </div>
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3" role="list" aria-label="单词列表">
+                    <article class="word-card group rounded-lg border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="word-card-act" role="listitem" tabindex="0">
+                        <div class="mb-3 flex items-start justify-between">
+                            <h3 class="font-mono text-xl font-semibold text-foreground">act</h3>
+                            <i data-lucide="chevron-right" class="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true"></i>
+                        </div>
+                        <p class="mb-4 text-sm text-muted-foreground">行动；表演；起作用</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><span class="font-mono">act</span> · 根</span>
+                        </div>
+                    </article>
+
+                    <article class="word-card group rounded-lg border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="word-card-action" role="listitem" tabindex="0">
+                        <div class="mb-3 flex items-start justify-between">
+                            <h3 class="font-mono text-xl font-semibold text-foreground">action</h3>
+                            <i data-lucide="chevron-right" class="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true"></i>
+                        </div>
+                        <p class="mb-4 text-sm text-muted-foreground">行动；活动；行为</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><span class="font-mono">act</span> · 根</span>
+                            <span class="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground"><span class="font-mono">-ion</span> · 缀</span>
+                        </div>
+                    </article>
+
+                    <article class="word-card group rounded-lg border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="word-card-actor" role="listitem" tabindex="0">
+                        <div class="mb-3 flex items-start justify-between">
+                            <h3 class="font-mono text-xl font-semibold text-foreground">actor</h3>
+                            <i data-lucide="chevron-right" class="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true"></i>
+                        </div>
+                        <p class="mb-4 text-sm text-muted-foreground">演员；行动者</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><span class="font-mono">act</span> · 根</span>
+                            <span class="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground"><span class="font-mono">-or</span> · 缀</span>
+                        </div>
+                    </article>
+
+                    <article class="word-card group rounded-lg border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="word-card-active" role="listitem" tabindex="0">
+                        <div class="mb-3 flex items-start justify-between">
+                            <h3 class="font-mono text-xl font-semibold text-foreground">active</h3>
+                            <i data-lucide="chevron-right" class="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true"></i>
+                        </div>
+                        <p class="mb-4 text-sm text-muted-foreground">活跃的；积极的</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><span class="font-mono">act</span> · 根</span>
+                            <span class="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground"><span class="font-mono">-ive</span> · 缀</span>
+                        </div>
+                    </article>
+
+                    <article class="word-card group rounded-lg border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="word-card-actual" role="listitem" tabindex="0">
+                        <div class="mb-3 flex items-start justify-between">
+                            <h3 class="font-mono text-xl font-semibold text-foreground">actual</h3>
+                            <i data-lucide="chevron-right" class="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true"></i>
+                        </div>
+                        <p class="mb-4 text-sm text-muted-foreground">实际的；真实的</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><span class="font-mono">act</span> · 根</span>
+                            <span class="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground"><span class="font-mono">-ual</span> · 缀</span>
+                        </div>
+                    </article>
+
+                    <article class="word-card group rounded-lg border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="word-card-react" role="listitem" tabindex="0">
+                        <div class="mb-3 flex items-start justify-between">
+                            <h3 class="font-mono text-xl font-semibold text-foreground">react</h3>
+                            <i data-lucide="chevron-right" class="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true"></i>
+                        </div>
+                        <p class="mb-4 text-sm text-muted-foreground">反应；起反作用</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium" style="background-color: var(--linxu-muted); color: var(--linxu-muted-foreground);"><span class="font-mono">re-</span> · 前</span>
+                            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><span class="font-mono">act</span> · 根</span>
+                        </div>
+                    </article>
+
+                    <article class="word-card group rounded-lg border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="word-card-interact" role="listitem" tabindex="0">
+                        <div class="mb-3 flex items-start justify-between">
+                            <h3 class="font-mono text-xl font-semibold text-foreground">interact</h3>
+                            <i data-lucide="chevron-right" class="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true"></i>
+                        </div>
+                        <p class="mb-4 text-sm text-muted-foreground">相互作用；相互影响</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium" style="background-color: var(--linxu-muted); color: var(--linxu-muted-foreground);"><span class="font-mono">inter-</span> · 前</span>
+                            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><span class="font-mono">act</span> · 根</span>
+                        </div>
+                    </article>
+
+                    <article class="word-card group rounded-lg border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="word-card-transport" role="listitem" tabindex="0">
+                        <div class="mb-3 flex items-start justify-between">
+                            <h3 class="font-mono text-xl font-semibold text-foreground">transport</h3>
+                            <i data-lucide="chevron-right" class="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true"></i>
+                        </div>
+                        <p class="mb-4 text-sm text-muted-foreground">运输；交通工具</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium" style="background-color: var(--linxu-muted); color: var(--linxu-muted-foreground);"><span class="font-mono">trans-</span> · 前</span>
+                            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><span class="font-mono">port</span> · 根</span>
+                        </div>
+                    </article>
+
+                    <article class="word-card group rounded-lg border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="word-card-report" role="listitem" tabindex="0">
+                        <div class="mb-3 flex items-start justify-between">
+                            <h3 class="font-mono text-xl font-semibold text-foreground">report</h3>
+                            <i data-lucide="chevron-right" class="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true"></i>
+                        </div>
+                        <p class="mb-4 text-sm text-muted-foreground">报告；报道；汇报</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium" style="background-color: var(--linxu-muted); color: var(--linxu-muted-foreground);"><span class="font-mono">re-</span> · 前</span>
+                            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><span class="font-mono">port</span> · 根</span>
+                        </div>
+                    </article>
+
+                    <article class="word-card group rounded-lg border border-border bg-card p-5 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-md focus-within:ring-2 focus-within:ring-ring" data-dom-id="word-card-support" role="listitem" tabindex="0">
+                        <div class="mb-3 flex items-start justify-between">
+                            <h3 class="font-mono text-xl font-semibold text-foreground">support</h3>
+                            <i data-lucide="chevron-right" class="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary" aria-hidden="true"></i>
+                        </div>
+                        <p class="mb-4 text-sm text-muted-foreground">支持；支撑；拥护</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium" style="background-color: var(--linxu-muted); color: var(--linxu-muted-foreground);"><span class="font-mono">sup-</span> · 前</span>
+                            <span class="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"><span class="font-mono">port</span> · 根</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="footer" class="w-full border-t border-border bg-background px-6 py-12 lg:px-8" data-dom-id="footer">
+        <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
+            <div class="text-center sm:text-left">
+                <p class="font-serif text-lg font-semibold text-foreground" data-dom-id="footer-brand">林序</p>
+                <p class="text-sm text-muted-foreground" data-dom-id="footer-tagline">词源即故事</p>
+            </div>
+            <p class="text-sm text-muted-foreground" data-dom-id="footer-copyright">© 2026 林序 · 词源即故事</p>
+        </div>
+    </footer>
+
+    <script>
+        (function () {
+            const toggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            function applyTheme() {
+                const isDark = html.classList.contains('dark');
+                toggle.setAttribute('aria-label', isDark ? '切换到浅色模式' : '切换到深色模式');
+            }
+            toggle.addEventListener('click', function () {
+                html.classList.toggle('dark');
+                html.classList.toggle('light');
+                applyTheme();
+                lucide.createIcons();
+            });
+            applyTheme();
+            lucide.createIcons();
+        })();
+    </script>
+</body>
+</html>

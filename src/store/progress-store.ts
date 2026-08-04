@@ -13,7 +13,7 @@ interface ProgressState {
   setCurrentRoot: (root: string | null) => void
   isWordViewed: (word: string) => boolean
   isRootCompleted: (rootText: string) => boolean
-  getViewedCountForRoot: (rootText: string, allWordIndices: number[], vocab: { word: string }[]) => number
+  getViewedCountForRoot: (allWordIndices: number[], vocab: { word: string }[]) => number
 }
 
 export const useProgressStore = create<ProgressState>()(
@@ -45,7 +45,7 @@ export const useProgressStore = create<ProgressState>()(
 
       isRootCompleted: (rootText) => get().completedRoots.includes(rootText),
 
-      getViewedCountForRoot: (rootText, allWordIndices, vocab) => {
+      getViewedCountForRoot: (allWordIndices, vocab) => {
         const state = get()
         return allWordIndices.filter(idx => {
           const word = vocab[idx]?.word
@@ -55,12 +55,25 @@ export const useProgressStore = create<ProgressState>()(
     }),
     {
       name: 'linxu-progress',
+      // 只持久化数组形式，viewedWordSet 在 rehydrate 时从数组重建，避免冗余存储
       partialize: (state) => ({
         viewedWords: state.viewedWords,
-        viewedWordSet: state.viewedWordSet,
         completedRoots: state.completedRoots,
         currentRoot: state.currentRoot,
       }),
+      merge: (persisted, current) => {
+        const p = (persisted as Partial<ProgressState>) || {}
+        const viewedWords = p.viewedWords ?? []
+        // 从持久化的数组重建 Set 视图，保证 isWordViewed / markWordViewed 的 O(1) 查询
+        const viewedWordSet: Record<string, true> = {}
+        for (const w of viewedWords) viewedWordSet[w] = true
+        return {
+          ...current,
+          ...p,
+          viewedWords,
+          viewedWordSet,
+        }
+      },
     }
   )
 )

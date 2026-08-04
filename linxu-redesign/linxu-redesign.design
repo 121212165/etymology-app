@@ -1,0 +1,244 @@
+{
+  "data": [
+    {
+      "id": "page-index",
+      "title": "首页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753841040000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1799,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-d8bf2cc5",
+          "measuredAt": 1785803234028
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/index.html",
+        "interactions": [
+          {
+            "domId": "nav-roots",
+            "targetPageId": "page-root-detail",
+            "hideEdge": true,
+            "transitionLabel": "浏览词根"
+          },
+          {
+            "domId": "root-cloud-act",
+            "targetPageId": "page-root-detail",
+            "transitionLabel": "查看 act 词根"
+          },
+          {
+            "domId": "root-cloud-port",
+            "targetPageId": "page-root-detail",
+            "transitionLabel": "查看 port 词根"
+          },
+          {
+            "domId": "word-card-act",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 act"
+          },
+          {
+            "domId": "word-card-action",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 action"
+          },
+          {
+            "domId": "word-card-actor",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 actor"
+          },
+          {
+            "domId": "word-card-active",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 active"
+          },
+          {
+            "domId": "word-card-actual",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 actual"
+          },
+          {
+            "domId": "word-card-react",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 react"
+          },
+          {
+            "domId": "word-card-interact",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 interact"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-word-detail",
+      "title": "单词详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753841040001,
+      "canvasData": {
+        "x": 620,
+        "y": 440,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1706,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-6f7928b7",
+          "measuredAt": 1785803234028
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/word-detail.html",
+        "interactions": [
+          {
+            "domId": "nav-home",
+            "targetPageId": "page-index",
+            "hideEdge": true,
+            "transitionLabel": "返回首页"
+          },
+          {
+            "domId": "back-home",
+            "targetPageId": "page-index",
+            "hideEdge": true,
+            "transitionLabel": "返回首页"
+          },
+          {
+            "domId": "nav-roots",
+            "targetPageId": "page-root-detail",
+            "hideEdge": true,
+            "transitionLabel": "浏览词根"
+          },
+          {
+            "domId": "root-link-act",
+            "targetPageId": "page-root-detail",
+            "transitionLabel": "查看 act 词根"
+          },
+          {
+            "domId": "cognate-action",
+            "targetPageId": "page-word-detail",
+            "hideEdge": true,
+            "transitionLabel": "查看 action"
+          },
+          {
+            "domId": "cognate-actor",
+            "targetPageId": "page-word-detail",
+            "hideEdge": true,
+            "transitionLabel": "查看 actor"
+          },
+          {
+            "domId": "cognate-active",
+            "targetPageId": "page-word-detail",
+            "hideEdge": true,
+            "transitionLabel": "查看 active"
+          },
+          {
+            "domId": "cognate-actual",
+            "targetPageId": "page-word-detail",
+            "hideEdge": true,
+            "transitionLabel": "查看 actual"
+          },
+          {
+            "domId": "cognate-react",
+            "targetPageId": "page-word-detail",
+            "hideEdge": true,
+            "transitionLabel": "查看 react"
+          },
+          {
+            "domId": "cognate-interact",
+            "targetPageId": "page-word-detail",
+            "hideEdge": true,
+            "transitionLabel": "查看 interact"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-root-detail",
+      "title": "词根详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753841040002,
+      "canvasData": {
+        "x": 620,
+        "y": 0,
+        "group": 0,
+        "layoutSnapshot": {
+          "version": 1,
+          "contentHeight": 1116,
+          "viewportWidth": 1440,
+          "sourceHash": "fnv1a-73803bc3",
+          "measuredAt": 1785803234028
+        }
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/root-detail.html",
+        "interactions": [
+          {
+            "domId": "nav-home",
+            "targetPageId": "page-index",
+            "hideEdge": true,
+            "transitionLabel": "返回首页"
+          },
+          {
+            "domId": "back-home",
+            "targetPageId": "page-index",
+            "hideEdge": true,
+            "transitionLabel": "返回首页"
+          },
+          {
+            "domId": "root-word-act",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 act"
+          },
+          {
+            "domId": "root-word-action",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 action"
+          },
+          {
+            "domId": "root-word-actor",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 actor"
+          },
+          {
+            "domId": "root-word-active",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 active"
+          },
+          {
+            "domId": "root-word-actual",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 actual"
+          },
+          {
+            "domId": "root-word-react",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 react"
+          },
+          {
+            "domId": "root-word-interact",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 interact"
+          },
+          {
+            "domId": "root-word-exact",
+            "targetPageId": "page-word-detail",
+            "transitionLabel": "查看 exact"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "desktop",
+    "projectName": "林序前端重设计",
+    "designLibrary": null
+  }
+}

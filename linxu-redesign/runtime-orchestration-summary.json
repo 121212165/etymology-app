@@ -1,0 +1,686 @@
+{
+  "schemaVersion": "1.0",
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.07.22.00.00.00",
+    "release": "prompt-base-cloud-ssot-migration",
+    "version_source": "skill-release-manifest.json",
+    "read_status": "ok"
+  },
+  "project": {
+    "resolvedLane": "complex_html_page",
+    "intentProfile": {
+      "caseFamily": "free_exploration",
+      "sourceType": "text",
+      "complexity": "multi-page"
+    },
+    "selectedIntentWorkflowRead": true,
+    "operation": "create",
+    "deviceType": "desktop",
+    "projectName": "林序前端重设计",
+    "designProjectPath": "c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign",
+    "contextRequirementsLoaded": [
+      {
+        "path": "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+        "readStatus": "loaded",
+        "bodyRead": true,
+        "recordedAt": "2026-07-29T23:24:00.000Z"
+      },
+      {
+        "path": "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+        "readStatus": "loaded",
+        "bodyRead": true,
+        "recordedAt": "2026-07-29T23:24:00.000Z"
+      },
+      {
+        "path": "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+        "readStatus": "loaded",
+        "bodyRead": true,
+        "recordedAt": "2026-07-29T23:24:00.000Z"
+      },
+      {
+        "path": "delivery-quality/page-rendering-quality-gate.md",
+        "readStatus": "loaded",
+        "bodyRead": true,
+        "recordedAt": "2026-07-29T23:24:00.000Z"
+      },
+      {
+        "path": "delivery-quality/design-artifact-validation.md",
+        "readStatus": "loaded",
+        "bodyRead": true,
+        "recordedAt": "2026-07-29T23:24:00.000Z"
+      },
+      {
+        "path": "delivery-quality/delivery-evidence-contract.md",
+        "readStatus": "loaded",
+        "bodyRead": true,
+        "recordedAt": "2026-07-29T23:24:00.000Z"
+      },
+      {
+        "path": "visual-experience/visual-experience-guidelines.md",
+        "readStatus": "loaded",
+        "bodyRead": true,
+        "recordedAt": "2026-07-29T23:24:00.000Z"
+      },
+      {
+        "path": "visual-experience/visual-checkpoint-protocol.md",
+        "readStatus": "loaded",
+        "bodyRead": true,
+        "recordedAt": "2026-07-29T23:24:00.000Z"
+      }
+    ],
+    "contextReadScope": {
+      "primaryIntentWorkflow": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+      "phaseRunbooks": [
+        "intent-workflows/intent-project-complex-build/00-requirement-and-style-intake.md",
+        "intent-workflows/intent-project-complex-build/02-page-composition.md",
+        "intent-workflows/intent-project-complex-build/03-interaction-validation-delivery.md"
+      ],
+      "sharedRuntime": [
+        "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+        "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+        "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+        "shared-runtime/design-artifact-formats/design-project-file-format.md",
+        "shared-runtime/orchestration-summary-contract/orchestration-summary-contract.md"
+      ],
+      "deliveryQuality": [
+        "delivery-quality/page-rendering-quality-gate.md",
+        "delivery-quality/design-artifact-validation.md",
+        "delivery-quality/delivery-evidence-contract.md"
+      ],
+      "visualExperience": [
+        "visual-experience/visual-experience-guidelines.md",
+        "visual-experience/visual-checkpoint-protocol.md"
+      ]
+    },
+    "readScopeLedger": [
+      {
+        "actor": "page-sub-agent",
+        "lane": "complex_html_page",
+        "path": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "reason": "page runtime guide",
+        "scopeClass": "page-runtime",
+        "declaredBeforeRead": true,
+        "recordedAt": "2026-07-29T15:27:28.893Z",
+        "nodeId": "page-index",
+        "htmlSrc": "pages/index.html"
+      },
+      {
+        "actor": "page-sub-agent",
+        "lane": "complex_html_page",
+        "path": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md",
+        "reason": "dispatch contract",
+        "scopeClass": "dispatch-contract",
+        "declaredBeforeRead": true,
+        "recordedAt": "2026-07-29T15:27:28.893Z",
+        "nodeId": "page-index",
+        "htmlSrc": "pages/index.html"
+      }
+    ],
+    "generationTree": {
+      "path": "generation-tree.json",
+      "status": "ready",
+      "rootId": "root",
+      "leafCount": 3
+    },
+    "cssPreflightEvidence": {
+      "cssFilePath": "colors_and_type.css",
+      "preflightOutputPath": ".preflight/preflight.html",
+      "success": true,
+      "brandPrefix": "linxu",
+      "lang": "zh-CN",
+      "recordedAt": "2026-07-29T23:24:00.000Z",
+      "prefixMode": "standard"
+    },
+    "mobileNavigation": {
+      "applies": false
+    },
+    "sharedProjectShellContract": {
+      "header": {
+        "style": "minimal-top-bar",
+        "heightPx": 64,
+        "elements": [
+          "brand-mark",
+          "theme-toggle",
+          "nav-links"
+        ]
+      },
+      "footer": {
+        "style": "simple-footer",
+        "elements": [
+          "copyright",
+          "tagline"
+        ]
+      },
+      "typographySystem": {
+        "titleStack": "Noto Serif SC, Songti SC, SimSun, serif",
+        "bodyStack": "Noto Sans SC, PingFang SC, Microsoft YaHei, sans-serif",
+        "monoStack": "JetBrains Mono, SF Mono, Fira Code, monospace"
+      },
+      "colorSystem": {
+        "primaryHue": "warm-gold",
+        "backgroundTone": "parchment-light / ink-dark",
+        "darkFirst": true
+      },
+      "radiusScale": {
+        "sm": 2,
+        "md": 8,
+        "lg": 16,
+        "full": 9999
+      },
+      "surfaceDepthModel": "border-and-surface-layering",
+      "staticShadowAlphaMax": 0.05
+    },
+    "styleContinuityAnchors": [
+      "Editorial serif display typography for headings",
+      "Warm gold primary hue on neutral parchment/ink surfaces",
+      "Restrained 2/8/16px radius scale",
+      "Subtle border-led card surfaces, shadow alpha <= 0.05",
+      "Consistent top-bar + footer shell across pages"
+    ],
+    "dispatchPreflightManifest": [
+      {
+        "recorded_at": "2026-07-29T15:27:28.893Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-index",
+        "htmlSrc": "pages/index.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/index.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/index.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\" --node-id=\"page-index\" --html-src=\"pages/index.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\colors_and_type.css",
+        "htmlFilePath": "c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\pages\\index.html",
+        "brandPrefix": "linxu",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\colors_and_type.css\" \"c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\pages\\index.html\" --title=\"首页\" --lang=\"zh-CN\" --prefix=\"linxu\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": null,
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "linxu-redesign.design": "a030f79aad4e35b461d56c9319435759599001a8fb6e6add32f860dc11c9e9ac"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      },
+      {
+        "recorded_at": "2026-07-29T15:27:28.893Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-word-detail",
+        "htmlSrc": "pages/word-detail.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/word-detail.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/word-detail.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\" --node-id=\"page-word-detail\" --html-src=\"pages/word-detail.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\colors_and_type.css",
+        "htmlFilePath": "c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\pages\\word-detail.html",
+        "brandPrefix": "linxu",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\colors_and_type.css\" \"c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\pages\\word-detail.html\" --title=\"单词详情\" --lang=\"zh-CN\" --prefix=\"linxu\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": null,
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "linxu-redesign.design": "a030f79aad4e35b461d56c9319435759599001a8fb6e6add32f860dc11c9e9ac"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      },
+      {
+        "recorded_at": "2026-07-29T15:27:28.893Z",
+        "generatedBy": "build-page-dispatch-manifest.mjs",
+        "packetType": "ComplexPagePacket",
+        "laneContract": {
+          "resolvedLane": "complex_html_page",
+          "packetType": "ComplexPagePacket",
+          "pageRuntimeGuide": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+          "dispatchContract": "intent-workflows/intent-project-complex-build/complex-page-dispatch-contract.md"
+        },
+        "taskLinePresent": true,
+        "outputPathPresent": true,
+        "sharedTemplate": "intent-workflows/intent-project-complex-build/complex-page-runtime.md",
+        "nodeId": "page-root-detail",
+        "htmlSrc": "pages/root-detail.html",
+        "supplementaryReads": [],
+        "allowedWritePaths": [
+          "pages/root-detail.html",
+          "assets/"
+        ],
+        "forbiddenWriteRoots": [
+          "*.design",
+          "runtime-orchestration-summary.json",
+          "validation-report.json",
+          "finish-readiness-report.json",
+          "restore-contract-report.json",
+          "page-generation-summary.json"
+        ],
+        "toolPolicy": {
+          "todoWriteAllowed": false,
+          "validationScriptsAllowed": false,
+          "previewAllowed": false,
+          "helperScriptsAllowed": false,
+          "designFileWriteAllowed": false,
+          "allowedWritePaths": [
+            "pages/root-detail.html",
+            "assets/"
+          ]
+        },
+        "skillRuntime": {
+          "skillDir": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+          "deterministicToolDir": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling",
+          "toolPaths": {
+            "applyHtmlHeadContract": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs",
+            "recordDispatchCompletion": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs",
+            "buildPageDispatchManifest": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\build-page-dispatch-manifest.mjs",
+            "validateDesignWorkspace": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-design-workspace.mjs",
+            "validateFinishReadiness": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-finish-readiness.mjs",
+            "validateRestoreContract": "c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\validate-restore-contract.mjs"
+          },
+          "requiredForPageSubAgent": [
+            "applyHtmlHeadContract",
+            "recordDispatchCompletion"
+          ],
+          "pathInjection": "absolute",
+          "pathContract": "Do not use {SKILL_DIR} placeholders inside Page Sub-Agent packets; use toolPaths.* absolute paths.",
+          "commandTemplates": {
+            "recordDispatchCompletion": "node \"c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\record-dispatch-completion.mjs\" \"c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\" --node-id=\"page-root-detail\" --html-src=\"pages/root-detail.html\" --status=completed --changed-files=<comma-separated-project-relative-files> --trace-digest=<main-agent-runtime-trace-digest> --tool-ledger-json=<tool-ledger-json-or-file>"
+          }
+        },
+        "cssFilePath": "c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\colors_and_type.css",
+        "htmlFilePath": "c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\pages\\root-detail.html",
+        "brandPrefix": "linxu",
+        "aestheticsMode": "free-explore",
+        "toolDisciplineBlockPresent": true,
+        "fillHtmlHeadCommand": "node \"c:\\Users\\lenovo\\.trae-cn\\builtin\\design\\default\\skills\\solo-design\\shared-runtime\\deterministic-tooling\\apply-html-head-contract.mjs\" \"c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\colors_and_type.css\" \"c:\\Users\\lenovo\\Desktop\\etymology-app-v5-cac7d6a\\linxu-redesign\\pages\\root-detail.html\" --title=\"词根详情\" --lang=\"zh-CN\" --prefix=\"linxu\"",
+        "headFillMode": "skeleton-first",
+        "viewportMode": null,
+        "completionSchemaExpected": "full",
+        "restoreFields": null,
+        "restoreContractStatus": null,
+        "restoreCompactPacket": null,
+        "deterministicCommands": null,
+        "sourceAuthorityLock": null,
+        "preDispatchFileHashes": {
+          "linxu-redesign.design": "a030f79aad4e35b461d56c9319435759599001a8fb6e6add32f860dc11c9e9ac"
+        },
+        "contextPreflight": {
+          "workflowPath": "intent-workflows/intent-project-complex-build/INTENT_WORKFLOW.md",
+          "requiredContextFiles": [
+            "shared-runtime/runtime-boundaries/lane-runtime-contracts.md",
+            "shared-runtime/agent-dispatch-runtime/lane-dispatch-index.md",
+            "shared-runtime/agent-dispatch-runtime/shared-page-rendering-kernel.md",
+            "delivery-quality/page-rendering-quality-gate.md",
+            "delivery-quality/design-artifact-validation.md",
+            "delivery-quality/delivery-evidence-contract.md",
+            "visual-experience/visual-experience-guidelines.md",
+            "visual-experience/visual-checkpoint-protocol.md"
+          ],
+          "optionalContextFiles": [],
+          "passed": true
+        },
+        "pageSliceOnly": true,
+        "requiredFieldsPresent": true,
+        "missingFields": [],
+        "fillHtmlHeadCommandValid": true,
+        "mobileNavigation": {
+          "required": false,
+          "appliesToThisPage": false,
+          "canonicalHtmlIncluded": false,
+          "missingFields": []
+        },
+        "persistedToSummary": true,
+        "taskQueryAudited": false,
+        "proofSource": "summary-only",
+        "largeWorkflowFilesInTaskQuery": null
+      }
+    ],
+    "expectedDispatches": [
+      {
+        "nodeId": "page-index",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/index.html"],
+        "toolCallLedger": {"source": "main-agent-runtime-trace", "traceDigest": "3c1bccc16ba6545649f9b010989ca6da8a5a5879f5e0af9fd5ec4b90830d811a", "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0}
+      },
+      {
+        "nodeId": "page-word-detail",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/word-detail.html"],
+        "toolCallLedger": {"source": "main-agent-runtime-trace", "traceDigest": "fd4d71790df485cac83a7a8bf949d05f8c2ef0cb367a6789f308c1a85e2d9e84", "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0}
+      },
+      {
+        "nodeId": "page-root-detail",
+        "packetType": "ComplexPagePacket",
+        "status": "completed",
+        "changedFiles": ["pages/root-detail.html"],
+        "toolCallLedger": {"source": "main-agent-runtime-trace", "traceDigest": "d016f2856226f53490e64874075044f523e696a61026a0f7f9bc1f7901ffa282", "todoWriteCalls": 0, "previewCalls": 0, "validationScriptCalls": 0, "helperScriptWrites": 0}
+      }
+    ],
+    "mainAgentPostDispatchMutations": [
+      {
+        "path": "linxu-redesign.design",
+        "owner": "main-agent",
+        "reason": "registered page nodes and interaction links after page Sub-Agent completions"
+      }
+    ],
+    "validationRunDiscipline": {
+      "maxFullValidationRuns": 2,
+      "softWarningsTriggerRepair": false,
+      "blockingRepairMode": "targeted-once",
+      "forbiddenRepairTriggers": [
+        "soft-warning-only",
+        "provenance-warning-only",
+        "style-warning-only"
+      ]
+    },
+    "validationHistory": [],
+    "validationRepairLedger": [],
+    "validationSnapshot": {},
+    "artifactReadinessEvidence": {},
+    "lowValueCallWatchdog": {
+      "applies": true,
+      "noProgressSignals": [
+        "no_tool_call",
+        "no_artifact_diff",
+        "no_structured_decision"
+      ],
+      "noProgressNextAction": "enter_readiness_or_blocked_summary",
+      "recordedAt": "2026-07-29T23:24:00.000Z"
+    },
+    "visualQualityCheckpoints": [
+      {
+        "checkpointId": "vq-anchor",
+        "dimension": "visual-anchor",
+        "expected": "Editorial serif wordmark and large display typography establish the learning-tool identity on every page",
+        "evidenceTarget": "pages/index.html#hero"
+      },
+      {
+        "checkpointId": "vq-hierarchy",
+        "dimension": "information-hierarchy",
+        "expected": "Primary word/root, secondary meaning, tertiary etymology notes are clearly separated by type scale and whitespace",
+        "evidenceTarget": "pages/word-detail.html#content"
+      },
+      {
+        "checkpointId": "vq-structure",
+        "dimension": "composition-structure",
+        "expected": "Single readable column with consistent margins; search and card grids align to a shared grid rhythm",
+        "evidenceTarget": "pages/index.html#layout"
+      },
+      {
+        "checkpointId": "vq-implementation",
+        "dimension": "implementation-strategy",
+        "expected": "Typography-led pages using CSS variables and Lucide icons; no generated raster images required",
+        "evidenceTarget": "pages/index.html#implementation"
+      }
+    ]
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "cssFilePath": "colors_and_type.css",
+    "brandPrefix": "linxu",
+    "styleConstraints": {
+      "radiusMax": 16,
+      "staticShadowAlphaMax": 0.05,
+      "singlePrimaryHue": true,
+      "noSecondaryAccent": true
+    },
+    "styleDefinitionBrief": "Chinese etymology learning app redesign: editorial typography, warm gold primary, dark-first parchment palette, generous whitespace, serif display + sans-serif body.",
+    "designRead": "Etymology learning tool / Chinese intermediate+ English learners / editorial-academic / medium density / avoid generic SaaS card templates",
+    "designDials": {
+      "layoutVariance": 3,
+      "motionIntensity": 2,
+      "visualDensity": 3
+    }
+  },
+  "pages": [
+    {
+      "nodeId": "page-index",
+      "title": "首页",
+      "htmlSrc": "pages/index.html",
+      "pageIndex": 1,
+      "pageType": "showcase",
+      "visualNorthStar": "Editorial landing for a word-origin explorer: large serif wordmark, generous search, floating root cloud, and a disciplined word-card grid on warm parchment surfaces.",
+      "compositionPattern": "editorial-hero + asymmetric-cloud + grid-rhythm",
+      "continuityAnchors": [
+        "Shared minimal top bar with brand mark and theme toggle",
+        "Warm gold primary on neutral parchment/ink background",
+        "Serif display headings + sans-serif body text",
+        "Restrained border-led card surfaces",
+        "Simple footer with tagline"
+      ],
+      "componentPlan": [],
+      "imagePlan": {
+        "strategy": "typography-led",
+        "assets": []
+      },
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [
+        "root-cloud-density",
+        "card-grid-balance"
+      ]
+    },
+    {
+      "nodeId": "page-word-detail",
+      "title": "单词详情",
+      "htmlSrc": "pages/word-detail.html",
+      "pageIndex": 2,
+      "pageType": "information-dense",
+      "visualNorthStar": "A reading-like word page: oversized Latin word + serif Chinese meaning, a timeline-style morpheme breakdown, a short etymology story, and a cognate list.",
+      "compositionPattern": "single-column-narrative",
+      "continuityAnchors": [
+        "Shared minimal top bar with brand mark and theme toggle",
+        "Warm gold primary on neutral parchment/ink background",
+        "Serif display headings + sans-serif body text",
+        "Restrained border-led card surfaces",
+        "Simple footer with tagline"
+      ],
+      "componentPlan": [],
+      "imagePlan": {
+        "strategy": "typography-led",
+        "assets": []
+      },
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [
+        "morpheme-timeline-alignment",
+        "cognate-list-density"
+      ]
+    },
+    {
+      "nodeId": "page-root-detail",
+      "title": "词根详情",
+      "htmlSrc": "pages/root-detail.html",
+      "pageIndex": 3,
+      "pageType": "information-dense",
+      "visualNorthStar": "Root archive page: hero root with meaning and origin note, followed by an alphabetically flowing list of words containing that root with compact definitions.",
+      "compositionPattern": "header + list-rhythm",
+      "continuityAnchors": [
+        "Shared minimal top bar with brand mark and theme toggle",
+        "Warm gold primary on neutral parchment/ink background",
+        "Serif display headings + sans-serif body text",
+        "Restrained border-led card surfaces",
+        "Simple footer with tagline"
+      ],
+      "componentPlan": [],
+      "imagePlan": {
+        "strategy": "typography-led",
+        "assets": []
+      },
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [
+        "long-list-readability",
+        "root-meaning-prominence"
+      ]
+    }
+  ]
+}

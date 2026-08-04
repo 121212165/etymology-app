@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preflight</title>
+    <style id="theme-vars">
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-serif: "Noto Serif SC", "Songti SC", "SimSun", serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
+
+  --color-background: var(--linxu-background);
+  --color-foreground: var(--linxu-foreground);
+  --color-card: var(--linxu-card);
+  --color-card-foreground: var(--linxu-card-foreground);
+  --color-popover: var(--linxu-popover);
+  --color-popover-foreground: var(--linxu-popover-foreground);
+  --color-primary: var(--linxu-primary);
+  --color-primary-foreground: var(--linxu-primary-foreground);
+  --color-muted: var(--linxu-muted);
+  --color-muted-foreground: var(--linxu-muted-foreground);
+  --color-border: var(--linxu-border);
+  --color-input: var(--linxu-input);
+  --color-ring: var(--linxu-ring);
+
+  --radius-sm: 2px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+}
+
+:root {
+  --linxu-background: #faf9f6;
+  --linxu-foreground: #1a1a1a;
+  --linxu-card: #ffffff;
+  --linxu-card-foreground: #1a1a1a;
+  --linxu-popover: #ffffff;
+  --linxu-popover-foreground: #1a1a1a;
+  --linxu-primary: #8c6b3f;
+  --linxu-primary-foreground: #ffffff;
+  --linxu-muted: #f0eee9;
+  --linxu-muted-foreground: #6b6b6b;
+  --linxu-border: #e5e2db;
+  --linxu-input: #e5e2db;
+  --linxu-ring: #8c6b3f;
+
+  --linxu-primary-50: #f7f3ed;
+  --linxu-primary-100: #ede4d6;
+  --linxu-primary-200: #dbc8ad;
+  --linxu-primary-300: #c4a47d;
+  --linxu-primary-400: #a88156;
+  --linxu-primary-500: #8c6b3f;
+  --linxu-primary-600: #6f5231;
+  --linxu-primary-700: #553f28;
+  --linxu-primary-800: #3d2d1d;
+  --linxu-primary-900: #271d13;
+
+  --linxu-neutral-50: #faf9f6;
+  --linxu-neutral-100: #f0eee9;
+  --linxu-neutral-200: #e5e2db;
+  --linxu-neutral-300: #d1cdc3;
+  --linxu-neutral-400: #a8a39a;
+  --linxu-neutral-500: #7a766f;
+  --linxu-neutral-600: #57534e;
+  --linxu-neutral-700: #3f3b36;
+  --linxu-neutral-800: #292622;
+  --linxu-neutral-900: #1a1a1a;
+
+  --linxu-state-success: #3d6b4f;
+  --linxu-state-warning: #b87e2e;
+  --linxu-state-error: #a94442;
+  --linxu-state-info: #4a6fa5;
+
+  --linxu-shadow-xs: 0 1px 2px rgba(26, 26, 26, 0.04);
+  --linxu-shadow-sm: 0 1px 3px rgba(26, 26, 26, 0.05);
+  --linxu-shadow-md: 0 4px 12px rgba(26, 26, 26, 0.05);
+  --linxu-shadow-lg: 0 8px 24px rgba(26, 26, 26, 0.05);
+
+  --linxu-radius-sm: 2px;
+  --linxu-radius-md: 8px;
+  --linxu-radius-lg: 16px;
+  --linxu-radius-full: 9999px;
+}
+
+html.dark {
+  --linxu-background: #12110f;
+  --linxu-foreground: #f0eee9;
+  --linxu-card: #1a1816;
+  --linxu-card-foreground: #f0eee9;
+  --linxu-popover: #1a1816;
+  --linxu-popover-foreground: #f0eee9;
+  --linxu-primary: #c9a86c;
+  --linxu-primary-foreground: #1a1816;
+  --linxu-muted: #24221f;
+  --linxu-muted-foreground: #9a958c;
+  --linxu-border: #2e2b27;
+  --linxu-input: #2e2b27;
+  --linxu-ring: #c9a86c;
+
+  --linxu-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --linxu-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.30);
+  --linxu-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --linxu-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.40);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--linxu-background);
+    color: var(--linxu-foreground);
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.18;
+  }
+
+  h4, h5, h6 {
+    font-family: var(--font-sans);
+    font-weight: 600;
+  }
+
+  code, pre {
+    font-family: var(--font-mono);
+  }
+
+  ::selection {
+    background-color: var(--linxu-primary-200);
+    color: var(--linxu-primary-900);
+  }
+
+  html.dark ::selection {
+    background-color: var(--linxu-primary-700);
+    color: var(--linxu-primary-50);
+  }
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--linxu-background);
+    --color-foreground: var(--linxu-foreground);
+    --color-card: var(--linxu-card);
+    --color-card-foreground: var(--linxu-card-foreground);
+    --color-popover: var(--linxu-popover);
+    --color-popover-foreground: var(--linxu-popover-foreground);
+    --color-primary: var(--linxu-primary);
+    --color-primary-foreground: var(--linxu-primary-foreground);
+    --color-muted: var(--linxu-muted);
+    --color-muted-foreground: var(--linxu-muted-foreground);
+    --color-border: var(--linxu-border);
+    --color-input: var(--linxu-input);
+    --color-ring: var(--linxu-ring);
+    --radius-sm: var(--linxu-radius-sm);
+    --radius-md: var(--linxu-radius-md);
+    --radius-lg: var(--linxu-radius-lg);
+  }
+  @layer base {
+    body { background: var(--linxu-background); color: var(--linxu-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--linxu-background); }
+      .text-background { color: var(--linxu-background); }
+      .border-background { border-color: var(--linxu-background); }
+      .ring-background { --tw-ring-color: var(--linxu-background); }
+      .bg-foreground { background-color: var(--linxu-foreground); }
+      .text-foreground { color: var(--linxu-foreground); }
+      .border-foreground { border-color: var(--linxu-foreground); }
+      .ring-foreground { --tw-ring-color: var(--linxu-foreground); }
+      .bg-card { background-color: var(--linxu-card); }
+      .text-card { color: var(--linxu-card); }
+      .border-card { border-color: var(--linxu-card); }
+      .ring-card { --tw-ring-color: var(--linxu-card); }
+      .bg-card-foreground { background-color: var(--linxu-card-foreground); }
+      .text-card-foreground { color: var(--linxu-card-foreground); }
+      .border-card-foreground { border-color: var(--linxu-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--linxu-card-foreground); }
+      .bg-popover { background-color: var(--linxu-popover); }
+      .text-popover { color: var(--linxu-popover); }
+      .border-popover { border-color: var(--linxu-popover); }
+      .ring-popover { --tw-ring-color: var(--linxu-popover); }
+      .bg-popover-foreground { background-color: var(--linxu-popover-foreground); }
+      .text-popover-foreground { color: var(--linxu-popover-foreground); }
+      .border-popover-foreground { border-color: var(--linxu-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--linxu-popover-foreground); }
+      .bg-primary { background-color: var(--linxu-primary); }
+      .text-primary { color: var(--linxu-primary); }
+      .border-primary { border-color: var(--linxu-primary); }
+      .ring-primary { --tw-ring-color: var(--linxu-primary); }
+      .bg-primary-foreground { background-color: var(--linxu-primary-foreground); }
+      .text-primary-foreground { color: var(--linxu-primary-foreground); }
+      .border-primary-foreground { border-color: var(--linxu-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--linxu-primary-foreground); }
+      .bg-muted { background-color: var(--linxu-muted); }
+      .text-muted { color: var(--linxu-muted); }
+      .border-muted { border-color: var(--linxu-muted); }
+      .ring-muted { --tw-ring-color: var(--linxu-muted); }
+      .bg-muted-foreground { background-color: var(--linxu-muted-foreground); }
+      .text-muted-foreground { color: var(--linxu-muted-foreground); }
+      .border-muted-foreground { border-color: var(--linxu-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--linxu-muted-foreground); }
+      .bg-border { background-color: var(--linxu-border); }
+      .text-border { color: var(--linxu-border); }
+      .border-border { border-color: var(--linxu-border); }
+      .ring-border { --tw-ring-color: var(--linxu-border); }
+      .bg-input { background-color: var(--linxu-input); }
+      .text-input { color: var(--linxu-input); }
+      .border-input { border-color: var(--linxu-input); }
+      .ring-input { --tw-ring-color: var(--linxu-input); }
+      .bg-ring { background-color: var(--linxu-ring); }
+      .text-ring { color: var(--linxu-ring); }
+      .border-ring { border-color: var(--linxu-ring); }
+      .ring-ring { --tw-ring-color: var(--linxu-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

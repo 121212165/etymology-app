@@ -62,7 +62,6 @@ export default function HomePage() {
   }
 
   const viewedCount = getViewedCountForRoot(
-    focusRoot.primaryText,
     focusRoot.wordIndices,
     searchIndex.data
   )

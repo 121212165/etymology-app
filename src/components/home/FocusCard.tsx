@@ -17,7 +17,7 @@ export function FocusCard({ root, viewedCount }: FocusCardProps) {
     <div className="max-w-xl mx-auto px-4">
       <div className="bg-bg-surface border border-border rounded-2xl p-8 hover:border-accent/30 transition-all duration-300">
         <p className="text-xs text-text-muted uppercase tracking-wider mb-3">
-          {isFirstTime ? '今日词根' : '继续这个词根'}
+          {isFirstTime ? '从这里开始' : '继续这个词根'}
         </p>
 
         <div className="flex items-baseline gap-3 mb-4">

@@ -5,9 +5,15 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { RootSession } from '@/components/root/RootSession'
 import type { VocabEntry, RootIndex } from '@/lib/types'
+import type { MindMapData } from '@/lib/mindmap-types'
 import { notFound } from 'next/navigation'
 
+// 模块级缓存：SSG 时 613 个页面共享一份数据，避免重复 readFileSync + JSON.parse
+// （enhanced-roots.json 有 27K 行，重复解析会导致 build 时间爆炸）
+let cachedData: { vocab: VocabEntry[]; rootIndex: RootIndex; mindmap: MindMapData } | null = null
+
 function loadData() {
+  if (cachedData) return cachedData
   const dataDir = join(process.cwd(), 'public', 'data')
   const vocab: VocabEntry[] = JSON.parse(
     readFileSync(join(dataDir, 'vocab.json'), 'utf-8')
@@ -15,12 +21,25 @@ function loadData() {
   const rootIndex: RootIndex = JSON.parse(
     readFileSync(join(dataDir, 'roots-index.json'), 'utf-8')
   )
-  return { vocab, rootIndex }
+  // 使用增强后的合并数据，保证首页与词根页数据源一致
+  const mindmap: MindMapData = JSON.parse(
+    readFileSync(join(dataDir, 'enhanced-roots.json'), 'utf-8')
+  )
+  cachedData = { vocab, rootIndex, mindmap }
+  return cachedData
 }
 
+// 生成所有词根的静态参数（包含合并后的主文本与别名，保证别名 URL 也可访问）
 export function generateStaticParams() {
   const { rootIndex } = loadData()
   return Object.keys(rootIndex).map((slug) => ({ slug }))
+}
+
+// 通过任一别名找到合并后的词根节点
+function findRootByAnyText(data: MindMapData, text: string) {
+  return data.roots.find(
+    (r) => r.primaryText === text || r.aliases.includes(text)
+  )
 }
 
 export default async function RootPage({
@@ -30,16 +49,24 @@ export default async function RootPage({
 }) {
   const { slug } = await params
   const rootText = decodeURIComponent(slug)
-  const { vocab, rootIndex } = loadData()
+  const { vocab, rootIndex, mindmap } = loadData()
+
+  // 优先使用合并后的增强数据；若未找到（理论上不应发生），回退到原始 rootIndex
+  const enhancedRoot = findRootByAnyText(mindmap, rootText)
   const rootEntry = rootIndex[rootText]
 
-  if (!rootEntry) {
+  if (!enhancedRoot && !rootEntry) {
     notFound()
   }
 
-  const words = rootEntry.w
-    .filter(idx => idx < vocab.length)
-    .map(idx => vocab[idx])
+  const meaning = enhancedRoot?.meaning ?? rootEntry!.m
+  const wordIndices = enhancedRoot?.wordIndices ?? rootEntry!.w
+  // 统一用合并组的主文本作为展示名，避免别名与合并组内容不一致
+  const displayRootText = enhancedRoot?.primaryText ?? rootText
+
+  const words = wordIndices
+    .filter((idx) => idx < vocab.length)
+    .map((idx) => vocab[idx])
     .filter(Boolean)
 
   return (
@@ -54,7 +81,12 @@ export default async function RootPage({
         </Link>
       </header>
 
-      <RootSession rootText={rootText} rootMeaning={rootEntry.m} words={words} />
+      <RootSession
+        rootText={displayRootText}
+        rootMeaning={meaning}
+        words={words}
+        enhancedRoot={enhancedRoot}
+      />
     </div>
   )
 }

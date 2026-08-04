@@ -87,7 +87,7 @@ export function MindMap({ data, vocab, centerRoot }: MindMapProps) {
         return (
           <div
             key={word.word}
-            className="absolute -translate-x-1/2 -translate-y-1/2 z-5"
+            className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
             style={{ left: `${x}%`, top: `${y}%` }}
           >
             <Link
@@ -111,7 +111,7 @@ export function MindMap({ data, vocab, centerRoot }: MindMapProps) {
         return (
           <div
             key={root.primaryText}
-            className="absolute -translate-x-1/2 -translate-y-1/2 z-5"
+            className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
             style={{ left: `${x}%`, top: `${y}%` }}
           >
             <Link

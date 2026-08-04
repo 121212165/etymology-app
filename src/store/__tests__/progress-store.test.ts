@@ -40,7 +40,7 @@ describe('progress-store', () => {
     const { markWordViewed, getViewedCountForRoot } = useProgressStore.getState()
     markWordViewed('act')
     markWordViewed('action')
-    const count = getViewedCountForRoot('act', [0, 1, 2], [
+    const count = getViewedCountForRoot([0, 1, 2], [
       { word: 'act' },
       { word: 'action' },
       { word: 'active' },

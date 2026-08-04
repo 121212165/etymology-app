@@ -5,8 +5,16 @@ import { SpeakButton } from "@/components/word/SpeakButton";
 import { ArrowLeft } from "lucide-react";
 import type { VocabEntry, RootIndex } from "@/lib/types";
 
-// Load data at build time
+// 模块级缓存：SSG 时 5011 个 word 页面共享一份数据，避免重复 readFileSync + JSON.parse
+// 同时用 Map 索引替代 O(n) find，将页面查找从 O(n) 降到 O(1)
+let cachedData: {
+  vocab: VocabEntry[];
+  rootIndex: RootIndex;
+  vocabMap: Map<string, VocabEntry>;
+} | null = null;
+
 function loadData() {
+  if (cachedData) return cachedData;
   const dataDir = join(process.cwd(), "public", "data");
   const vocab: VocabEntry[] = JSON.parse(
     readFileSync(join(dataDir, "vocab.json"), "utf-8")
@@ -14,7 +22,10 @@ function loadData() {
   const rootIndex: RootIndex = JSON.parse(
     readFileSync(join(dataDir, "roots-index.json"), "utf-8")
   );
-  return { vocab, rootIndex };
+  const vocabMap = new Map<string, VocabEntry>();
+  for (const entry of vocab) vocabMap.set(entry.word, entry);
+  cachedData = { vocab, rootIndex, vocabMap };
+  return cachedData;
 }
 
 export function generateStaticParams() {
@@ -29,8 +40,8 @@ export default async function WordPage({
 }) {
   const { slug } = await params;
   const word = decodeURIComponent(slug);
-  const { vocab, rootIndex } = loadData();
-  const entry = vocab.find((v) => v.word === word);
+  const { vocab, rootIndex, vocabMap } = loadData();
+  const entry = vocabMap.get(word);
 
   if (!entry) {
     return (
