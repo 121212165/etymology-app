@@ -13,12 +13,15 @@ import type { EnhancedRootNode } from '@/lib/mindmap-types'
 export default function HomePage() {
   const { loading, error, retry } = useSearch()
   const { searchIndex } = useAppStore()
-  const { currentRoot, setCurrentRoot, completedRoots, getViewedCountForRoot } = useProgressStore()
+  const { getViewedCountForRoot } = useProgressStore()
   const [focusRoot, setFocusRoot] = useState<EnhancedRootNode | null>(null)
 
   useEffect(() => {
     loadMindMapData().then(data => {
       const cores = getCoreRoots(data)
+      // 在异步回调里读取最新 store 状态，避免闭包捕获 rehydrate 前的初始值
+      // （reload 场景下 persist 从 localStorage rehydrate 晚于首次渲染闭包）
+      const { currentRoot, completedRoots, setCurrentRoot } = useProgressStore.getState()
 
       // 仅当当前词根尚未完成时才继续它；已完成则前进到下一个未完成词根
       if (currentRoot && !completedRoots.includes(currentRoot)) {
