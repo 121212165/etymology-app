@@ -152,4 +152,29 @@ describe("RootSession", () => {
     );
     expect(useProgressStore.getState().currentRoot).toBe("act");
   });
+
+  it("falls back to first word when currentIndex goes out of bounds", () => {
+    // 边界保护：词根切换时若上层未通过 key 重挂载，currentIndex 可能越过新 words 的长度。
+    // 此处验证 render 阶段的兜底，避免读取 undefined.word 崩溃。
+    // 正常词根切换的重置由 page 层 key={displayRootText} 保证，这里只测防御层。
+    const { rerender } = render(
+      <RootSession rootText="act" rootMeaning="做" words={sampleWords} />
+    );
+    // 浏览到 act 的最后一个词 (index=2)
+    fireEvent.click(screen.getByText("下一个")); // -> action
+    fireEvent.click(screen.getByText("下一个")); // -> active
+    expect(screen.getByRole("heading", { level: 2, name: "active" })).toBeInTheDocument();
+
+    // 切换到词根 port（只有 2 词，index=2 越界），同实例 rerender 模拟未加 key
+    const portWords: VocabEntry[] = [
+      { word: "port", definition: "carry", parts: [{ type: "root", text: "port", meaning: "运" }] },
+      { word: "export", definition: "send out", parts: [{ type: "root", text: "port", meaning: "运" }] },
+    ];
+    rerender(
+      <RootSession rootText="port" rootMeaning="运" words={portWords} />
+    );
+    // 不应崩溃，且回退到首词
+    expect(screen.getByRole("heading", { level: 2, name: "port" })).toBeInTheDocument();
+    expect(screen.getByText("carry")).toBeInTheDocument();
+  });
 });

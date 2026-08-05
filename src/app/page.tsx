@@ -19,49 +19,69 @@ export default function HomePage() {
   const { getViewedCountForRoot, isRootCompleted } = useProgressStore()
   const [focusRoot, setFocusRoot] = useState<EnhancedRootNode | null>(null)
   const [coreRoots, setCoreRoots] = useState<EnhancedRootNode[]>([])
+  // 思维导图数据加载失败时给出独立错误与重试入口，避免首页永久转圈
+  const [mindmapError, setMindmapError] = useState<string | null>(null)
+  const [mindmapLoading, setMindmapLoading] = useState(true)
+
+  const loadMindmap = () => {
+    setMindmapLoading(true)
+    setMindmapError(null)
+    loadMindMapData()
+      .then(data => {
+        const cores = getCoreRoots(data)
+        setCoreRoots(cores)
+        const { currentRoot, completedRoots, setCurrentRoot } = useProgressStore.getState()
+
+        if (currentRoot && !completedRoots.includes(currentRoot)) {
+          const found = cores.find(r => r.primaryText === currentRoot)
+          if (found) {
+            setFocusRoot(found)
+            return
+          }
+        }
+
+        const next = cores.find(r => !completedRoots.includes(r.primaryText)) || cores[0]
+        setFocusRoot(next)
+        setCurrentRoot(next?.primaryText || null)
+      })
+      .catch(err => {
+        console.error('[home] Failed to load mindmap data:', err)
+        setMindmapError('词根数据加载失败，请重试')
+      })
+      .finally(() => setMindmapLoading(false))
+  }
 
   useEffect(() => {
-    loadMindMapData().then(data => {
-      const cores = getCoreRoots(data)
-      setCoreRoots(cores)
-      const { currentRoot, completedRoots, setCurrentRoot } = useProgressStore.getState()
-
-      if (currentRoot && !completedRoots.includes(currentRoot)) {
-        const found = cores.find(r => r.primaryText === currentRoot)
-        if (found) {
-          setFocusRoot(found)
-          return
-        }
-      }
-
-      const next = cores.find(r => !completedRoots.includes(r.primaryText)) || cores[0]
-      setFocusRoot(next)
-      setCurrentRoot(next?.primaryText || null)
-    })
+    loadMindmap()
   }, [])
 
-  if (loading || !searchIndex || !focusRoot) {
+  // 错误优先于 loading 判定，否则失败时 searchIndex/focusRoot 恒为空会一直走转圈分支
+  const anyError = error || mindmapError
+  if (anyError) {
     return (
       <div className="min-h-screen bg-bg-deep flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-          <p className="text-text-secondary text-sm">加载中...</p>
+        <div className="flex flex-col items-center gap-4 text-center">
+          <p className="text-text-secondary">{anyError}</p>
+          <button
+            onClick={() => {
+              if (error) retry()
+              if (mindmapError) loadMindmap()
+            }}
+            className="px-6 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent-hover transition-colors"
+          >
+            重试
+          </button>
         </div>
       </div>
     )
   }
 
-  if (error) {
+  if (loading || mindmapLoading || !searchIndex || !focusRoot) {
     return (
       <div className="min-h-screen bg-bg-deep flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4 text-center">
-          <p className="text-text-secondary">{error}</p>
-          <button
-            onClick={retry}
-            className="px-6 py-2 rounded-lg bg-accent text-white text-sm hover:bg-accent-hover transition-colors"
-          >
-            重试
-          </button>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+          <p className="text-text-secondary text-sm">加载中...</p>
         </div>
       </div>
     )

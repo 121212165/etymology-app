@@ -32,8 +32,13 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
   const { markWordViewed, markRootCompleted, setCurrentRoot } = useProgressStore()
   const { searchIndex } = useAppStore()
 
-  const current = words[currentIndex]
-  const isLast = currentIndex === words.length - 1
+  // 边界保护：currentIndex 可能因词根切换（上层未加 key 时）或 words 变短而越界，
+  // 此时回退到首词，避免 render 阶段读取 undefined.word 崩溃。
+  // 注：词根切换的正确重置依赖 page 层的 key={displayRootText} 强制重挂载，
+  //    此处仅作兜底防御，不替代 key。
+  const safeIndex = currentIndex < words.length ? currentIndex : 0
+  const current = words[safeIndex]
+  const isLast = safeIndex === words.length - 1
 
   useEffect(() => {
     setCurrentRoot(rootText)
@@ -43,13 +48,13 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
     if (current) markWordViewed(current.word)
   }, [current, markWordViewed])
 
-  // 懒加载思维导图数据（仅一次）
+  // 懒加载思维导图数据（仅一次）；辅助可视化，加载失败不阻塞主流程，但记录上下文便于排查
   useEffect(() => {
     if (!enhancedRoot || mindmapData) return
-    loadMindMapData().then(setMindmapData).catch(() => {
-      // 思维导图是辅助可视化，加载失败不阻塞主流程
+    loadMindMapData().then(setMindmapData).catch(err => {
+      console.warn('[RootSession] mindmap load failed for', rootText, err)
     })
-  }, [enhancedRoot, mindmapData])
+  }, [enhancedRoot, mindmapData, rootText])
 
   const handleNext = () => {
     if (isLast) {

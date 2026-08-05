@@ -12,15 +12,21 @@ export function executeSearch(
   const q = query.trim().toLowerCase();
   if (!q) return index.data.map((_, i) => i);
 
+  // 用 Set 去重，避免原 !results.includes(idx) 在大结果集下退化为 O(n²)
+  const seen = new Set<number>();
   const results: number[] = [];
+
   for (let i = 0; i < index.data.length; i++) {
-    if (index.data[i].word.toLowerCase().startsWith(q)) results.push(i);
+    if (index.data[i].word.toLowerCase().startsWith(q)) {
+      seen.add(i);
+      results.push(i);
+    }
   }
 
   for (const rootText in index.rootIndex) {
     if (rootText.includes(q)) {
       for (const idx of index.rootIndex[rootText].w) {
-        if (!results.includes(idx)) results.push(idx);
+        if (seen.add(idx)) results.push(idx);
       }
     }
   }

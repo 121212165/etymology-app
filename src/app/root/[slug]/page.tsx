@@ -81,7 +81,9 @@ export default async function RootPage({
         </Link>
       </header>
 
+      {/* key 强制在词根切换时重挂载，避免 currentIndex 等内部 state 跨 root 复用导致越界/起始词错乱 */}
       <RootSession
+        key={displayRootText}
         rootText={displayRootText}
         rootMeaning={meaning}
         words={words}

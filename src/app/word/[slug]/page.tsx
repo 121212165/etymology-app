@@ -64,6 +64,8 @@ export default async function WordPage({
       const rootEntry = rootIndex[part.text];
       if (rootEntry) {
         for (const idx of rootEntry.w) {
+          // 防御：roots-index.json 可能存在 >= vocab.length 的索引，越界访问会抛错
+          if (idx >= vocab.length) continue;
           if (vocab[idx].word !== word) relatedWords.add(vocab[idx].word);
           if (relatedWords.size >= 20) break;
         }
