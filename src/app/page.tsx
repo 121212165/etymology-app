@@ -11,7 +11,6 @@ import { useProgressStore } from '@/store/progress-store'
 import { loadMindMapData, getCoreRoots } from '@/lib/mindmap-loader'
 import type { EnhancedRootNode } from '@/lib/mindmap-types'
 
-const ROOT_CLOUD_LIMIT = 24
 const WORD_GRID_LIMIT = 12
 
 export default function HomePage() {
@@ -25,10 +24,8 @@ export default function HomePage() {
     loadMindMapData().then(data => {
       const cores = getCoreRoots(data)
       setCoreRoots(cores)
-      // 在异步回调里读取最新 store 状态，避免闭包捕获 rehydrate 前的初始值
       const { currentRoot, completedRoots, setCurrentRoot } = useProgressStore.getState()
 
-      // 仅当当前词根尚未完成时才继续它；已完成则前进到下一个未完成词根
       if (currentRoot && !completedRoots.includes(currentRoot)) {
         const found = cores.find(r => r.primaryText === currentRoot)
         if (found) {
@@ -88,23 +85,23 @@ export default function HomePage() {
     <div className="min-h-screen bg-bg-deep">
       <TopBar />
 
-      <main className="max-w-5xl mx-auto px-6 pt-16 pb-20">
+      <main className="max-w-3xl mx-auto px-6 pt-20 pb-24 text-center">
         {/* ── Hero ── */}
-        <section className="mb-12">
-          <p className="editorial-label mb-3">英语词根词缀拆解</p>
-          <h1 className="text-4xl lg:text-5xl text-text-primary mb-3">
+        <section className="mb-14">
+          <p className="editorial-label mb-4">英语词根词缀拆解</p>
+          <h1 className="text-5xl lg:text-6xl text-text-primary mb-4">
             林序
           </h1>
-          <p className="text-text-secondary text-base lg:text-lg max-w-xl leading-relaxed">
+          <p className="text-text-secondary text-base lg:text-lg max-w-lg mx-auto leading-relaxed">
             5011 个单词，按词根分组。从核心词根出发，三分钟看懂一组关联词。
           </p>
         </section>
 
-        <hr className="editorial-divider mb-10" />
+        <hr className="editorial-divider mb-12" />
 
         {/* ── 焦点词根 ── */}
         <section className="mb-12">
-          <div className="flex items-baseline justify-between mb-4">
+          <div className="flex items-baseline justify-between mb-4 max-w-xl mx-auto">
             <p className="editorial-label">
               {isFirstTime ? '从这里开始' : '继续'}
             </p>
@@ -113,17 +110,17 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="editorial-card p-6 lg:p-8">
-            <div className="flex items-baseline gap-4 mb-3">
-              <h2 className="text-3xl lg:text-4xl font-mono text-root">
+          <div className="editorial-card p-8 lg:p-10 max-w-xl mx-auto text-left">
+            <div className="flex items-baseline gap-4 mb-3 justify-center">
+              <h2 className="text-4xl lg:text-5xl font-mono text-root">
                 {focusRoot.primaryText}
               </h2>
-              <span className="text-lg text-text-secondary">
+              <span className="text-xl text-text-secondary">
                 {focusRoot.meaning}
               </span>
             </div>
 
-            <p className="text-sm text-text-muted mb-5">
+            <p className="text-sm text-text-muted mb-6 text-center">
               {isFirstTime
                 ? `${focusRoot.wordCount} 个关联词 · 3 分钟看完`
                 : `已看 ${viewedCount} / ${focusRoot.wordCount} 个词`}
@@ -131,7 +128,7 @@ export default function HomePage() {
 
             {/* 进度条 */}
             {!isFirstTime && (
-              <div className="h-0.5 bg-bg-elevated rounded-full overflow-hidden mb-5">
+              <div className="h-0.5 bg-bg-elevated rounded-full overflow-hidden mb-6">
                 <div
                   className="h-full bg-accent transition-all duration-300"
                   style={{
@@ -143,26 +140,28 @@ export default function HomePage() {
               </div>
             )}
 
-            <Link
-              href={`/root/${encodeURIComponent(focusRoot.primaryText)}`}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-white text-sm hover:bg-accent-hover transition-colors"
-            >
-              {isFirstTime ? '开始看' : '继续看'}
-              <ArrowRight size={16} />
-            </Link>
+            <div className="text-center">
+              <Link
+                href={`/root/${encodeURIComponent(focusRoot.primaryText)}`}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-accent text-white text-sm hover:bg-accent-hover transition-colors"
+              >
+                {isFirstTime ? '开始看' : '继续看'}
+                <ArrowRight size={16} />
+              </Link>
+            </div>
           </div>
         </section>
 
         {/* ── 焦点词根下的词汇预览 ── */}
         {focusWords.length > 0 && (
-          <section className="mb-12">
-            <p className="editorial-label mb-4">这组词</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+          <section className="mb-14">
+            <p className="editorial-label mb-5">这组词</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-w-2xl mx-auto">
               {focusWords.map((word) => (
                 <Link
                   key={word.word}
                   href={`/word/${encodeURIComponent(word.word)}`}
-                  className="word-grid-item"
+                  className="word-grid-item text-left"
                 >
                   <div className="flex items-baseline justify-between gap-2 mb-1">
                     <span className="text-sm font-medium text-text-primary truncate">
@@ -189,13 +188,13 @@ export default function HomePage() {
           </section>
         )}
 
-        <hr className="editorial-divider mb-10" />
+        <hr className="editorial-divider mb-12" />
 
-        {/* ── 词根云 ── */}
+        {/* ── 词根云（全部核心词根） ── */}
         <section>
-          <p className="editorial-label mb-4">核心词根</p>
-          <div className="flex flex-wrap gap-1.5">
-            {coreRoots.slice(0, ROOT_CLOUD_LIMIT).map((root) => {
+          <p className="editorial-label mb-5">核心词根 · {coreRoots.length}</p>
+          <div className="flex flex-wrap gap-1.5 justify-center max-w-2xl mx-auto">
+            {coreRoots.map((root) => {
               const completed = isRootCompleted(root.primaryText)
               return (
                 <Link

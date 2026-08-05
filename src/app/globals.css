@@ -25,6 +25,11 @@
   --font-mono: var(--font-mono), "JetBrains Mono", "SF Mono", monospace;
 }
 
+/* ── Font variable (CDN loaded, shared across themes) ── */
+:root {
+  --font-serif-display: "Noto Serif SC", "Songti SC", "SimSun", serif;
+}
+
 /* ── Dark theme (default) ── */
 :root,
 [data-theme="dark"] {
