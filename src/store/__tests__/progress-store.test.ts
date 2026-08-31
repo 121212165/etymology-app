@@ -9,6 +9,7 @@ describe('progress-store', () => {
       viewedWordSet: {},
       completedRoots: [],
       currentRoot: null,
+      quizResults: {},
     })
   })
 
@@ -46,5 +47,25 @@ describe('progress-store', () => {
       { word: 'active' },
     ])
     expect(count).toBe(2)
+  })
+
+  it('marks quiz result per word', () => {
+    const { markQuizResult } = useProgressStore.getState()
+    expect(useProgressStore.getState().quizResults['act']).toBeUndefined()
+    markQuizResult('act', 'known')
+    markQuizResult('inspect', 'again')
+    expect(useProgressStore.getState().quizResults).toEqual({
+      act: 'known',
+      inspect: 'again',
+    })
+  })
+
+  it('overwrites quiz result with the latest judgement', () => {
+    const { markQuizResult } = useProgressStore.getState()
+    markQuizResult('act', 'again')
+    markQuizResult('act', 'known')
+    const results = useProgressStore.getState().quizResults
+    expect(results['act']).toBe('known')
+    expect(Object.keys(results)).toHaveLength(1)
   })
 })
