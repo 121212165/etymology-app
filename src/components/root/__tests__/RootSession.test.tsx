@@ -13,6 +13,12 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+// RootSession 用 useRouter 做完成后的自动跳转；测试中记录 push 调用即可
+const pushMock = vi.fn();
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: pushMock }),
+}));
+
 // SpeakButton / PartTags / MindMap / MicroCelebrate 都是子组件，mock 掉以隔离 RootSession 逻辑
 vi.mock("@/components/word/SpeakButton", () => ({
   SpeakButton: () => <button data-testid="speak">speak</button>,
@@ -65,7 +71,9 @@ describe("RootSession", () => {
       viewedWordSet: {},
       completedRoots: [],
       currentRoot: null,
+      quizResults: {},
     });
+    pushMock.mockClear();
   });
 
   afterEach(() => {

@@ -2,15 +2,21 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+/** 自测判定结果：known = 会了，again = 再看 */
+export type QuizResult = 'known' | 'again'
+
 interface ProgressState {
   viewedWords: string[]
   viewedWordSet: Record<string, true>
   completedRoots: string[]
   currentRoot: string | null
+  /** 自测判定记录，按单词最后一次判定为准 */
+  quizResults: Record<string, QuizResult>
 
   markWordViewed: (word: string) => void
   markRootCompleted: (rootText: string) => void
   setCurrentRoot: (root: string | null) => void
+  markQuizResult: (word: string, result: QuizResult) => void
   isWordViewed: (word: string) => boolean
   isRootCompleted: (rootText: string) => boolean
   getViewedCountForRoot: (allWordIndices: number[], vocab: { word: string }[]) => number
@@ -23,6 +29,7 @@ export const useProgressStore = create<ProgressState>()(
       viewedWordSet: {},
       completedRoots: [],
       currentRoot: null,
+      quizResults: {},
 
       markWordViewed: (word) => {
         const state = get()
@@ -41,6 +48,10 @@ export const useProgressStore = create<ProgressState>()(
 
       setCurrentRoot: (root) => set({ currentRoot: root }),
 
+      markQuizResult: (word, result) => {
+        set(state => ({ quizResults: { ...state.quizResults, [word]: result } }))
+      },
+
       isWordViewed: (word) => !!get().viewedWordSet[word],
 
       isRootCompleted: (rootText) => get().completedRoots.includes(rootText),
@@ -55,11 +66,12 @@ export const useProgressStore = create<ProgressState>()(
     }),
     {
       name: 'linxu-progress',
-      // 只持久化数组形式，viewedWordSet 在 rehydrate 时从数组重建，避免冗余存储
+      // 只持久化数组/普通对象形式，viewedWordSet 在 rehydrate 时从数组重建，避免冗余存储
       partialize: (state) => ({
         viewedWords: state.viewedWords,
         completedRoots: state.completedRoots,
         currentRoot: state.currentRoot,
+        quizResults: state.quizResults,
       }),
       merge: (persisted, current) => {
         const p = (persisted as Partial<ProgressState>) || {}
@@ -72,6 +84,7 @@ export const useProgressStore = create<ProgressState>()(
           ...p,
           viewedWords,
           viewedWordSet,
+          quizResults: p.quizResults ?? {},
         }
       },
     }
