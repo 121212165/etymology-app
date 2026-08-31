@@ -9,6 +9,7 @@ import { SpeakButton } from '@/components/word/SpeakButton'
 import { MindMap } from '@/components/mindmap/MindMap'
 import { useProgressStore } from '@/store/progress-store'
 import { loadMindMapData } from '@/lib/mindmap-loader'
+import { loadSearchIndex } from '@/lib/data-loader'
 import { useAppStore } from '@/store/app-store'
 import type { VocabEntry } from '@/lib/types'
 import type { MindMapData, EnhancedRootNode } from '@/lib/mindmap-types'
@@ -30,7 +31,7 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
   const [celebrationTick, setCelebrationTick] = useState(0)
   const firstRenderRef = useRef(true)
   const { markWordViewed, markRootCompleted, setCurrentRoot } = useProgressStore()
-  const { searchIndex } = useAppStore()
+  const { searchIndex, setSearchIndex } = useAppStore()
 
   // 边界保护：currentIndex 可能因词根切换（上层未加 key 时）或 words 变短而越界，
   // 此时回退到首词，避免 render 阶段读取 undefined.word 崩溃。
@@ -55,6 +56,15 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
       console.warn('[RootSession] mindmap load failed for', rootText, err)
     })
   }, [enhancedRoot, mindmapData, rootText])
+
+  // 思维导图需要 vocab 数据；首页路径由 useSearch 预载，直达/刷新本页时 store 为空，
+  // 这里自行触发一次加载（loadSearchIndex 有模块级缓存，重复调用无额外成本）
+  useEffect(() => {
+    if (!enhancedRoot || searchIndex) return
+    loadSearchIndex().then(setSearchIndex).catch(err => {
+      console.warn('[RootSession] search index load failed for', rootText, err)
+    })
+  }, [enhancedRoot, searchIndex, setSearchIndex, rootText])
 
   const handleNext = () => {
     if (isLast) {
