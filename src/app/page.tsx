@@ -8,7 +8,7 @@ import { TopBar } from '@/components/layout/TopBar'
 import { useSearch } from '@/hooks/useSearch'
 import { useAppStore } from '@/store/app-store'
 import { useProgressStore } from '@/store/progress-store'
-import { loadMindMapData, getCoreRoots } from '@/lib/mindmap-loader'
+import { loadMindMapData, getCoreRoots, getMiddleRoots } from '@/lib/mindmap-loader'
 import type { EnhancedRootNode } from '@/lib/mindmap-types'
 
 const WORD_GRID_LIMIT = 12
@@ -19,6 +19,7 @@ export default function HomePage() {
   const { getViewedCountForRoot, isRootCompleted } = useProgressStore()
   const [focusRoot, setFocusRoot] = useState<EnhancedRootNode | null>(null)
   const [coreRoots, setCoreRoots] = useState<EnhancedRootNode[]>([])
+  const [totalRoots, setTotalRoots] = useState(0)
   // 思维导图数据加载失败时给出独立错误与重试入口，避免首页永久转圈
   const [mindmapError, setMindmapError] = useState<string | null>(null)
   const [mindmapLoading, setMindmapLoading] = useState(true)
@@ -29,18 +30,24 @@ export default function HomePage() {
     loadMindMapData()
       .then(data => {
         const cores = getCoreRoots(data)
+        const middles = getMiddleRoots(data)
         setCoreRoots(cores)
+        setTotalRoots(data.roots.length)
         const { currentRoot, completedRoots, setCurrentRoot } = useProgressStore.getState()
 
         if (currentRoot && !completedRoots.includes(currentRoot)) {
-          const found = cores.find(r => r.primaryText === currentRoot)
+          const found = [...cores, ...middles].find(r => r.primaryText === currentRoot)
           if (found) {
             setFocusRoot(found)
             return
           }
         }
 
-        const next = cores.find(r => !completedRoots.includes(r.primaryText)) || cores[0]
+        // 焦点优先级：未完成核心 → 未完成进阶 → 首个核心。
+        // 核心层学完后若仍只看核心会「断头」，故回落到进阶层。
+        const next = cores.find(r => !completedRoots.includes(r.primaryText))
+          || middles.find(r => !completedRoots.includes(r.primaryText))
+          || cores[0]
         setFocusRoot(next)
         setCurrentRoot(next?.primaryText || null)
       })
@@ -210,9 +217,19 @@ export default function HomePage() {
 
         <hr className="editorial-divider mb-12" />
 
-        {/* ── 词根云（全部核心词根） ── */}
+        {/* ── 词根云（核心词根；全部词根入口见右上） ── */}
         <section>
-          <p className="editorial-label mb-5">核心词根 · {coreRoots.length}</p>
+          <div className="flex items-baseline justify-between mb-5 max-w-2xl mx-auto">
+            <p className="editorial-label">核心词根 · {coreRoots.length}</p>
+            {totalRoots > coreRoots.length && (
+              <Link
+                href="/roots"
+                className="text-xs text-text-muted hover:text-accent transition-colors"
+              >
+                全部 {totalRoots} 组 →
+              </Link>
+            )}
+          </div>
           <div className="flex flex-wrap gap-1.5 justify-center max-w-2xl mx-auto">
             {coreRoots.map((root) => {
               const completed = isRootCompleted(root.primaryText)

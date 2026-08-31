@@ -9,7 +9,7 @@ import { PartTags } from '@/components/word/PartTags'
 import { SpeakButton } from '@/components/word/SpeakButton'
 import { MindMap } from '@/components/mindmap/MindMap'
 import { useProgressStore } from '@/store/progress-store'
-import { loadMindMapData, getCoreRoots } from '@/lib/mindmap-loader'
+import { loadMindMapData, getCoreRoots, getMiddleRoots } from '@/lib/mindmap-loader'
 import { loadSearchIndex } from '@/lib/data-loader'
 import { useAppStore } from '@/store/app-store'
 import { CONFUSABLE_ROOTS } from '@/lib/confusables'
@@ -35,29 +35,35 @@ interface RootSessionProps {
 const CELEBRATE_COUNTDOWN_MS = 2000
 
 /**
- * 从 core 词根里挑「下一个未完成词根」的跳转目标：
- * 从当前组往后找第一个未完成的；找不到再回头（wrap）扫当前组之前的；
- * 当前组不在 core 列表时按存储顺序取第一个未完成的。全都没有 → null（回首页）。
+ * 挑「下一个未完成词根」的跳转目标：
+ * 优先从 core 词根里找——从当前组往后找第一个未完成的，找不到再回头（wrap）扫当前组之前的；
+ * core 全部完成后回落到 middle 层（按数据顺序，跳过当前组），避免核心学完后无处可去。
+ * 都没有 → null（回首页）。
  */
-function pickNextCoreRootHref(
+function pickNextRootHref(
   data: MindMapData | null | undefined,
   currentRootText: string,
   completedRoots: string[]
 ): string | null {
   if (!data) return null
   const coreRoots = getCoreRoots(data)
-  if (coreRoots.length === 0) return null
+  const middleRoots = getMiddleRoots(data)
+  if (coreRoots.length === 0 && middleRoots.length === 0) return null
 
-  const idx = coreRoots.findIndex(
-    r => r.primaryText === currentRootText || r.aliases.includes(currentRootText)
-  )
+  const isCurrent = (r: EnhancedRootNode) =>
+    r.primaryText === currentRootText || r.aliases.includes(currentRootText)
+  const coreIdx = coreRoots.findIndex(isCurrent)
   const after: EnhancedRootNode[] = []
-  for (let i = idx + 1; i < coreRoots.length; i++) after.push(coreRoots[i])
+  for (let i = coreIdx + 1; i < coreRoots.length; i++) after.push(coreRoots[i])
   const before: EnhancedRootNode[] = []
-  for (let i = 0; i < idx; i++) before.push(coreRoots[i])
+  for (let i = 0; i < coreIdx; i++) before.push(coreRoots[i])
 
-  const candidates = idx === -1 ? coreRoots : [...after, ...before]
-  const next = candidates.find(r => !completedRoots.includes(r.primaryText))
+  const coreCandidates = coreIdx === -1 ? coreRoots : [...after, ...before]
+  const next =
+    coreCandidates.find(r => !completedRoots.includes(r.primaryText)) ??
+    middleRoots.find(
+      r => !isCurrent(r) && !completedRoots.includes(r.primaryText)
+    )
   return next ? `/root/${next.primaryText}` : null
 }
 
@@ -160,7 +166,7 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
     loadMindMapData()
       .then(data => {
         if (!cancelled) {
-          setCelebrateHref(pickNextCoreRootHref(data, rootText, completedRoots))
+          setCelebrateHref(pickNextRootHref(data, rootText, completedRoots))
         }
       })
       .catch(() => {
