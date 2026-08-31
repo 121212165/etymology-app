@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
+// 自托管衬线字体（unicode-range 分块，按需下载），替代被墙的 Google Fonts CDN
+import "@fontsource/noto-serif-sc/400.css";
+import "@fontsource/noto-serif-sc/600.css";
 import "./globals.css";
 
 const inter = Inter({
@@ -31,19 +34,6 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrains.variable}`}
     >
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body className="antialiased">
         <ThemeProvider
           attribute="data-theme"
