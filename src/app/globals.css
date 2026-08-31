@@ -292,3 +292,73 @@ code, pre, .font-mono {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── MindMap focus & variants ── */
+/* 变体标识色：与 --root-color / --accent 同族的暖金深浅，暗/亮主题各自成组。
+   第 n 个变体取 --variant-((n-1) % 4 + 1)，超过 4 个变体时颜色循环复用。 */
+:root,
+[data-theme="dark"] {
+  --variant-1: #e2cda2;
+  --variant-2: #c9a86c;
+  --variant-3: #a3804e;
+  --variant-4: #7c6136;
+}
+
+[data-theme="light"] {
+  --variant-1: #b08c55;
+  --variant-2: #8c6b3f;
+  --variant-3: #74572f;
+  --variant-4: #5c4423;
+}
+
+/* 面板整体弱化：当前词在另一个面板时降透明度 + 降饱和 */
+.mindmap-panel {
+  transition: opacity 0.3s var(--ease), filter 0.3s var(--ease);
+}
+
+.mindmap-panel--dimmed {
+  opacity: 0.4;
+  filter: saturate(0.5);
+}
+
+/* 非当前词叶子弱化 */
+.mindmap-leaf--muted {
+  opacity: 0.7;
+}
+
+/* 当前词叶子：金色描边 + 轻微放大 + 柔和金色阴影 */
+.mindmap-leaf--current {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: scale(1.08);
+  box-shadow:
+    0 0 0 1px var(--accent),
+    0 6px 16px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+/* 变体小圆点（叶子标签内，无命中的变体用 muted 灰） */
+.mindmap-variant-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  margin-right: 5px;
+  vertical-align: middle;
+  background: var(--text-muted);
+}
+
+.mindmap-variant-dot-1 { background: var(--variant-1); }
+.mindmap-variant-dot-2 { background: var(--variant-2); }
+.mindmap-variant-dot-3 { background: var(--variant-3); }
+.mindmap-variant-dot-4 { background: var(--variant-4); }
+.mindmap-variant-dot-none { background: var(--text-muted); }
+
+/* 中心 chip 下方的拼写变体小字 */
+.mindmap-root-variants {
+  margin-top: 3px;
+  font-family: var(--font-mono), "JetBrains Mono", monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--text-muted);
+}
