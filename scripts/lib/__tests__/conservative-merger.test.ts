@@ -16,12 +16,13 @@ describe('shouldMerge', () => {
     )).toBe(true)
   })
 
-  it('does NOT merge short roots (<=4) at edit distance 2 (行为变更: ceed/cess 拆开)', () => {
-    // 规则收紧：长度 <=4 的词根阈值从 2 收紧为 1，ceed/cess（距离 2）不再合并
+  it('merges short roots (<=4) at edit distance 2 (ceed/cess 合法变体)', () => {
+    // 距离 2 的合法变体必须保持合并（ceed/cess/cede、duce/duct、tain/tent 同理）；
+    // 误合并（fair/fic）由 MERGE_BLACKLIST 阻断而非收紧阈值
     expect(shouldMerge(
       { text: 'ceed', meaning: '走' },
       { text: 'cess', meaning: '走' }
-    )).toBe(false)
+    )).toBe(true)
   })
 
   it('does NOT merge different meanings', () => {

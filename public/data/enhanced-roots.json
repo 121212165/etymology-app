@@ -45,20 +45,28 @@
     },
     {
       "primaryText": "cept",
-      "aliases": [],
+      "aliases": [
+        "cap"
+      ],
       "meaning": "拿",
-      "layer": "middle",
+      "layer": "core",
       "wordIndices": [
         13,
         14,
         15,
+        19,
         217,
         218,
+        779,
+        781,
+        782,
+        783,
         1040,
         1763,
+        2416,
         4693
       ],
-      "wordCount": 8
+      "wordCount": 14
     },
     {
       "primaryText": "ceive",
@@ -75,59 +83,36 @@
       "wordCount": 5
     },
     {
-      "primaryText": "cap",
-      "aliases": [],
-      "meaning": "拿",
-      "layer": "middle",
-      "wordIndices": [
-        19,
-        779,
-        781,
-        782,
-        783,
-        2416
-      ],
-      "wordCount": 6
-    },
-    {
       "primaryText": "ceed",
       "aliases": [
+        "cess",
         "cede",
         "ced"
       ],
       "meaning": "走",
-      "layer": "middle",
+      "layer": "core",
       "wordIndices": [
         20,
         21,
-        23,
-        1037,
-        3466,
-        3467,
-        3538,
-        4736
-      ],
-      "wordCount": 8
-    },
-    {
-      "primaryText": "cess",
-      "aliases": [],
-      "meaning": "走",
-      "layer": "core",
-      "wordIndices": [
         22,
+        23,
         24,
         25,
         26,
         219,
         220,
         370,
+        1037,
         1765,
         1766,
+        3466,
+        3467,
         3473,
-        3539
+        3538,
+        3539,
+        4736
       ],
-      "wordCount": 11
+      "wordCount": 19
     },
     {
       "primaryText": "dict",
@@ -207,36 +192,29 @@
     },
     {
       "primaryText": "fect",
-      "aliases": [],
+      "aliases": [
+        "fic"
+      ],
       "meaning": "做",
-      "layer": "middle",
+      "layer": "core",
       "wordIndices": [
         37,
         38,
         39,
         40,
-        1303,
-        3328
-      ],
-      "wordCount": 6
-    },
-    {
-      "primaryText": "fic",
-      "aliases": [],
-      "meaning": "做",
-      "layer": "middle",
-      "wordIndices": [
         42,
         43,
         44,
         45,
         46,
+        1303,
         1310,
         1311,
         1909,
+        3328,
         4376
       ],
-      "wordCount": 9
+      "wordCount": 15
     },
     {
       "primaryText": "fer",
@@ -339,10 +317,12 @@
       "wordCount": 8
     },
     {
-      "primaryText": "mit",
-      "aliases": [],
+      "primaryText": "miss",
+      "aliases": [
+        "mit"
+      ],
       "meaning": "发送",
-      "layer": "middle",
+      "layer": "core",
       "wordIndices": [
         74,
         75,
@@ -350,22 +330,13 @@
         77,
         78,
         79,
-        985,
-        986
-      ],
-      "wordCount": 8
-    },
-    {
-      "primaryText": "miss",
-      "aliases": [],
-      "meaning": "发送",
-      "layer": "edge",
-      "wordIndices": [
         80,
         81,
+        985,
+        986,
         2955
       ],
-      "wordCount": 3
+      "wordCount": 11
     },
     {
       "primaryText": "port",
@@ -635,8 +606,11 @@
       "wordCount": 17
     },
     {
-      "primaryText": "sta",
-      "aliases": [],
+      "primaryText": "stit",
+      "aliases": [
+        "sta",
+        "sist"
+      ],
       "meaning": "站立",
       "layer": "core",
       "wordIndices": [
@@ -647,13 +621,30 @@
         131,
         132,
         133,
+        134,
+        135,
+        136,
+        468,
+        469,
+        470,
+        1083,
+        1085,
         1090,
+        1091,
+        2484,
         2488,
         2489,
         2490,
         2491,
+        2494,
         3137,
         3226,
+        3336,
+        3337,
+        3814,
+        3815,
+        3816,
+        4116,
         4253,
         4258,
         4266,
@@ -663,21 +654,7 @@
         4346,
         4737
       ],
-      "wordCount": 22
-    },
-    {
-      "primaryText": "stit",
-      "aliases": [],
-      "meaning": "站立",
-      "layer": "middle",
-      "wordIndices": [
-        134,
-        135,
-        136,
-        1091,
-        2494
-      ],
-      "wordCount": 5
+      "wordCount": 39
     },
     {
       "primaryText": "struct",
@@ -827,9 +804,12 @@
     },
     {
       "primaryText": "tain",
-      "aliases": [],
+      "aliases": [
+        "tent",
+        "ten"
+      ],
       "meaning": "持有",
-      "layer": "middle",
+      "layer": "core",
       "wordIndices": [
         173,
         174,
@@ -838,9 +818,26 @@
         177,
         178,
         179,
-        1102
+        492,
+        1102,
+        1108,
+        1379,
+        1822,
+        1823,
+        1825,
+        2515,
+        2516,
+        2517,
+        2518,
+        2519,
+        2520,
+        3841,
+        4476,
+        4477,
+        4481,
+        4482
       ],
-      "wordCount": 8
+      "wordCount": 25
     },
     {
       "primaryText": "tend",
@@ -1168,19 +1165,27 @@
       "wordCount": 2
     },
     {
-      "primaryText": "cur",
-      "aliases": [],
+      "primaryText": "care",
+      "aliases": [
+        "cur",
+        "cern"
+      ],
       "meaning": "关心",
-      "layer": "middle",
+      "layer": "core",
       "wordIndices": [
         233,
         234,
+        789,
+        791,
+        792,
+        1041,
+        1042,
         1232,
         1233,
         1235,
         2432
       ],
-      "wordCount": 6
+      "wordCount": 11
     },
     {
       "primaryText": "cus",
@@ -1207,14 +1212,27 @@
     },
     {
       "primaryText": "ition",
-      "aliases": [],
+      "aliases": [
+        "ion"
+      ],
       "meaning": "行为",
-      "layer": "edge",
+      "layer": "core",
       "wordIndices": [
         242,
-        4632
+        251,
+        304,
+        355,
+        418,
+        462,
+        474,
+        492,
+        495,
+        4632,
+        4721,
+        5001,
+        5004
       ],
-      "wordCount": 2
+      "wordCount": 13
     },
     {
       "primaryText": "tiv",
@@ -1238,26 +1256,6 @@
         493
       ],
       "wordCount": 3
-    },
-    {
-      "primaryText": "ion",
-      "aliases": [],
-      "meaning": "行为",
-      "layer": "core",
-      "wordIndices": [
-        251,
-        304,
-        355,
-        418,
-        462,
-        474,
-        492,
-        495,
-        4721,
-        5001,
-        5004
-      ],
-      "wordCount": 11
     },
     {
       "primaryText": "dition",
@@ -2160,27 +2158,6 @@
       "wordCount": 12
     },
     {
-      "primaryText": "sist",
-      "aliases": [],
-      "meaning": "站立",
-      "layer": "core",
-      "wordIndices": [
-        468,
-        469,
-        470,
-        1083,
-        1085,
-        2484,
-        3336,
-        3337,
-        3814,
-        3815,
-        3816,
-        4116
-      ],
-      "wordCount": 12
-    },
-    {
       "primaryText": "soci",
       "aliases": [],
       "meaning": "同伴",
@@ -2307,34 +2284,6 @@
         4475
       ],
       "wordCount": 3
-    },
-    {
-      "primaryText": "tent",
-      "aliases": [
-        "ten"
-      ],
-      "meaning": "持有",
-      "layer": "core",
-      "wordIndices": [
-        492,
-        1108,
-        1379,
-        1822,
-        1823,
-        1825,
-        2515,
-        2516,
-        2517,
-        2518,
-        2519,
-        2520,
-        3841,
-        4476,
-        4477,
-        4481,
-        4482
-      ],
-      "wordCount": 17
     },
     {
       "primaryText": "aug",
@@ -2582,14 +2531,19 @@
     },
     {
       "primaryText": "ing",
-      "aliases": [],
+      "aliases": [
+        "ist"
+      ],
       "meaning": "存在",
-      "layer": "edge",
+      "layer": "middle",
       "wordIndices": [
         605,
+        1788,
+        1789,
+        1790,
         3680
       ],
-      "wordCount": 2
+      "wordCount": 5
     },
     {
       "primaryText": "lief",
@@ -2778,18 +2732,6 @@
       "wordCount": 2
     },
     {
-      "primaryText": "care",
-      "aliases": [],
-      "meaning": "关心",
-      "layer": "edge",
-      "wordIndices": [
-        789,
-        791,
-        792
-      ],
-      "wordCount": 3
-    },
-    {
       "primaryText": "cast",
       "aliases": [],
       "meaning": "投掷",
@@ -2973,17 +2915,23 @@
     },
     {
       "primaryText": "clos",
-      "aliases": [],
+      "aliases": [
+        "clud"
+      ],
       "meaning": "关闭",
       "layer": "middle",
       "wordIndices": [
         929,
         931,
+        1044,
         1448,
         1449,
-        1657
+        1657,
+        1771,
+        2424,
+        2425
       ],
-      "wordCount": 5
+      "wordCount": 9
     },
     {
       "primaryText": "cloth",
@@ -3227,16 +3175,20 @@
       "wordCount": 5
     },
     {
-      "primaryText": "pel",
-      "aliases": [],
+      "primaryText": "puls",
+      "aliases": [
+        "pel"
+      ],
       "meaning": "推",
-      "layer": "edge",
+      "layer": "middle",
       "wordIndices": [
         1002,
         1003,
-        1797
+        1033,
+        1797,
+        2411
       ],
-      "wordCount": 3
+      "wordCount": 5
     },
     {
       "primaryText": "pens",
@@ -3313,17 +3265,6 @@
       "wordCount": 3
     },
     {
-      "primaryText": "puls",
-      "aliases": [],
-      "meaning": "推",
-      "layer": "edge",
-      "wordIndices": [
-        1033,
-        2411
-      ],
-      "wordCount": 2
-    },
-    {
       "primaryText": "pute",
       "aliases": [],
       "meaning": "计算",
@@ -3344,30 +3285,6 @@
         1285,
         3327,
         3699
-      ],
-      "wordCount": 4
-    },
-    {
-      "primaryText": "cern",
-      "aliases": [],
-      "meaning": "关心",
-      "layer": "edge",
-      "wordIndices": [
-        1041,
-        1042
-      ],
-      "wordCount": 2
-    },
-    {
-      "primaryText": "clud",
-      "aliases": [],
-      "meaning": "关闭",
-      "layer": "middle",
-      "wordIndices": [
-        1044,
-        1771,
-        2424,
-        2425
       ],
       "wordCount": 4
     },
@@ -3441,15 +3358,19 @@
       "wordCount": 2
     },
     {
-      "primaryText": "quer",
-      "aliases": [],
+      "primaryText": "quire",
+      "aliases": [
+        "quer"
+      ],
       "meaning": "寻求",
-      "layer": "edge",
+      "layer": "middle",
       "wordIndices": [
         1068,
-        3632
+        3632,
+        3800,
+        3801
       ],
-      "wordCount": 2
+      "wordCount": 4
     },
     {
       "primaryText": "quest",
@@ -4007,25 +3928,18 @@
     },
     {
       "primaryText": "liver",
-      "aliases": [],
+      "aliases": [
+        "liv"
+      ],
       "meaning": "递送",
-      "layer": "edge",
+      "layer": "middle",
       "wordIndices": [
         1325,
-        2762
-      ],
-      "wordCount": 2
-    },
-    {
-      "primaryText": "liv",
-      "aliases": [],
-      "meaning": "递送",
-      "layer": "edge",
-      "wordIndices": [
         1326,
+        2762,
         2763
       ],
-      "wordCount": 2
+      "wordCount": 4
     },
     {
       "primaryText": "pend",
@@ -4794,18 +4708,6 @@
         1785,
         2461,
         3559
-      ],
-      "wordCount": 3
-    },
-    {
-      "primaryText": "ist",
-      "aliases": [],
-      "meaning": "存在",
-      "layer": "edge",
-      "wordIndices": [
-        1788,
-        1789,
-        1790
       ],
       "wordCount": 3
     },
@@ -6833,17 +6735,6 @@
       "wordIndices": [
         3753,
         5006
-      ],
-      "wordCount": 2
-    },
-    {
-      "primaryText": "quire",
-      "aliases": [],
-      "meaning": "寻求",
-      "layer": "edge",
-      "wordIndices": [
-        3800,
-        3801
       ],
       "wordCount": 2
     },
@@ -27001,11 +26892,11 @@
     }
   ],
   "stats": {
-    "totalRoots": 584,
-    "coreRoots": 33,
-    "middleRoots": 107,
-    "edgeRoots": 444,
-    "mergedGroups": 29,
+    "totalRoots": 569,
+    "coreRoots": 36,
+    "middleRoots": 101,
+    "edgeRoots": 432,
+    "mergedGroups": 44,
     "totalLinks": 2799
   }
 }

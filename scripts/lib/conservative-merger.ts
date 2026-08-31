@@ -15,9 +15,6 @@ export interface MergeInput {
  */
 export const MERGE_BLACKLIST: ReadonlySet<string> = new Set(['fair'])
 
-/** 长度 <= SHORT_TEXT_MAX 的词根使用更紧的编辑距离阈值 */
-const SHORT_TEXT_MAX = 4
-
 export interface MergeGroup {
   texts: string[]
   meaning: string
@@ -30,10 +27,12 @@ export interface MergeGroup {
  * 1. 任一条目在合并黑名单中 → 不合并
  * 2. meaning 字符串完全相等
  * 3. 首字母相同
- * 4. 编辑距离：任一方长度 <= 4 时阈值收紧为 <= 1（短词根在距离 2 下误合并率高，
- *    如 fair/fic）；双方长度均 >= 5 时保持 <= 2
+ * 4. 编辑距离 <= 2
  *
- * 设计取舍：宁可漏合并，不要错合并
+ * 设计取舍：宁可漏合并，不要错合并。
+ * 注：曾尝试对 <=4 字符词根收紧到距离 1，但会拆散大量合法变体组
+ * （ceed/cess、duce/duct、tain/tent、vert/vers、sta/stit…），故保持 2，
+ * 错合并（fair→fic）由黑名单精准阻断。
  */
 export function shouldMerge(
   a: { text: string; meaning: string },
@@ -42,9 +41,7 @@ export function shouldMerge(
   if (MERGE_BLACKLIST.has(a.text) || MERGE_BLACKLIST.has(b.text)) return false
   if (a.meaning !== b.meaning) return false
   if (a.text[0] !== b.text[0]) return false
-  const threshold =
-    a.text.length <= SHORT_TEXT_MAX || b.text.length <= SHORT_TEXT_MAX ? 1 : 2
-  return editDistance(a.text, b.text) <= threshold
+  return editDistance(a.text, b.text) <= 2
 }
 
 export function mergeRoots(inputs: MergeInput[]): MergeGroup[] {
