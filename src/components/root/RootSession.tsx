@@ -132,13 +132,15 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
       setSessionFinished(true)
       return
     }
-    setCurrentIndex(i => i + 1)
+    // 钳制到末词：index 越界后（safeIndex 兜底显示首词）若无此钳制，
+    // 递增永远追不回长度，「完成」将不可达
+    setCurrentIndex(i => Math.min(i + 1, displayWords.length - 1))
     setCelebrationTick(t => t + 1)
-  }, [isLast, markRootCompleted, rootText])
+  }, [isLast, markRootCompleted, rootText, displayWords.length])
 
   const handlePrev = useCallback(() => {
-    if (currentIndex > 0) setCurrentIndex(i => i - 1)
-  }, [currentIndex])
+    setCurrentIndex(i => Math.max(i - 1, 0))
+  }, [])
 
   // ── 完成庆祝：计算下一组目标 + 2 秒倒计时自动进入 ──
   useEffect(() => {
@@ -349,13 +351,25 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
                 <p className="text-sm text-text-secondary leading-relaxed">
                   <span className="text-text-primary font-medium">{current.word}</span>
                   {' 由 '}
-                  {current.parts.map((part, i) => (
-                    <span key={i}>
-                      {i > 0 && ' + '}
-                      <span className="font-mono text-root">{part.text}</span>
-                      <span className="text-text-muted">（{part.meaning}）</span>
-                    </span>
-                  ))}
+                  {current.parts.map((part, i) =>
+                    part.type === 'linker' ? (
+                      // 衔接字母：中性裸字母，无括号意义（如 verbal 的 b）
+                      <span key={i}>
+                        {i > 0 && ' + '}
+                        <span className="font-mono text-text-muted">{part.text}</span>
+                      </span>
+                    ) : (
+                      <span key={i}>
+                        {i > 0 && ' + '}
+                        <span className="font-mono text-root">{part.surface || part.text}</span>
+                        <span className="text-text-muted">
+                          {part.surface
+                            ? `（${part.text}，${part.meaning}）`
+                            : `（${part.meaning}）`}
+                        </span>
+                      </span>
+                    )
+                  )}
                   {' 组成'}
                 </p>
               </div>
@@ -395,7 +409,7 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
           )}
         </div>
 
-        {/* ── 右列：思维导图（辅助可视化当前词根的关联网络） ── */}
+        {/* ── 右列：思维导图（辅助可视化当前词根的关联网络，高亮当前词） ── */}
         {enhancedRoot && mindmapData && searchIndex?.data && (
           <div>
             <p className="editorial-label mb-3">关联网络</p>
@@ -403,6 +417,7 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
               data={mindmapData}
               vocab={searchIndex.data}
               centerRoot={enhancedRoot}
+              currentWord={current?.word}
             />
           </div>
         )}
