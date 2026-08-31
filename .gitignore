@@ -3,3 +3,6 @@ node_modules/
 out/
 .trae/
 tsconfig.tsbuildinfo
+
+# vercel cli 本地链接与拉取的环境变量
+.vercel/
