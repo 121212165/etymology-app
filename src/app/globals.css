@@ -70,11 +70,16 @@
   --shadow: rgba(26, 26, 26, 0.05);
 }
 
-/* ── Base styles ── */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* ── Base styles ──
+   必须放进 @layer base：Tailwind v4 的工具类都在 @layer utilities 里，
+   未分层的普通规则会无条件压过所有 layered 规则（CSS Cascading L5），
+   否则 * { margin:0; padding:0 } 会废掉全站 mx-auto / p-* / mb-* 等间距类。 */
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 }
 
 html {
