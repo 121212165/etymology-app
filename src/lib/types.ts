@@ -18,6 +18,12 @@ export interface VocabEntry {
    * 含连接字母（linker）、歧义同化前缀、或 parts 为空。
    */
   parseQuality?: "low";
+  /**
+   * 派生链（一层）：剥掉最外层后缀（经形态修补）后命中的词库词。
+   * 如 fertility → { stemWord: "fertile", suffix: "ity" }。
+   * 展示时沿 stemWord 的 derivation 递归读取（限深）。
+   */
+  derivation?: { stemWord: string; suffix: string };
 }
 
 export interface RootIndexEntry {

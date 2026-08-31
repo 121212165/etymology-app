@@ -12,6 +12,7 @@ import { useProgressStore } from '@/store/progress-store'
 import { loadMindMapData, getCoreRoots } from '@/lib/mindmap-loader'
 import { loadSearchIndex } from '@/lib/data-loader'
 import { useAppStore } from '@/store/app-store'
+import { CONFUSABLE_ROOTS } from '@/lib/confusables'
 import type { VocabEntry } from '@/lib/types'
 import type { MindMapData, EnhancedRootNode } from '@/lib/mindmap-types'
 import { MicroCelebrate } from '@/components/feedback/MicroCelebrate'
@@ -100,6 +101,16 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
     const group = variantGroups.find(g => g.words.some(w => w.word === current.word))
     return group ? group.text : null
   }, [variantGroups, current])
+
+  // 派生提示里的词义词（fertility → fertile 的释义）
+  const stemEntry = useMemo(() => {
+    const der = current?.derivation
+    if (!der || !searchIndex) return null
+    return searchIndex.data.find(e => e.word === der.stemWord) ?? null
+  }, [current, searchIndex])
+
+  // 易混词根（静态 curated 数据，按展示词根查）
+  const confusables = CONFUSABLE_ROOTS[rootText] ?? []
 
   useEffect(() => {
     setCurrentRoot(rootText)
@@ -328,6 +339,24 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
                 onSelect={handleSelectVariant}
               />
 
+              {/* 易混词根对比条：形近/义近词根并列，帮助区分 */}
+              {confusables.length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5 mb-4">
+                  <span className="editorial-label mr-1">易混</span>
+                  {confusables.map(c => (
+                    <Link
+                      key={c.text}
+                      href={`/root/${encodeURIComponent(c.text)}`}
+                      title={`${c.text} ${c.meaning}，如 ${c.sample.join('、')}`}
+                      className="root-cloud-item"
+                    >
+                      <span className="root-cloud-text">{c.text}</span>
+                      <span className="text-xs text-text-muted">{c.meaning}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+
               {/* ── 当前单词卡片（支持水平滑动换词） ── */}
               <div className="editorial-card p-6 lg:p-8 mb-6" {...swipeHandlers}>
                 <div className="flex items-start justify-between gap-4 mb-4">
@@ -372,6 +401,27 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
                   )}
                   {' 组成'}
                 </p>
+
+                {/* 构词路径提示：机械切分没有记忆价值时，给出派生词（fertility ← fertile + -ity） */}
+                {current.derivation && (
+                  <p className="text-sm text-text-secondary mt-2">
+                    <span className="editorial-label mr-2">记法</span>
+                    {'先记 '}
+                    <Link
+                      href={`/word/${encodeURIComponent(current.derivation.stemWord)}`}
+                      className="font-mono text-accent hover:underline"
+                    >
+                      {current.derivation.stemWord}
+                    </Link>
+                    {stemEntry && (
+                      <span className="text-text-muted">（{stemEntry.definition}）</span>
+                    )}
+                    <span className="text-text-muted">
+                      {'，再加 -'}
+                      {current.derivation.suffix}
+                    </span>
+                  </p>
+                )}
               </div>
 
               {/* ── 导航（含自测入口） ── */}

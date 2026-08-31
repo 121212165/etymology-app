@@ -180,6 +180,66 @@ export default async function WordPage({
           </p>
         </section>
 
+        {/* ── 构词路径（派生链，最多两级） ── */}
+        {entry.derivation && (
+          <section className="mb-10">
+            <p className="editorial-label mb-4">构词路径</p>
+            <p className="text-text-primary leading-loose text-[15px]">
+              <span className="text-text-secondary">{entry.word}</span>
+              {" 由 "}
+              <Link
+                href={`/word/${encodeURIComponent(entry.derivation.stemWord)}`}
+                className="font-mono text-accent hover:underline"
+              >
+                {entry.derivation.stemWord}
+              </Link>
+              {(() => {
+                const stemEntry = vocabMap.get(entry.derivation!.stemWord);
+                return stemEntry ? (
+                  <span className="text-text-secondary">
+                    {"（"}
+                    {stemEntry.definition}
+                    {"）"}
+                  </span>
+                ) : null;
+              })()}
+              <span className="text-text-muted">
+                {" + -"}
+                {entry.derivation.suffix}
+              </span>
+              {(() => {
+                // 第二级：stem 自身的派生（如 accessible ← access + -ible）
+                const stemEntry = vocabMap.get(entry.derivation!.stemWord);
+                if (!stemEntry?.derivation) return null;
+                const stem2 = vocabMap.get(stemEntry.derivation.stemWord);
+                return (
+                  <>
+                    {"，而 "}
+                    <Link
+                      href={`/word/${encodeURIComponent(stemEntry.derivation.stemWord)}`}
+                      className="font-mono text-accent hover:underline"
+                    >
+                      {stemEntry.derivation.stemWord}
+                    </Link>
+                    {stem2 ? (
+                      <span className="text-text-secondary">
+                        {"（"}
+                        {stem2.definition}
+                        {"）"}
+                      </span>
+                    ) : null}
+                    <span className="text-text-muted">
+                      {" + -"}
+                      {stemEntry.derivation.suffix}
+                    </span>
+                  </>
+                );
+              })()}
+              {"。"}
+            </p>
+          </section>
+        )}
+
         <hr className="editorial-divider mb-8" />
 
         {/* ── 同根词 ── */}
