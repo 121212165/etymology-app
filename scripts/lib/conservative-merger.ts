@@ -6,6 +6,18 @@ export interface MergeInput {
   wordIndices: number[]
 }
 
+/**
+ * 合并黑名单：命中条目不参与任何合并（始终保持独立组）。
+ *
+ * 背景：上游 roots-index.json 中 fair（词 affair/fair/unfair）意义被错标为
+ * "做"，曾按编辑距离 2 与 fic 合并、再并入 fect，导致 unfair 出现在 fect 组。
+ * 黑名单条目即使满足全部合并条件也不合并。
+ */
+export const MERGE_BLACKLIST: ReadonlySet<string> = new Set(['fair'])
+
+/** 长度 <= SHORT_TEXT_MAX 的词根使用更紧的编辑距离阈值 */
+const SHORT_TEXT_MAX = 4
+
 export interface MergeGroup {
   texts: string[]
   meaning: string
@@ -15,9 +27,11 @@ export interface MergeGroup {
 
 /**
  * 保守合并规则（全部硬条件，0 AI 语义判断）:
- * 1. meaning 字符串完全相等
- * 2. 首字母相同
- * 3. 编辑距离 <= 2
+ * 1. 任一条目在合并黑名单中 → 不合并
+ * 2. meaning 字符串完全相等
+ * 3. 首字母相同
+ * 4. 编辑距离：任一方长度 <= 4 时阈值收紧为 <= 1（短词根在距离 2 下误合并率高，
+ *    如 fair/fic）；双方长度均 >= 5 时保持 <= 2
  *
  * 设计取舍：宁可漏合并，不要错合并
  */
@@ -25,9 +39,12 @@ export function shouldMerge(
   a: { text: string; meaning: string },
   b: { text: string; meaning: string }
 ): boolean {
+  if (MERGE_BLACKLIST.has(a.text) || MERGE_BLACKLIST.has(b.text)) return false
   if (a.meaning !== b.meaning) return false
   if (a.text[0] !== b.text[0]) return false
-  return editDistance(a.text, b.text) <= 2
+  const threshold =
+    a.text.length <= SHORT_TEXT_MAX || b.text.length <= SHORT_TEXT_MAX ? 1 : 2
+  return editDistance(a.text, b.text) <= threshold
 }
 
 export function mergeRoots(inputs: MergeInput[]): MergeGroup[] {

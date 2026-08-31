@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { shouldMerge, mergeRoots, type MergeInput } from '../conservative-merger'
+import { shouldMerge, mergeRoots, MERGE_BLACKLIST, type MergeInput } from '../conservative-merger'
 
 describe('shouldMerge', () => {
   it('merges same meaning + same first letter + close edit distance', () => {
@@ -9,11 +9,19 @@ describe('shouldMerge', () => {
     )).toBe(true)
   })
 
-  it('merges ceed/cess (both "走", edit distance 2)', () => {
+  it('still merges long roots (>=5) at edit distance 2 (scribe/script)', () => {
+    expect(shouldMerge(
+      { text: 'scribe', meaning: '写' },
+      { text: 'script', meaning: '写' }
+    )).toBe(true)
+  })
+
+  it('does NOT merge short roots (<=4) at edit distance 2 (行为变更: ceed/cess 拆开)', () => {
+    // 规则收紧：长度 <=4 的词根阈值从 2 收紧为 1，ceed/cess（距离 2）不再合并
     expect(shouldMerge(
       { text: 'ceed', meaning: '走' },
       { text: 'cess', meaning: '走' }
-    )).toBe(true)
+    )).toBe(false)
   })
 
   it('does NOT merge different meanings', () => {
@@ -35,6 +43,24 @@ describe('shouldMerge', () => {
       { text: 'cede', meaning: '走' },
       { text: 'gress', meaning: '走' }
     )).toBe(false)
+  })
+})
+
+describe('MERGE_BLACKLIST', () => {
+  it('contains "fair"', () => {
+    expect(MERGE_BLACKLIST.has('fair')).toBe(true)
+  })
+
+  it('blocks merge even when all other conditions hold (fair/fain, distance 1)', () => {
+    expect(shouldMerge(
+      { text: 'fair', meaning: '做' },
+      { text: 'fain', meaning: '做' }
+    )).toBe(false)
+    // 对照：同样的距离、不在黑名单时正常合并
+    expect(shouldMerge(
+      { text: 'gair', meaning: '做' },
+      { text: 'gain', meaning: '做' }
+    )).toBe(true)
   })
 })
 
@@ -70,5 +96,37 @@ describe('mergeRoots', () => {
 
     const groups = mergeRoots(input)
     expect(groups[0].wordIndices).toEqual([1, 2, 3, 4])
+  })
+
+  it('keeps blacklisted roots standalone (fair 不并入 fic/fect)', () => {
+    const input: MergeInput[] = [
+      { text: 'fic', meaning: '做', wordIndices: [1] },
+      { text: 'fair', meaning: '做', wordIndices: [2] },
+      { text: 'benefit', meaning: '好处', wordIndices: [3] },
+    ]
+
+    const groups = mergeRoots(input)
+    const fairGroup = groups.find(g => g.texts.includes('fair'))
+    expect(fairGroup?.texts).toEqual(['fair'])
+    expect(fairGroup?.wordIndices).toEqual([2])
+  })
+
+  it('does not let blacklisted entries join a group transitively', () => {
+    // fair-fail(1)-faic(1)-fic(1) 构成合并链；无黑名单时 fair 会经 fail 传递并入，
+    // 黑名单在第一跳就阻断，fair 始终独立
+    const input: MergeInput[] = [
+      { text: 'fair', meaning: '做', wordIndices: [1] },
+      { text: 'fail', meaning: '做', wordIndices: [2] },
+      { text: 'faic', meaning: '做', wordIndices: [3] },
+      { text: 'fic', meaning: '做', wordIndices: [4] },
+    ]
+
+    const groups = mergeRoots(input)
+    expect(groups).toHaveLength(2)
+    const fairGroup = groups.find(g => g.texts.includes('fair'))
+    expect(fairGroup?.texts).toEqual(['fair'])
+    expect(fairGroup?.wordIndices).toEqual([1])
+    const chainGroup = groups.find(g => g.texts.includes('fic'))
+    expect(chainGroup?.texts).toEqual(['fail', 'faic', 'fic'])
   })
 })
