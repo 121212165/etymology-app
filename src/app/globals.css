@@ -292,3 +292,72 @@ code, pre, .font-mono {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Session UX ──
+   词根学习会话：完成庆祝层动画（纯 CSS，无新依赖）。
+   prefers-reduced-motion 由上方全局 reduce-motion 规则压缩到 0.01ms。 */
+
+/* 完成庆祝：金色圆圈内大对勾 scale-in（带轻微过冲） */
+@keyframes session-check-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.session-check-in {
+  animation: session-check-in 0.5s var(--ease) both;
+}
+
+/* 完成庆祝：2 秒倒计时环（stroke-dashoffset 从满环均匀退到空环） */
+@keyframes session-ring-countdown {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 276.46; /* 2π × r(44)，与 SVG viewBox 尺寸配套 */
+  }
+}
+
+.session-ring-countdown {
+  stroke-dasharray: 276.46;
+  animation: session-ring-countdown 2s linear forwards;
+}
+
+/* 完成庆祝：遮罩淡入 */
+@keyframes session-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.session-overlay-in {
+  animation: session-overlay-in 0.25s var(--ease) both;
+}
+
+/* 完成庆祝：文案上浮入场（略延迟，让对勾先落定） */
+@keyframes session-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.session-rise-in {
+  animation: session-rise-in 0.45s var(--ease) 0.15s both;
+}
