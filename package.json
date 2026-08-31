@@ -9,7 +9,8 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build:mindmap": "tsx scripts/build-mindmap-data.ts"
+    "build:mindmap": "tsx scripts/build-mindmap-data.ts",
+    "build:vocab2": "tsx scripts/build-vocab-v2.ts"
   },
   "dependencies": {
     "@fontsource/noto-serif-sc": "^5.3.0",

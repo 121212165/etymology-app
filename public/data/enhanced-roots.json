@@ -45,28 +45,20 @@
     },
     {
       "primaryText": "cept",
-      "aliases": [
-        "cap"
-      ],
+      "aliases": [],
       "meaning": "拿",
-      "layer": "core",
+      "layer": "middle",
       "wordIndices": [
         13,
         14,
         15,
-        19,
         217,
         218,
-        779,
-        781,
-        782,
-        783,
         1040,
         1763,
-        2416,
         4693
       ],
-      "wordCount": 14
+      "wordCount": 8
     },
     {
       "primaryText": "ceive",
@@ -83,36 +75,59 @@
       "wordCount": 5
     },
     {
+      "primaryText": "cap",
+      "aliases": [],
+      "meaning": "拿",
+      "layer": "middle",
+      "wordIndices": [
+        19,
+        779,
+        781,
+        782,
+        783,
+        2416
+      ],
+      "wordCount": 6
+    },
+    {
       "primaryText": "ceed",
       "aliases": [
-        "cess",
         "cede",
         "ced"
       ],
       "meaning": "走",
-      "layer": "core",
+      "layer": "middle",
       "wordIndices": [
         20,
         21,
-        22,
         23,
+        1037,
+        3466,
+        3467,
+        3538,
+        4736
+      ],
+      "wordCount": 8
+    },
+    {
+      "primaryText": "cess",
+      "aliases": [],
+      "meaning": "走",
+      "layer": "core",
+      "wordIndices": [
+        22,
         24,
         25,
         26,
         219,
         220,
         370,
-        1037,
         1765,
         1766,
-        3466,
-        3467,
         3473,
-        3538,
-        3539,
-        4736
+        3539
       ],
-      "wordCount": 19
+      "wordCount": 11
     },
     {
       "primaryText": "dict",
@@ -192,33 +207,36 @@
     },
     {
       "primaryText": "fect",
-      "aliases": [
-        "fic",
-        "fair"
-      ],
+      "aliases": [],
       "meaning": "做",
-      "layer": "core",
+      "layer": "middle",
       "wordIndices": [
         37,
         38,
         39,
         40,
+        1303,
+        3328
+      ],
+      "wordCount": 6
+    },
+    {
+      "primaryText": "fic",
+      "aliases": [],
+      "meaning": "做",
+      "layer": "middle",
+      "wordIndices": [
         42,
         43,
         44,
         45,
         46,
-        286,
-        1303,
         1310,
         1311,
-        1848,
         1909,
-        3328,
-        4376,
-        4716
+        4376
       ],
-      "wordCount": 18
+      "wordCount": 9
     },
     {
       "primaryText": "fer",
@@ -321,12 +339,10 @@
       "wordCount": 8
     },
     {
-      "primaryText": "miss",
-      "aliases": [
-        "mit"
-      ],
+      "primaryText": "mit",
+      "aliases": [],
       "meaning": "发送",
-      "layer": "core",
+      "layer": "middle",
       "wordIndices": [
         74,
         75,
@@ -334,13 +350,22 @@
         77,
         78,
         79,
+        985,
+        986
+      ],
+      "wordCount": 8
+    },
+    {
+      "primaryText": "miss",
+      "aliases": [],
+      "meaning": "发送",
+      "layer": "edge",
+      "wordIndices": [
         80,
         81,
-        985,
-        986,
         2955
       ],
-      "wordCount": 11
+      "wordCount": 3
     },
     {
       "primaryText": "port",
@@ -610,11 +635,8 @@
       "wordCount": 17
     },
     {
-      "primaryText": "stit",
-      "aliases": [
-        "sta",
-        "sist"
-      ],
+      "primaryText": "sta",
+      "aliases": [],
       "meaning": "站立",
       "layer": "core",
       "wordIndices": [
@@ -625,30 +647,13 @@
         131,
         132,
         133,
-        134,
-        135,
-        136,
-        468,
-        469,
-        470,
-        1083,
-        1085,
         1090,
-        1091,
-        2484,
         2488,
         2489,
         2490,
         2491,
-        2494,
         3137,
         3226,
-        3336,
-        3337,
-        3814,
-        3815,
-        3816,
-        4116,
         4253,
         4258,
         4266,
@@ -658,7 +663,21 @@
         4346,
         4737
       ],
-      "wordCount": 39
+      "wordCount": 22
+    },
+    {
+      "primaryText": "stit",
+      "aliases": [],
+      "meaning": "站立",
+      "layer": "middle",
+      "wordIndices": [
+        134,
+        135,
+        136,
+        1091,
+        2494
+      ],
+      "wordCount": 5
     },
     {
       "primaryText": "struct",
@@ -808,12 +827,9 @@
     },
     {
       "primaryText": "tain",
-      "aliases": [
-        "tent",
-        "ten"
-      ],
+      "aliases": [],
       "meaning": "持有",
-      "layer": "core",
+      "layer": "middle",
       "wordIndices": [
         173,
         174,
@@ -822,26 +838,9 @@
         177,
         178,
         179,
-        492,
-        1102,
-        1108,
-        1379,
-        1822,
-        1823,
-        1825,
-        2515,
-        2516,
-        2517,
-        2518,
-        2519,
-        2520,
-        3841,
-        4476,
-        4477,
-        4481,
-        4482
+        1102
       ],
-      "wordCount": 25
+      "wordCount": 8
     },
     {
       "primaryText": "tend",
@@ -1169,27 +1168,19 @@
       "wordCount": 2
     },
     {
-      "primaryText": "care",
-      "aliases": [
-        "cur",
-        "cern"
-      ],
+      "primaryText": "cur",
+      "aliases": [],
       "meaning": "关心",
-      "layer": "core",
+      "layer": "middle",
       "wordIndices": [
         233,
         234,
-        789,
-        791,
-        792,
-        1041,
-        1042,
         1232,
         1233,
         1235,
         2432
       ],
-      "wordCount": 11
+      "wordCount": 6
     },
     {
       "primaryText": "cus",
@@ -1216,27 +1207,14 @@
     },
     {
       "primaryText": "ition",
-      "aliases": [
-        "ion"
-      ],
+      "aliases": [],
       "meaning": "行为",
-      "layer": "core",
+      "layer": "edge",
       "wordIndices": [
         242,
-        251,
-        304,
-        355,
-        418,
-        462,
-        474,
-        492,
-        495,
-        4632,
-        4721,
-        5001,
-        5004
+        4632
       ],
-      "wordCount": 13
+      "wordCount": 2
     },
     {
       "primaryText": "tiv",
@@ -1260,6 +1238,26 @@
         493
       ],
       "wordCount": 3
+    },
+    {
+      "primaryText": "ion",
+      "aliases": [],
+      "meaning": "行为",
+      "layer": "core",
+      "wordIndices": [
+        251,
+        304,
+        355,
+        418,
+        462,
+        474,
+        492,
+        495,
+        4721,
+        5001,
+        5004
+      ],
+      "wordCount": 11
     },
     {
       "primaryText": "dition",
@@ -1436,6 +1434,18 @@
         4791
       ],
       "wordCount": 17
+    },
+    {
+      "primaryText": "fair",
+      "aliases": [],
+      "meaning": "做",
+      "layer": "edge",
+      "wordIndices": [
+        286,
+        1848,
+        4716
+      ],
+      "wordCount": 3
     },
     {
       "primaryText": "fec",
@@ -2150,6 +2160,27 @@
       "wordCount": 12
     },
     {
+      "primaryText": "sist",
+      "aliases": [],
+      "meaning": "站立",
+      "layer": "core",
+      "wordIndices": [
+        468,
+        469,
+        470,
+        1083,
+        1085,
+        2484,
+        3336,
+        3337,
+        3814,
+        3815,
+        3816,
+        4116
+      ],
+      "wordCount": 12
+    },
+    {
       "primaryText": "soci",
       "aliases": [],
       "meaning": "同伴",
@@ -2276,6 +2307,34 @@
         4475
       ],
       "wordCount": 3
+    },
+    {
+      "primaryText": "tent",
+      "aliases": [
+        "ten"
+      ],
+      "meaning": "持有",
+      "layer": "core",
+      "wordIndices": [
+        492,
+        1108,
+        1379,
+        1822,
+        1823,
+        1825,
+        2515,
+        2516,
+        2517,
+        2518,
+        2519,
+        2520,
+        3841,
+        4476,
+        4477,
+        4481,
+        4482
+      ],
+      "wordCount": 17
     },
     {
       "primaryText": "aug",
@@ -2523,19 +2582,14 @@
     },
     {
       "primaryText": "ing",
-      "aliases": [
-        "ist"
-      ],
+      "aliases": [],
       "meaning": "存在",
-      "layer": "middle",
+      "layer": "edge",
       "wordIndices": [
         605,
-        1788,
-        1789,
-        1790,
         3680
       ],
-      "wordCount": 5
+      "wordCount": 2
     },
     {
       "primaryText": "lief",
@@ -2724,6 +2778,18 @@
       "wordCount": 2
     },
     {
+      "primaryText": "care",
+      "aliases": [],
+      "meaning": "关心",
+      "layer": "edge",
+      "wordIndices": [
+        789,
+        791,
+        792
+      ],
+      "wordCount": 3
+    },
+    {
       "primaryText": "cast",
       "aliases": [],
       "meaning": "投掷",
@@ -2907,23 +2973,17 @@
     },
     {
       "primaryText": "clos",
-      "aliases": [
-        "clud"
-      ],
+      "aliases": [],
       "meaning": "关闭",
       "layer": "middle",
       "wordIndices": [
         929,
         931,
-        1044,
         1448,
         1449,
-        1657,
-        1771,
-        2424,
-        2425
+        1657
       ],
-      "wordCount": 9
+      "wordCount": 5
     },
     {
       "primaryText": "cloth",
@@ -3167,20 +3227,16 @@
       "wordCount": 5
     },
     {
-      "primaryText": "puls",
-      "aliases": [
-        "pel"
-      ],
+      "primaryText": "pel",
+      "aliases": [],
       "meaning": "推",
-      "layer": "middle",
+      "layer": "edge",
       "wordIndices": [
         1002,
         1003,
-        1033,
-        1797,
-        2411
+        1797
       ],
-      "wordCount": 5
+      "wordCount": 3
     },
     {
       "primaryText": "pens",
@@ -3257,6 +3313,17 @@
       "wordCount": 3
     },
     {
+      "primaryText": "puls",
+      "aliases": [],
+      "meaning": "推",
+      "layer": "edge",
+      "wordIndices": [
+        1033,
+        2411
+      ],
+      "wordCount": 2
+    },
+    {
       "primaryText": "pute",
       "aliases": [],
       "meaning": "计算",
@@ -3277,6 +3344,30 @@
         1285,
         3327,
         3699
+      ],
+      "wordCount": 4
+    },
+    {
+      "primaryText": "cern",
+      "aliases": [],
+      "meaning": "关心",
+      "layer": "edge",
+      "wordIndices": [
+        1041,
+        1042
+      ],
+      "wordCount": 2
+    },
+    {
+      "primaryText": "clud",
+      "aliases": [],
+      "meaning": "关闭",
+      "layer": "middle",
+      "wordIndices": [
+        1044,
+        1771,
+        2424,
+        2425
       ],
       "wordCount": 4
     },
@@ -3350,19 +3441,15 @@
       "wordCount": 2
     },
     {
-      "primaryText": "quire",
-      "aliases": [
-        "quer"
-      ],
+      "primaryText": "quer",
+      "aliases": [],
       "meaning": "寻求",
-      "layer": "middle",
+      "layer": "edge",
       "wordIndices": [
         1068,
-        3632,
-        3800,
-        3801
+        3632
       ],
-      "wordCount": 4
+      "wordCount": 2
     },
     {
       "primaryText": "quest",
@@ -3920,18 +4007,25 @@
     },
     {
       "primaryText": "liver",
-      "aliases": [
-        "liv"
-      ],
+      "aliases": [],
       "meaning": "递送",
-      "layer": "middle",
+      "layer": "edge",
       "wordIndices": [
         1325,
+        2762
+      ],
+      "wordCount": 2
+    },
+    {
+      "primaryText": "liv",
+      "aliases": [],
+      "meaning": "递送",
+      "layer": "edge",
+      "wordIndices": [
         1326,
-        2762,
         2763
       ],
-      "wordCount": 4
+      "wordCount": 2
     },
     {
       "primaryText": "pend",
@@ -4700,6 +4794,18 @@
         1785,
         2461,
         3559
+      ],
+      "wordCount": 3
+    },
+    {
+      "primaryText": "ist",
+      "aliases": [],
+      "meaning": "存在",
+      "layer": "edge",
+      "wordIndices": [
+        1788,
+        1789,
+        1790
       ],
       "wordCount": 3
     },
@@ -6727,6 +6833,17 @@
       "wordIndices": [
         3753,
         5006
+      ],
+      "wordCount": 2
+    },
+    {
+      "primaryText": "quire",
+      "aliases": [],
+      "meaning": "寻求",
+      "layer": "edge",
+      "wordIndices": [
+        3800,
+        3801
       ],
       "wordCount": 2
     },
@@ -12981,6 +13098,27 @@
       "weight": 0.5
     },
     {
+      "fromWordIndex": 241,
+      "toWordIndex": 3800,
+      "partText": "quire",
+      "partType": "root",
+      "weight": 0.3333333333333333
+    },
+    {
+      "fromWordIndex": 241,
+      "toWordIndex": 3801,
+      "partText": "quire",
+      "partType": "root",
+      "weight": 0.3333333333333333
+    },
+    {
+      "fromWordIndex": 3800,
+      "toWordIndex": 3801,
+      "partText": "quire",
+      "partType": "root",
+      "weight": 0.3333333333333333
+    },
+    {
       "fromWordIndex": 242,
       "toWordIndex": 4632,
       "partText": "ition",
@@ -15333,11 +15471,25 @@
       "weight": 0.5
     },
     {
-      "fromWordIndex": 421,
-      "toWordIndex": 422,
-      "partText": "prov",
+      "fromWordIndex": 422,
+      "toWordIndex": 2409,
+      "partText": "prove",
       "partType": "root",
-      "weight": 0.5
+      "weight": 0.3333333333333333
+    },
+    {
+      "fromWordIndex": 422,
+      "toWordIndex": 3591,
+      "partText": "prove",
+      "partType": "root",
+      "weight": 0.3333333333333333
+    },
+    {
+      "fromWordIndex": 2409,
+      "toWordIndex": 3591,
+      "partText": "prove",
+      "partType": "root",
+      "weight": 0.3333333333333333
     },
     {
       "fromWordIndex": 426,
@@ -15401,111 +15553,6 @@
       "partText": "rise",
       "partType": "root",
       "weight": 0.5
-    },
-    {
-      "fromWordIndex": 439,
-      "toWordIndex": 440,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 439,
-      "toWordIndex": 441,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 439,
-      "toWordIndex": 442,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 439,
-      "toWordIndex": 443,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 439,
-      "toWordIndex": 444,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 440,
-      "toWordIndex": 441,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 440,
-      "toWordIndex": 442,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 440,
-      "toWordIndex": 443,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 440,
-      "toWordIndex": 444,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 441,
-      "toWordIndex": 442,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 441,
-      "toWordIndex": 443,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 441,
-      "toWordIndex": 444,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 442,
-      "toWordIndex": 443,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 442,
-      "toWordIndex": 444,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
-    },
-    {
-      "fromWordIndex": 443,
-      "toWordIndex": 444,
-      "partText": "ar",
-      "partType": "root",
-      "weight": 0.16666666666666666
     },
     {
       "fromWordIndex": 439,
@@ -16037,315 +16084,70 @@
       "toWordIndex": 476,
       "partText": "sur",
       "partType": "root",
-      "weight": 0.1
+      "weight": 0.2
     },
     {
       "fromWordIndex": 475,
       "toWordIndex": 1691,
       "partText": "sur",
       "partType": "root",
-      "weight": 0.1
+      "weight": 0.2
     },
     {
       "fromWordIndex": 475,
       "toWordIndex": 2502,
       "partText": "sur",
       "partType": "root",
-      "weight": 0.1
+      "weight": 0.2
     },
     {
       "fromWordIndex": 475,
       "toWordIndex": 2503,
       "partText": "sur",
       "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 475,
-      "toWordIndex": 4387,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 475,
-      "toWordIndex": 4390,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 475,
-      "toWordIndex": 4391,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 475,
-      "toWordIndex": 4393,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 475,
-      "toWordIndex": 4399,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
+      "weight": 0.2
     },
     {
       "fromWordIndex": 476,
       "toWordIndex": 1691,
       "partText": "sur",
       "partType": "root",
-      "weight": 0.1
+      "weight": 0.2
     },
     {
       "fromWordIndex": 476,
       "toWordIndex": 2502,
       "partText": "sur",
       "partType": "root",
-      "weight": 0.1
+      "weight": 0.2
     },
     {
       "fromWordIndex": 476,
       "toWordIndex": 2503,
       "partText": "sur",
       "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 476,
-      "toWordIndex": 4387,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 476,
-      "toWordIndex": 4390,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 476,
-      "toWordIndex": 4391,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 476,
-      "toWordIndex": 4393,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 476,
-      "toWordIndex": 4399,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
+      "weight": 0.2
     },
     {
       "fromWordIndex": 1691,
       "toWordIndex": 2502,
       "partText": "sur",
       "partType": "root",
-      "weight": 0.1
+      "weight": 0.2
     },
     {
       "fromWordIndex": 1691,
       "toWordIndex": 2503,
       "partText": "sur",
       "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 1691,
-      "toWordIndex": 4387,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 1691,
-      "toWordIndex": 4390,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 1691,
-      "toWordIndex": 4391,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 1691,
-      "toWordIndex": 4393,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 1691,
-      "toWordIndex": 4399,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
+      "weight": 0.2
     },
     {
       "fromWordIndex": 2502,
       "toWordIndex": 2503,
       "partText": "sur",
       "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 2502,
-      "toWordIndex": 4387,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 2502,
-      "toWordIndex": 4390,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 2502,
-      "toWordIndex": 4391,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 2502,
-      "toWordIndex": 4393,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 2502,
-      "toWordIndex": 4399,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 2503,
-      "toWordIndex": 4387,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 2503,
-      "toWordIndex": 4390,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 2503,
-      "toWordIndex": 4391,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 2503,
-      "toWordIndex": 4393,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 2503,
-      "toWordIndex": 4399,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 4387,
-      "toWordIndex": 4390,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 4387,
-      "toWordIndex": 4391,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 4387,
-      "toWordIndex": 4393,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 4387,
-      "toWordIndex": 4399,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 4390,
-      "toWordIndex": 4391,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 4390,
-      "toWordIndex": 4393,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 4390,
-      "toWordIndex": 4399,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 4391,
-      "toWordIndex": 4393,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 4391,
-      "toWordIndex": 4399,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
-    },
-    {
-      "fromWordIndex": 4393,
-      "toWordIndex": 4399,
-      "partText": "sur",
-      "partType": "root",
-      "weight": 0.1
+      "weight": 0.2
     },
     {
       "fromWordIndex": 477,
@@ -23712,13 +23514,6 @@
       "weight": 0.3333333333333333
     },
     {
-      "fromWordIndex": 2409,
-      "toWordIndex": 3591,
-      "partText": "prove",
-      "partType": "root",
-      "weight": 0.5
-    },
-    {
       "fromWordIndex": 2444,
       "toWordIndex": 2445,
       "partText": "dustr",
@@ -26337,13 +26132,6 @@
       "weight": 0.5
     },
     {
-      "fromWordIndex": 3800,
-      "toWordIndex": 3801,
-      "partText": "quire",
-      "partType": "root",
-      "weight": 0.5
-    },
-    {
       "fromWordIndex": 3803,
       "toWordIndex": 3975,
       "partText": "search",
@@ -27213,11 +27001,11 @@
     }
   ],
   "stats": {
-    "totalRoots": 568,
-    "coreRoots": 36,
-    "middleRoots": 101,
-    "edgeRoots": 431,
-    "mergedGroups": 45,
-    "totalLinks": 2846
+    "totalRoots": 584,
+    "coreRoots": 33,
+    "middleRoots": 107,
+    "edgeRoots": 444,
+    "mergedGroups": 29,
+    "totalLinks": 2799
   }
 }

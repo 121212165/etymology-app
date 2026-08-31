@@ -1,5 +1,5 @@
 export interface CooccurPart {
-  type: 'prefix' | 'root' | 'suffix'
+  type: 'prefix' | 'root' | 'suffix' | 'linker'
   text: string
   meaning: string
 }
@@ -18,7 +18,7 @@ export interface CooccurLink {
   from: number
   to: number
   partText: string
-  partType: 'prefix' | 'root' | 'suffix'
+  partType: CooccurPart['type']
   weight: number
 }
 
@@ -45,6 +45,8 @@ export function buildCooccurrenceLinks(
 
   for (const word of input.words) {
     for (const part of word.parts) {
+      // 衔接字母（linker）无词源语义，不参与共现连接
+      if (part.type === 'linker') continue
       const key = `${part.type}:${part.text}`
       if (!partToWords.has(key)) {
         partToWords.set(key, { indices: [], part })
