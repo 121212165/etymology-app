@@ -292,3 +292,10 @@ code, pre, .font-mono {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Linker part tag（词源拆解衔接字母, data-quality v2）── */
+/* 衔接字母无词源语义，用中性灰弱化显示；不改既有 part-tag 规则 */
+.part-tag-linker {
+  background: color-mix(in srgb, var(--text-muted) 10%, transparent);
+  color: var(--text-muted);
+}

@@ -75,13 +75,15 @@ export default async function WordPage({
   }
 
   const partTypeLabel = (type: string) =>
-    type === "prefix" ? "前缀" : type === "root" ? "词根" : "后缀";
+    type === "prefix" ? "前缀" : type === "root" ? "词根" : type === "linker" ? "衔接" : "后缀";
 
   const partColorClass = (type: string) =>
     type === "prefix"
       ? "text-prefix"
       : type === "root"
       ? "text-root"
+      : type === "linker"
+      ? "text-text-muted"
       : "text-suffix";
 
   return (
@@ -124,13 +126,15 @@ export default async function WordPage({
                 {i > 0 && <div className="morpheme-plus">+</div>}
                 <div className="morpheme-node">
                   <span className={`font-mono text-xl font-semibold mb-1 ${partColorClass(part.type)}`}>
-                    {part.text}
+                    {part.surface || part.text}
                   </span>
                   <span className="text-xs text-text-muted uppercase tracking-wider">
                     {partTypeLabel(part.type)}
                   </span>
                   <span className="text-xs text-text-secondary mt-1 text-center">
-                    {part.meaning}
+                    {part.surface
+                      ? `引用形态 ${part.text}，${part.meaning}`
+                      : part.meaning}
                   </span>
                 </div>
               </div>
@@ -144,18 +148,33 @@ export default async function WordPage({
           <p className="text-text-primary leading-loose text-[15px]">
             <span className="text-text-secondary">{entry.word}</span>
             {" 由 "}
-            {entry.parts.map((part, i) => (
-              <span key={i}>
-                {i > 0 && " + "}
-                <span className={`font-mono font-medium ${partColorClass(part.type)}`}>
-                  {part.text}
+            {entry.parts.map((part, i) =>
+              part.type === "linker" ? (
+                // 衔接字母：中性裸字母，无括号意义
+                <span key={i}>
+                  {i > 0 && " + "}
+                  <span className="font-mono text-text-muted">{part.text}</span>
                 </span>
-                <span className="text-text-muted">（{part.meaning}）</span>
-              </span>
-            ))}
+              ) : (
+                <span key={i}>
+                  {i > 0 && " + "}
+                  <span className={`font-mono font-medium ${partColorClass(part.type)}`}>
+                    {part.surface || part.text}
+                  </span>
+                  <span className="text-text-muted">
+                    {part.surface
+                      ? `（${part.text}，${part.meaning}）`
+                      : `（${part.meaning}）`}
+                  </span>
+                </span>
+              )
+            )}
             {" 组成，字面意思为「"}
             <span className="text-text-secondary italic">
-              {entry.parts.map((p) => p.meaning).join(" + ")}
+              {entry.parts
+                .filter((p) => p.type !== "linker")
+                .map((p) => p.meaning)
+                .join(" + ")}
             </span>
             」，引申为「{entry.definition}」。
           </p>
