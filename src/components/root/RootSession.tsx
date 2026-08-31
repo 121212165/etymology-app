@@ -1,7 +1,7 @@
 // src/components/root/RootSession.tsx
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react'
 import { PartTags } from '@/components/word/PartTags'
@@ -14,6 +14,7 @@ import { useAppStore } from '@/store/app-store'
 import type { VocabEntry } from '@/lib/types'
 import type { MindMapData, EnhancedRootNode } from '@/lib/mindmap-types'
 import { MicroCelebrate } from '@/components/feedback/MicroCelebrate'
+import { useSwipeNavigation } from '@/hooks/useSwipeNavigation'
 
 interface RootSessionProps {
   rootText: string
@@ -66,7 +67,7 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
     })
   }, [enhancedRoot, searchIndex, setSearchIndex, rootText])
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (isLast) {
       markRootCompleted(rootText)
       setSessionFinished(true)
@@ -74,11 +75,45 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
     }
     setCurrentIndex(i => i + 1)
     setCelebrationTick(t => t + 1)
-  }
+  }, [isLast, markRootCompleted, rootText])
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (currentIndex > 0) setCurrentIndex(i => i - 1)
-  }
+  }, [currentIndex])
+
+  // ── 键盘导航：←/→ 换词 ──
+  // 输入类元素聚焦或带修饰键时忽略；完成态下不再换词。
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (sessionFinished) return
+      if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        handleNext()
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        handlePrev()
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [sessionFinished, handleNext, handlePrev])
+
+  // ── 触摸导航：词卡上水平滑动换词 ──
+  const swipeHandlers = useSwipeNavigation({
+    onSwipeLeft: handleNext,
+    onSwipeRight: handlePrev,
+    enabled: !sessionFinished,
+  })
 
   // 首次渲染跳过庆祝触发
   useEffect(() => {
@@ -149,8 +184,8 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
 
       <hr className="editorial-divider mb-8" />
 
-      {/* ── 当前单词卡片 ── */}
-      <div className="editorial-card p-6 lg:p-8 mb-6">
+      {/* ── 当前单词卡片（支持水平滑动换词） ── */}
+      <div className="editorial-card p-6 lg:p-8 mb-6" {...swipeHandlers}>
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
             <h2 className="text-3xl lg:text-4xl text-text-primary mb-2">
