@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ArrowRight, GraduationCap } from 'lucide-react'
+import { ArrowLeft, ArrowRight, BookOpen, GraduationCap, Network } from 'lucide-react'
 import { PartTags } from '@/components/word/PartTags'
 import { SegmentedWord } from '@/components/word/SegmentedWord'
 import { SpeakButton } from '@/components/word/SpeakButton'
@@ -12,6 +12,7 @@ import { MaskedText } from '@/components/mask/MaskedText'
 import { MaskToggle } from '@/components/mask/MaskToggle'
 import { useMaskStore } from '@/store/mask-store'
 import { MindMap } from '@/components/mindmap/MindMap'
+import { FlipPanel } from '@/components/mindmap/FlipPanel'
 import { useProgressStore } from '@/store/progress-store'
 import { loadMindMapData, getCoreRoots, getMiddleRoots } from '@/lib/mindmap-loader'
 import { loadSearchIndex } from '@/lib/data-loader'
@@ -37,6 +38,12 @@ interface RootSessionProps {
 
 /** 完成庆祝停留时长，与 SessionCelebrate 倒计时环动画（2s）同步 */
 const CELEBRATE_COUNTDOWN_MS = 2000
+
+/**
+ * 翻面状态（词卡面/导图面）的跨挂载持久值：page 层用 key={displayRootText} 强制重挂载
+ * RootSession，模块级变量让「切词根」时保持用户所在面；整页刷新后回到词卡面。
+ */
+let persistedFlipped = false
 
 /**
  * 挑「下一个未完成词根」的跳转目标：
@@ -84,6 +91,12 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
   const [quizSelecting, setQuizSelecting] = useState(false)
   // 释义遮罩：当前词卡的揭示状态；换词时重置回遮挡（难度档位见 mask-store）
   const [revealed, setRevealed] = useState(false)
+  // 翻面：false = 词卡面（front），true = 关联网络面（back）；本地 state，受控值同步到模块级持久值
+  const [flipped, setFlipped] = useState(() => persistedFlipped)
+  useEffect(() => {
+    persistedFlipped = flipped
+  }, [flipped])
+  const toggleFlip = useCallback(() => setFlipped((t) => !t), [])
   const maskLevel = useMaskStore((s) => s.maskLevel)
   const definitionMasked = maskLevel !== 'off'
   const morphemesMasked = maskLevel === 'hard'
@@ -230,11 +243,14 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
         // 空格揭示当前词卡（遮挡关闭时 reveal 无副作用，仍拦下默认滚动）
         e.preventDefault()
         setRevealed(true)
+      } else if (e.key === 'm') {
+        // m：词卡 / 关联网络翻面（无修饰键、非输入焦点；完成态与自测态已在上方提前返回）
+        toggleFlip()
       }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
-  }, [sessionFinished, quizActive, handleNext, handlePrev])
+  }, [sessionFinished, quizActive, handleNext, handlePrev, toggleFlip])
 
   // ── 触摸导航：词卡上水平滑动换词（学习模式专用） ──
   const swipeHandlers = useSwipeNavigation({
@@ -324,10 +340,11 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
 
       <hr className="editorial-divider mb-8" />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
-        {/* ── 左列：变体条 + 词卡/自测视图 + 导航（lg+ 固定在视口内） ── */}
-        <div className="lg:sticky lg:top-20">
-          {quizMode ? (
+      {/* ── 单列翻折容器：正面词卡/自测视图，背面关联网络导图（按钮或 m 键切换） ── */}
+      <FlipPanel
+        flipped={flipped}
+        front={
+          quizMode ? (
             <QuizView words={displayWords} mode={quizMode} onExit={exitQuiz} />
           ) : quizSelecting ? (
             <div className="editorial-card p-6 lg:p-8" data-testid="quiz-mode-select">
@@ -467,7 +484,7 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
                 </MaskedText>
               </div>
 
-              {/* ── 导航（含自测入口） ── */}
+              {/* ── 导航（含自测入口与翻面按钮） ── */}
               <div className="flex items-center justify-between gap-2">
                 <button
                   type="button"
@@ -479,14 +496,28 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
                   上一个
                 </button>
 
-                <button
-                  type="button"
-                  onClick={() => setQuizSelecting(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-text-secondary hover:text-accent transition-colors"
-                >
-                  <GraduationCap size={16} />
-                  自测
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setQuizSelecting(true)}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-text-secondary hover:text-accent transition-colors"
+                  >
+                    <GraduationCap size={16} />
+                    自测
+                  </button>
+
+                  {/* 翻面：词卡 ↔ 关联网络导图（快捷键 m），文案指示翻面后的去处 */}
+                  {enhancedRoot && (
+                    <button
+                      type="button"
+                      onClick={toggleFlip}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm text-text-secondary hover:text-accent transition-colors"
+                    >
+                      <Network size={16} />
+                      {flipped ? '看词卡' : '看导图'}
+                    </button>
+                  )}
+                </div>
 
                 <button
                   type="button"
@@ -500,21 +531,42 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
               <MicroCelebrate trigger={celebrationTick} message="已看" />
             </>
           )}
-        </div>
-
-        {/* ── 右列：思维导图（辅助可视化当前词根的关联网络，高亮当前词） ── */}
-        {enhancedRoot && mindmapData && searchIndex?.data && (
-          <div>
-            <p className="editorial-label mb-3">关联网络</p>
-            <MindMap
-              data={mindmapData}
-              vocab={searchIndex.data}
-              centerRoot={enhancedRoot}
-              currentWord={current?.word}
-            />
-          </div>
-        )}
-      </div>
+        back={
+          <>
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <p className="editorial-label">关联网络</p>
+              {/* 背面上的返回入口：移动端没有 m 键，翻回词卡面必须可点 */}
+              {enhancedRoot && (
+                <button
+                  type="button"
+                  onClick={toggleFlip}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-text-secondary hover:text-accent transition-colors"
+                >
+                  <BookOpen size={16} />
+                  看词卡
+                </button>
+              )}
+            </div>
+            {enhancedRoot && mindmapData && searchIndex?.data ? (
+              <MindMap
+                data={mindmapData}
+                vocab={searchIndex.data}
+                centerRoot={enhancedRoot}
+                currentWord={current?.word}
+              />
+            ) : enhancedRoot ? (
+              /* 懒加载未就绪（enhancedRoot 有值但 mindmapData/searchIndex 未到）时的占位 */
+              <div className="editorial-card p-8 text-center text-sm text-text-muted">
+                导图加载中…
+              </div>
+            ) : (
+              <div className="editorial-card p-8 text-center text-sm text-text-muted">
+                暂无关联网络
+              </div>
+            )}
+          </>
+        }
+      />
     </div>
   )
 }
