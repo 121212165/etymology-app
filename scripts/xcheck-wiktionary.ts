@@ -14,7 +14,7 @@
 import { createReadStream, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { TopLevelJsonScanner } from '../src/lib/xcheck/stream-json'
-import { collectAncestors, parseIndexWords, type EtymonHit, type EtymwnIndex } from '../src/lib/xcheck/etymwn'
+import { collectAncestors, parseIndexWords, type EtymwnIndex } from '../src/lib/xcheck/etymwn'
 import {
   checkRootWiktionary,
   expandFrontier,
@@ -145,8 +145,8 @@ async function main(): Promise<void> {
   const startWords = [...new Set(samplesByRoot.flat().map((s) => s.word))]
 
   let runStatus: SourceRunStatus
-  let rootsOut: RootCheckResult[] = []
-  let wordsOut: WordCheckResult[] = []
+  const rootsOut: RootCheckResult[] = []
+  const wordsOut: WordCheckResult[] = []
   let frontierSizes: number[] = []
   let indexEntries = 0
   let absentSamples = 0
