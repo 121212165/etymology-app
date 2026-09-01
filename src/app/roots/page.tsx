@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { TopBar } from '@/components/layout/TopBar'
 import { loadMindMapData } from '@/lib/mindmap-loader'
+import { orderRoots } from '@/lib/root-ordering'
 import { useProgressStore } from '@/store/progress-store'
 import type { EnhancedRootNode } from '@/lib/mindmap-types'
 
@@ -81,9 +82,9 @@ export default function AllRootsPage() {
 
         <hr className="editorial-divider mb-12" />
 
-        {/* ── 按层分组的词根云 ── */}
+        {/* ── 按层分组的词根云（层内走语义主题排列 v2） ── */}
         {LAYERS.map(({ key, label, desc }) => {
-          const layerRoots = roots.filter(r => r.layer === key)
+          const layerRoots = orderRoots(roots.filter(r => r.layer === key))
           if (layerRoots.length === 0) return null
           return (
             <section key={key} className="mb-12">
