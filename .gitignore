@@ -6,3 +6,7 @@ tsconfig.tsbuildinfo
 
 # vercel cli 本地链接与拉取的环境变量
 .vercel/
+.cache/
+
+# 词源数据缓存（体积大，不进仓库）
+.cache/
