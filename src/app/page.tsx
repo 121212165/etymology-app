@@ -8,6 +8,8 @@ import { TopBar } from '@/components/layout/TopBar'
 import { useSearch } from '@/hooks/useSearch'
 import { useAppStore } from '@/store/app-store'
 import { useProgressStore } from '@/store/progress-store'
+import { useMaskStore } from '@/store/mask-store'
+import { MaskedText } from '@/components/mask/MaskedText'
 import { loadMindMapData, getCoreRoots, getMiddleRoots } from '@/lib/mindmap-loader'
 import type { EnhancedRootNode } from '@/lib/mindmap-types'
 
@@ -23,6 +25,34 @@ export default function HomePage() {
   // 思维导图数据加载失败时给出独立错误与重试入口，避免首页永久转圈
   const [mindmapError, setMindmapError] = useState<string | null>(null)
   const [mindmapLoading, setMindmapLoading] = useState(true)
+
+  // ── 这组词释义遮罩：空格整页揭示，点击单点揭示（难度档位见 mask-store） ──
+  const maskLevel = useMaskStore((s) => s.maskLevel)
+  const maskOn = maskLevel !== 'off'
+  const [revealedWords, setRevealedWords] = useState<Record<string, boolean>>({})
+  const [allRevealed, setAllRevealed] = useState(false)
+
+  useEffect(() => {
+    if (!maskOn) return
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return
+      }
+      if (e.key === ' ') {
+        e.preventDefault()
+        setAllRevealed(true)
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [maskOn])
 
   const loadMindmap = () => {
     setMindmapLoading(true)
@@ -182,7 +212,12 @@ export default function HomePage() {
         {/* ── 焦点词根下的词汇预览 ── */}
         {focusWords.length > 0 && (
           <section className="mb-14">
-            <p className="editorial-label mb-5">这组词</p>
+            <div className="flex items-baseline justify-between mb-5 max-w-2xl mx-auto">
+              <p className="editorial-label">这组词</p>
+              {maskOn && !allRevealed && (
+                <p className="text-xs text-text-muted">已遮释义 · 空格揭示全部</p>
+              )}
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-w-2xl mx-auto">
               {focusWords.map((word) => (
                 <Link
@@ -198,17 +233,26 @@ export default function HomePage() {
                       .filter(p => p.type === 'root')
                       .slice(0, 1)
                       .map((p, i) => (
-                        <span
+                        <MaskedText
                           key={i}
+                          // 全遮档位下词根标记一并遮挡；点击在卡片内揭示而非跳转
+                          active={maskLevel === 'hard'}
+                          revealed={allRevealed || !!revealedWords[word.word]}
+                          onReveal={() => setRevealedWords(prev => ({ ...prev, [word.word]: true }))}
                           className="text-xs font-mono text-root shrink-0"
                         >
                           {p.text}
-                        </span>
+                        </MaskedText>
                       ))}
                   </div>
-                  <p className="text-xs text-text-secondary truncate">
+                  <MaskedText
+                    active={maskOn}
+                    revealed={allRevealed || !!revealedWords[word.word]}
+                    onReveal={() => setRevealedWords(prev => ({ ...prev, [word.word]: true }))}
+                    className="text-xs text-text-secondary truncate"
+                  >
                     {word.definition}
-                  </p>
+                  </MaskedText>
                 </Link>
               ))}
             </div>

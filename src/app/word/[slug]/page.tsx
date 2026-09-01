@@ -2,6 +2,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import Link from "next/link";
 import { SpeakButton } from "@/components/word/SpeakButton";
+import { SegmentedWord } from "@/components/word/SegmentedWord";
 import { ArrowLeft } from "lucide-react";
 import type { VocabEntry, RootIndex } from "@/lib/types";
 
@@ -104,8 +105,12 @@ export default async function WordPage({
         <div className="mb-10">
           <div className="flex items-start justify-between gap-4">
             <div>
+              {/* 词素中心点拆分标题：spec · ial · ize；sr-only 保留原词供读屏 */}
               <h1 className="text-4xl lg:text-5xl text-text-primary mb-2">
-                {entry.word}
+                <span className="sr-only">{entry.word}</span>
+                <span aria-hidden="true">
+                  <SegmentedWord parts={entry.parts} word={entry.word} />
+                </span>
               </h1>
               <p className="text-lg text-text-secondary leading-relaxed">
                 {entry.definition}
@@ -123,7 +128,7 @@ export default async function WordPage({
           <div className="morpheme-timeline">
             {entry.parts.map((part, i) => (
               <div key={i} className="contents">
-                {i > 0 && <div className="morpheme-plus">+</div>}
+                {i > 0 && <div className="morpheme-plus">·</div>}
                 <div className="morpheme-node">
                   <span className={`font-mono text-xl font-semibold mb-1 ${partColorClass(part.type)}`}>
                     {part.surface || part.text}
@@ -152,12 +157,12 @@ export default async function WordPage({
               part.type === "linker" ? (
                 // 衔接字母：中性裸字母，无括号意义
                 <span key={i}>
-                  {i > 0 && " + "}
+                  {i > 0 && " · "}
                   <span className="font-mono text-text-muted">{part.text}</span>
                 </span>
               ) : (
                 <span key={i}>
-                  {i > 0 && " + "}
+                  {i > 0 && " · "}
                   <span className={`font-mono font-medium ${partColorClass(part.type)}`}>
                     {part.surface || part.text}
                   </span>
@@ -174,7 +179,7 @@ export default async function WordPage({
               {entry.parts
                 .filter((p) => p.type !== "linker")
                 .map((p) => p.meaning)
-                .join(" + ")}
+                .join(" · ")}
             </span>
             」，引申为「{entry.definition}」。
           </p>

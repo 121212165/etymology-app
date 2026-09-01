@@ -2,6 +2,7 @@
 
 import { SearchInput } from "@/components/search/SearchInput";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { MaskToggle } from "@/components/mask/MaskToggle";
 import { TreesIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -20,6 +21,7 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
+        <MaskToggle />
         <ThemeToggle />
       </div>
     </header>

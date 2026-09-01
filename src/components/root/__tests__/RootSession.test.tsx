@@ -4,6 +4,7 @@ import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import type React from "react";
 import { RootSession } from "../RootSession";
 import { useProgressStore } from "@/store/progress-store";
+import { useMaskStore } from "@/store/mask-store";
 import type { VocabEntry } from "@/lib/types";
 
 // next/link 在 jsdom 环境下渲染为普通 <a>
@@ -184,5 +185,62 @@ describe("RootSession", () => {
     // 不应崩溃，且回退到首词
     expect(screen.getByRole("heading", { level: 2, name: "port" })).toBeInTheDocument();
     expect(screen.getByText("carry")).toBeInTheDocument();
+  });
+});
+
+describe("RootSession 释义遮罩", () => {
+  beforeEach(() => {
+    useProgressStore.setState({
+      viewedWords: [],
+      viewedWordSet: {},
+      completedRoots: [],
+      currentRoot: null,
+      quizResults: {},
+    });
+    useMaskStore.setState({ maskLevel: "easy" });
+    pushMock.mockClear();
+  });
+
+  afterEach(() => {
+    // 恢复无遮罩，避免影响其他用例文件对 store 的假设
+    useMaskStore.setState({ maskLevel: "off" });
+    cleanup();
+  });
+
+  const revealButtons = () =>
+    screen.getAllByRole("button", { name: "点击揭示内容" });
+
+  it("遮释义档位下出现揭示入口，空格揭示", () => {
+    render(<RootSession rootText="act" rootMeaning="做" words={sampleWords} />);
+    // easy：仅释义被遮挡（1 个揭示入口），构词区可见
+    expect(revealButtons()).toHaveLength(1);
+    fireEvent.keyDown(window, { key: " " });
+    expect(screen.queryByRole("button", { name: "点击揭示内容" })).not.toBeInTheDocument();
+  });
+
+  it("点击释义区域揭示", () => {
+    render(<RootSession rootText="act" rootMeaning="做" words={sampleWords} />);
+    fireEvent.click(revealButtons()[0]);
+    expect(screen.queryByRole("button", { name: "点击揭示内容" })).not.toBeInTheDocument();
+  });
+
+  it("全遮档位下释义与构词区均遮挡", () => {
+    useMaskStore.setState({ maskLevel: "hard" });
+    render(<RootSession rootText="act" rootMeaning="做" words={sampleWords} />);
+    expect(revealButtons()).toHaveLength(2);
+  });
+
+  it("无遮罩档位不出现揭示入口", () => {
+    useMaskStore.setState({ maskLevel: "off" });
+    render(<RootSession rootText="act" rootMeaning="做" words={sampleWords} />);
+    expect(screen.queryByRole("button", { name: "点击揭示内容" })).not.toBeInTheDocument();
+  });
+
+  it("换词后新卡重新遮挡", () => {
+    render(<RootSession rootText="act" rootMeaning="做" words={sampleWords} />);
+    fireEvent.keyDown(window, { key: " " }); // 揭示第一张卡
+    expect(screen.queryByRole("button", { name: "点击揭示内容" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText("下一个")); // -> action
+    expect(revealButtons()).toHaveLength(1);
   });
 });

@@ -6,7 +6,11 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, ArrowRight, GraduationCap } from 'lucide-react'
 import { PartTags } from '@/components/word/PartTags'
+import { SegmentedWord } from '@/components/word/SegmentedWord'
 import { SpeakButton } from '@/components/word/SpeakButton'
+import { MaskedText } from '@/components/mask/MaskedText'
+import { MaskToggle } from '@/components/mask/MaskToggle'
+import { useMaskStore } from '@/store/mask-store'
 import { MindMap } from '@/components/mindmap/MindMap'
 import { useProgressStore } from '@/store/progress-store'
 import { loadMindMapData, getCoreRoots, getMiddleRoots } from '@/lib/mindmap-loader'
@@ -78,6 +82,11 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
   // 自测模式：null = 学习模式；quizSelecting = 展示模式选择；quizMode = 自测进行中
   const [quizMode, setQuizMode] = useState<QuizMode | null>(null)
   const [quizSelecting, setQuizSelecting] = useState(false)
+  // 释义遮罩：当前词卡的揭示状态；换词时重置回遮挡（难度档位见 mask-store）
+  const [revealed, setRevealed] = useState(false)
+  const maskLevel = useMaskStore((s) => s.maskLevel)
+  const definitionMasked = maskLevel !== 'off'
+  const morphemesMasked = maskLevel === 'hard'
 
   const firstRenderRef = useRef(true)
   const continueHandledRef = useRef(false)
@@ -125,6 +134,11 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
   useEffect(() => {
     if (current) markWordViewed(current.word)
   }, [current, markWordViewed])
+
+  // 换词后新卡重新遮挡，保持「见词回想」节奏
+  useEffect(() => {
+    setRevealed(false)
+  }, [safeIndex])
 
   // 懒加载思维导图数据（仅一次）；辅助可视化，加载失败不阻塞主流程，但记录上下文便于排查
   useEffect(() => {
@@ -191,7 +205,7 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
     return () => clearTimeout(timer)
   }, [sessionFinished, handleContinue])
 
-  // ── 键盘导航：←/→ 换词（学习模式专用） ──
+  // ── 键盘导航：←/→ 换词，空格揭示遮罩（学习模式专用） ──
   // 输入类元素聚焦或带修饰键时忽略；完成态/自测态不再换词。
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -212,6 +226,10 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault()
         handlePrev()
+      } else if (e.key === ' ') {
+        // 空格揭示当前词卡（遮挡关闭时 reveal 无副作用，仍拦下默认滚动）
+        e.preventDefault()
+        setRevealed(true)
       }
     }
     window.addEventListener('keydown', onKeyDown)
@@ -292,6 +310,8 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
             {rootText}
           </h1>
           <span className="text-lg text-text-secondary">{rootMeaning}</span>
+          {/* 遮罩难度切换（个人中心上线前的全局入口） */}
+          <MaskToggle className="ml-auto self-center" />
         </div>
         {/* 进度条：只显示比例，不显示 X/Y 数字，避免暴露总数造成压迫感 */}
         <div className="h-0.5 bg-bg-elevated rounded-full overflow-hidden">
@@ -367,67 +387,84 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
               <div className="editorial-card p-6 lg:p-8 mb-6" {...swipeHandlers}>
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
+                    {/* 词素中心点拆分标题：spec · ial · ize；sr-only 保留原词供读屏/测试 */}
                     <h2 className="text-3xl lg:text-4xl text-text-primary mb-2">
-                      {current.word}
+                      <span className="sr-only">{current.word}</span>
+                      <span aria-hidden="true">
+                        <SegmentedWord parts={current.parts} word={current.word} />
+                      </span>
                     </h2>
-                    <p className="text-text-secondary leading-relaxed">
+                    <MaskedText
+                      active={definitionMasked}
+                      revealed={revealed}
+                      onReveal={() => setRevealed(true)}
+                      className="text-text-secondary leading-relaxed"
+                    >
                       {current.definition}
-                    </p>
+                    </MaskedText>
                   </div>
                   <SpeakButton word={current.word} />
                 </div>
 
-                <div className="mt-5">
-                  <PartTags parts={current.parts} />
-                </div>
+                {/* 构词拆解区：仅「全遮」档位遮挡，遮释义档位下作为提示可见 */}
+                <MaskedText
+                  as="div"
+                  active={morphemesMasked}
+                  revealed={revealed}
+                  onReveal={() => setRevealed(true)}
+                >
+                  <div className="mt-5">
+                    <PartTags parts={current.parts} />
+                  </div>
 
-                <hr className="editorial-divider my-6" />
+                  <hr className="editorial-divider my-6" />
 
-                <p className="text-sm text-text-secondary leading-relaxed">
-                  <span className="text-text-primary font-medium">{current.word}</span>
-                  {' 由 '}
-                  {current.parts.map((part, i) =>
-                    part.type === 'linker' ? (
-                      // 衔接字母：中性裸字母，无括号意义（如 verbal 的 b）
-                      <span key={i}>
-                        {i > 0 && ' + '}
-                        <span className="font-mono text-text-muted">{part.text}</span>
-                      </span>
-                    ) : (
-                      <span key={i}>
-                        {i > 0 && ' + '}
-                        <span className="font-mono text-root">{part.surface || part.text}</span>
-                        <span className="text-text-muted">
-                          {part.surface
-                            ? `（${part.text}，${part.meaning}）`
-                            : `（${part.meaning}）`}
+                  <p className="text-sm text-text-secondary leading-relaxed">
+                    <span className="text-text-primary font-medium">{current.word}</span>
+                    {' 由 '}
+                    {current.parts.map((part, i) =>
+                      part.type === 'linker' ? (
+                        // 衔接字母：中性裸字母，无括号意义（如 verbal 的 b）
+                        <span key={i}>
+                          {i > 0 && ' · '}
+                          <span className="font-mono text-text-muted">{part.text}</span>
                         </span>
-                      </span>
-                    )
-                  )}
-                  {' 组成'}
-                </p>
-
-                {/* 构词路径提示：机械切分没有记忆价值时，给出派生词（fertility ← fertile + -ity） */}
-                {current.derivation && (
-                  <p className="text-sm text-text-secondary mt-2">
-                    <span className="editorial-label mr-2">记法</span>
-                    {'先记 '}
-                    <Link
-                      href={`/word/${encodeURIComponent(current.derivation.stemWord)}`}
-                      className="font-mono text-accent hover:underline"
-                    >
-                      {current.derivation.stemWord}
-                    </Link>
-                    {stemEntry && (
-                      <span className="text-text-muted">（{stemEntry.definition}）</span>
+                      ) : (
+                        <span key={i}>
+                          {i > 0 && ' · '}
+                          <span className="font-mono text-root">{part.surface || part.text}</span>
+                          <span className="text-text-muted">
+                            {part.surface
+                              ? `（${part.text}，${part.meaning}）`
+                              : `（${part.meaning}）`}
+                          </span>
+                        </span>
+                      )
                     )}
-                    <span className="text-text-muted">
-                      {'，再加 -'}
-                      {current.derivation.suffix}
-                    </span>
+                    {' 组成'}
                   </p>
-                )}
+
+                  {/* 构词路径提示：机械切分没有记忆价值时，给出派生词（fertility ← fertile + -ity） */}
+                  {current.derivation && (
+                    <p className="text-sm text-text-secondary mt-2">
+                      <span className="editorial-label mr-2">记法</span>
+                      {'先记 '}
+                      <Link
+                        href={`/word/${encodeURIComponent(current.derivation.stemWord)}`}
+                        className="font-mono text-accent hover:underline"
+                      >
+                        {current.derivation.stemWord}
+                      </Link>
+                      {stemEntry && (
+                        <span className="text-text-muted">（{stemEntry.definition}）</span>
+                      )}
+                      <span className="text-text-muted">
+                        {'，再加 -'}
+                        {current.derivation.suffix}
+                      </span>
+                    </p>
+                  )}
+                </MaskedText>
               </div>
 
               {/* ── 导航（含自测入口） ── */}
