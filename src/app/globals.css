@@ -473,3 +473,152 @@ code, pre, .font-mono {
     transition: none;
   }
 }
+
+/* ═══════════════════════════════════════════
+   ui-polish — 首页动效与微交互
+   手法参考（手写等效实现，零新依赖）：
+   - ReactBits 文字/元素动效：blur+rise 渐入、滚动 reveal、stagger 入场
+   - 21st.dev 组件交互：hover 聚光（CSS 变量跟随鼠标的 radial 光晕）、按钮微交互
+   - bentogrids：bento 网格布局（布局在 page.tsx，样式复用 editorial-card）
+   说明：
+   - .reveal / .reveal-stagger / .reveal-item 由 useReveal hook 在客户端添加
+     （配合 IntersectionObserver），SSR 与无 JS 环境下内容始终可见；
+   - 动画用 keyframes + fill 而非 transition，避免覆盖卡片自身的
+     hover 过渡（border-color 等）。
+   ═══════════════════════════════════════════ */
+
+/* ── Hero 首屏：blur + rise 渐入（元素间以 hero-d-* 错开 delay） ── */
+@keyframes polish-hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.hero-in {
+  /* fill 用 backwards：delay 期间保持 from 态（隐藏），播完即还原自然态，
+     不残留 filter/transform（避免占用 hover 位移与多余合成层） */
+  animation: polish-hero-in 0.7s var(--ease) backwards;
+}
+
+.hero-d-1 { animation-delay: 0.05s; }
+.hero-d-2 { animation-delay: 0.16s; }
+.hero-d-3 { animation-delay: 0.3s; }
+
+/* ── 滚动入场：进入视口后上浮渐入 ──
+   useReveal 在客户端给元素加 .reveal，进入视口后加 .reveal--visible（一次性）。
+   未加 .reveal（SSR / 无 JS / 无 IO 支持）时不存在隐藏态。 */
+@keyframes polish-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 单元素模式：自身先隐藏，可见后播放入场；--reveal-delay 可做卡片级错开 */
+.reveal:not(.reveal--visible):not(.reveal-stagger) {
+  opacity: 0;
+}
+
+.reveal:not(.reveal-stagger).reveal--visible {
+  animation: polish-reveal-in 0.55s var(--ease) backwards;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+/* stagger 模式：容器自身不动（不加透明度/动画），仅 .reveal-item 子项逐个入场，
+   --stagger-i 为序号（无单位），delay = 序号 × 45ms */
+.reveal.reveal-stagger:not(.reveal--visible) .reveal-item {
+  opacity: 0;
+}
+
+.reveal.reveal-stagger.reveal--visible .reveal-item {
+  /* backwards 而非 both：播完还原自然态，子项自身的 hover transform 不被动画 fill 压住 */
+  animation: polish-reveal-in 0.5s var(--ease) backwards;
+  animation-delay: calc(var(--stagger-i, 0) * 45ms);
+}
+
+/* ── 聚光卡片（SpotlightCard）：光晕圆心由 --spot-x/--spot-y 跟随鼠标 ── */
+.spotlight-card {
+  position: relative;
+}
+
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    340px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    color-mix(in srgb, var(--accent) 9%, transparent),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+  pointer-events: none;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+/* ── 主按钮微交互：上浮 + 金色柔光，按下回落 ── */
+.btn-accent {
+  transition:
+    background-color 0.15s var(--ease),
+    transform 0.15s var(--ease),
+    box-shadow 0.2s var(--ease);
+}
+
+.btn-accent:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.btn-accent:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* ── 词根云条目 hover 微交互：在既有变色基础上增加上浮与更亮的边框光 ──
+   （同文件更晚声明，同特异性覆盖上方 .root-cloud-item:hover） */
+.root-cloud-item:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+/* ── 降级：偏好减弱动效时全部直接呈现，不做位移/模糊/光晕 ── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-in,
+  .reveal:not(.reveal-stagger).reveal--visible,
+  .reveal.reveal-stagger.reveal--visible .reveal-item {
+    animation: none !important;
+  }
+
+  .reveal:not(.reveal--visible):not(.reveal-stagger),
+  .reveal.reveal-stagger:not(.reveal--visible) .reveal-item {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .btn-accent:hover,
+  .btn-accent:active,
+  .root-cloud-item:hover {
+    transform: none !important;
+  }
+
+  .spotlight-card::before {
+    display: none;
+  }
+}
