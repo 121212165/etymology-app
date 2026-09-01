@@ -6,6 +6,7 @@ import { RootSession } from "../RootSession";
 import { useProgressStore } from "@/store/progress-store";
 import { useMaskStore } from "@/store/mask-store";
 import type { VocabEntry } from "@/lib/types";
+import type { EnhancedRootNode } from "@/lib/mindmap-types";
 
 // next/link 在 jsdom 环境下渲染为普通 <a>
 vi.mock("next/link", () => ({
@@ -185,6 +186,51 @@ describe("RootSession", () => {
     // 不应崩溃，且回退到首词
     expect(screen.getByRole("heading", { level: 2, name: "port" })).toBeInTheDocument();
     expect(screen.getByText("carry")).toBeInTheDocument();
+  });
+
+  it("按 m 键在词卡面与导图面之间翻折", () => {
+    render(
+      <RootSession rootText="act" rootMeaning="做" words={sampleWords} />
+    );
+    const panel = screen.getByTestId("flip-panel");
+    // 翻面状态为模块级持久值（跨挂载保留），以当前值为基准断言翻转，结束前还原避免污染后续用例
+    const before = panel.getAttribute("data-flipped");
+    fireEvent.keyDown(window, { key: "m" });
+    expect(panel.getAttribute("data-flipped")).toBe(
+      before === "true" ? "false" : "true"
+    );
+    fireEvent.keyDown(window, { key: "m" });
+    expect(panel.getAttribute("data-flipped")).toBe(before);
+  });
+
+  it("翻面按钮在词卡/导图两面间切换，未就绪时背面显示加载占位", () => {
+    const enhancedRoot: EnhancedRootNode = {
+      primaryText: "act",
+      aliases: [],
+      meaning: "做",
+      layer: "core",
+      wordIndices: [0, 1, 2],
+      wordCount: 3,
+    };
+    render(
+      <RootSession
+        rootText="act"
+        rootMeaning="做"
+        words={sampleWords}
+        enhancedRoot={enhancedRoot}
+      />
+    );
+    // 正面：翻面按钮文案为「看导图」；mindmap 数据在测试中不加载
+    expect(screen.getByTestId("flip-panel")).toHaveAttribute("data-flipped", "false");
+    fireEvent.click(screen.getByRole("button", { name: "看导图" }));
+    expect(screen.getByTestId("flip-panel")).toHaveAttribute("data-flipped", "true");
+
+    // 翻到背面：front 面 aria-hidden，「看词卡」只命中背面按钮；数据未就绪显示占位
+    expect(screen.getByText("导图加载中…")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "看导图" })).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "看词卡" }));
+    expect(screen.getByTestId("flip-panel")).toHaveAttribute("data-flipped", "false");
+    expect(screen.getByRole("button", { name: "看导图" })).toBeInTheDocument();
   });
 });
 

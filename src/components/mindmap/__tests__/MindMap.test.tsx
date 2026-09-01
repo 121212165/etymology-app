@@ -1,6 +1,6 @@
 // src/components/mindmap/__tests__/MindMap.test.tsx
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import type React from "react";
 import { MindMap } from "../MindMap";
 import { useProgressStore } from "@/store/progress-store";
@@ -142,11 +142,93 @@ describe("MindMap", () => {
   });
 
   it("ignores focus styling when currentWord is not in the map", () => {
-    // 词不在导图中：不做高亮/弱化，避免整图降透明度
+    // 词不在导图中：不做高亮/弱化，避免整图降级为常态展示
     const { container } = renderMindMap({ currentWord: "nonexistent" });
 
     expect(container.querySelector(".mindmap-leaf--current")).toBeNull();
     expect(container.querySelector(".mindmap-leaf--muted")).toBeNull();
     expect(container.querySelector(".mindmap-panel--dimmed")).toBeNull();
+  });
+
+  // ── 节点拖拽：mouseDown → mouseMove(≥4px) → mouseUp 更新偏移；<4px 走点击路径 ──
+  it("updates node offset after a drag beyond the 4px threshold", () => {
+    const { container } = renderMindMap();
+    const node = container.querySelector(
+      '[data-mindmap-node="success"]'
+    ) as HTMLElement;
+    expect(node).not.toBeNull();
+    expect(node.style.transform).toBe("translate(0px, 0px)");
+
+    fireEvent.mouseDown(node);
+    // document 级监听拖拽中的移动/抬起
+    fireEvent.mouseMove(document, { clientX: 30, clientY: 12 });
+    expect(node.style.transform).toBe("translate(30px, 12px)");
+
+    fireEvent.mouseUp(document);
+    // 拖后保持位置
+    expect(node.style.transform).toBe("translate(30px, 12px)");
+  });
+
+  it("keeps the click path (no offset, link not blocked) for movement under 4px", () => {
+    const { container } = renderMindMap();
+    const node = container.querySelector(
+      '[data-mindmap-node="exceed"]'
+    ) as HTMLElement;
+
+    fireEvent.mouseDown(node);
+    fireEvent.mouseMove(document, { clientX: 3, clientY: 0 });
+    fireEvent.mouseUp(document);
+
+    // 位移 <4px：视为点击，不产生偏移
+    expect(node.style.transform).toBe("translate(0px, 0px)");
+    // 链接点击不被拦截（fireEvent 返回 false 即 defaultPrevented）
+    const link = screen.getByText("exceed");
+    expect(fireEvent.click(link)).toBe(true);
+  });
+
+  it("swallows the click after a real drag to avoid accidental navigation", () => {
+    const { container } = renderMindMap();
+    const node = container.querySelector(
+      '[data-mindmap-node="success"]'
+    ) as HTMLElement;
+
+    fireEvent.mouseDown(node);
+    fireEvent.mouseMove(document, { clientX: 40, clientY: 0 });
+    fireEvent.mouseUp(document);
+
+    // 拖拽后的 click 被捕获层拦下，不触发叶子跳转
+    const link = screen.getByText("success");
+    expect(fireEvent.click(link)).toBe(false);
+  });
+
+  it("clears node offsets when centerRoot changes", () => {
+    const altRoot: EnhancedRootNode = {
+      primaryText: "port",
+      aliases: [],
+      meaning: "运",
+      layer: "core",
+      wordIndices: [0, 1, 2, 3],
+      wordCount: 4,
+    };
+    const { container, rerender } = render(
+      <MindMap data={data} vocab={vocab} centerRoot={centerRoot} />
+    );
+    const node = container.querySelector(
+      '[data-mindmap-node="success"]'
+    ) as HTMLElement;
+    fireEvent.mouseDown(node);
+    fireEvent.mouseMove(document, { clientX: 20, clientY: 20 });
+    fireEvent.mouseUp(document);
+    expect(node.style.transform).toBe("translate(20px, 20px)");
+
+    rerender(<MindMap data={data} vocab={vocab} centerRoot={altRoot} />);
+    // 切词根：偏移清空，所有节点回到原位
+    const nodes = Array.from(
+      container.querySelectorAll<HTMLElement>("[data-mindmap-node]")
+    );
+    expect(nodes.length).toBeGreaterThan(0);
+    for (const el of nodes) {
+      expect(el.style.transform).toBe("translate(0px, 0px)");
+    }
   });
 });

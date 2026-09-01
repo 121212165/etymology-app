@@ -438,3 +438,38 @@ code, pre, .font-mono {
 .session-rise-in {
   animation: session-rise-in 0.45s var(--ease) 0.15s both;
 }
+
+/* ── mindmap flip ──
+   词根学习页单列翻折容器：正面词卡 / 背面关联网络导图。
+   两面用 grid 同格叠放（.mindmap-flip-face 占同一格），高度取最大值，避免绝对定位塌陷；
+   backface-visibility 隐藏背向面；prefers-reduced-motion 时直接切换，不做翻转动画。 */
+.mindmap-flip-scene {
+  perspective: 1600px;
+}
+
+.mindmap-flip-inner {
+  display: grid;
+  transform-style: preserve-3d;
+  transition: transform 0.5s var(--ease);
+}
+
+.mindmap-flip-inner--flipped {
+  transform: rotateY(180deg);
+}
+
+.mindmap-flip-face {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* 背面预旋转 180°：容器翻转后呈正向 */
+.mindmap-flip-face--back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mindmap-flip-inner {
+    transition: none;
+  }
+}

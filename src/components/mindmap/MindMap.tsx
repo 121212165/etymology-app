@@ -1,8 +1,9 @@
 // src/components/mindmap/MindMap.tsx
 'use client'
 
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import type { MouseEvent as ReactMouseEvent, TouchEvent as ReactTouchEvent } from 'react'
 import type { MindMapData, EnhancedRootNode } from '@/lib/mindmap-types'
 import type { VocabEntry } from '@/lib/types'
 import { useProgressStore } from '@/store/progress-store'
@@ -21,6 +22,15 @@ const LEAF_RADIUS = 34
 /** 变体标识色数量（对应 globals.css 的 --variant-1..4） */
 const VARIANT_COLOR_COUNT = 4
 
+/** 拖拽判定阈值：位移 ≥4px 视为拖拽，<4px 视为点击（保留叶子跳转） */
+const DRAG_THRESHOLD_PX = 4
+
+/** 词节点拖拽偏移 */
+type NodeOffset = { dx: number; dy: number }
+
+/** 未拖拽节点的默认偏移（复用同一引用，避免每次 render 产生新对象） */
+const NO_OFFSET: NodeOffset = { dx: 0, dy: 0 }
+
 interface PanelProps {
   rootText: string
   words: VocabEntry[]
@@ -33,6 +43,16 @@ interface PanelProps {
   currentWord?: string
   /** 面板整体弱化（当前词在另一个面板时） */
   dimmed?: boolean
+  /** 词节点拖拽偏移表（key → dx/dy），由父级 MindMap 持有：拖后保持位置，切词根清空 */
+  offsets: Map<string, NodeOffset>
+  /** 正在拖拽的节点 key（控制光标状态） */
+  draggingKey: string | null
+  /** 按下词节点：进入拖拽会话，≥4px 判定拖拽，否则视为点击 */
+  onMouseNodeDown: (key: string, e: ReactMouseEvent<HTMLDivElement>) => void
+  /** 触摸按下词节点：同上（触摸拖拽支持） */
+  onTouchNodeStart: (key: string, e: ReactTouchEvent<HTMLDivElement>) => void
+  /** 捕获阶段拦截「拖拽后误触」的链接点击；未拖拽的点击原样放行 */
+  onNodeClickCapture: (e: ReactMouseEvent<HTMLDivElement>) => void
 }
 
 /**
@@ -64,7 +84,20 @@ function sortWordsByVariant(words: VocabEntry[], variants: string[]): VocabEntry
 }
 
 /** 单个导图面板：中心词根 + 一圈词叶；关联词根 pinned 在底部，避免窄面板外环裁切 */
-function MindMapPanel({ rootText, words, relatedRoots, variants, aliases, currentWord, dimmed }: PanelProps) {
+function MindMapPanel({
+  rootText,
+  words,
+  relatedRoots,
+  variants,
+  aliases,
+  currentWord,
+  dimmed,
+  offsets,
+  draggingKey,
+  onMouseNodeDown,
+  onTouchNodeStart,
+  onNodeClickCapture,
+}: PanelProps) {
   const { isWordViewed } = useProgressStore()
   const count = Math.max(words.length, 1)
 
@@ -114,26 +147,39 @@ function MindMapPanel({ rootText, words, relatedRoots, variants, aliases, curren
           vIdx === -1
             ? 'mindmap-variant-dot-none'
             : `mindmap-variant-dot-${(vIdx % VARIANT_COLOR_COUNT) + 1}`
+        const offset = offsets.get(word.word) ?? NO_OFFSET
         return (
           <div
             key={word.word}
             className="absolute -translate-x-1/2 -translate-y-1/2 z-10"
             style={{ left: `${x}%`, top: `${y}%` }}
           >
-            <Link
-              href={`/word/${encodeURIComponent(word.word)}`}
-              aria-current={isCurrent ? 'true' : undefined}
-              className={`mindmap-leaf block px-2.5 py-1 rounded-full text-xs border transition-all whitespace-nowrap ${
-                isCurrent
-                  ? 'mindmap-leaf--current bg-accent/15 border-accent text-accent'
-                  : viewed
-                    ? 'bg-accent/10 border-accent/30 text-accent'
-                    : 'bg-bg-surface border-border text-text-secondary hover:border-accent/30 hover:text-text-primary'
-              }${currentWord != null && !isCurrent ? ' mindmap-leaf--muted' : ''}`}
+            {/* 拖拽层：位移走 translate，不与外层百分比定位 / 内层 Link 的样式冲突 */}
+            <div
+              data-mindmap-node={word.word}
+              className={`select-none touch-none cursor-grab${
+                draggingKey === word.word ? ' cursor-grabbing' : ''
+              }`}
+              style={{ transform: `translate(${offset.dx}px, ${offset.dy}px)` }}
+              onMouseDown={(e) => onMouseNodeDown(word.word, e)}
+              onTouchStart={(e) => onTouchNodeStart(word.word, e)}
+              onClickCapture={onNodeClickCapture}
             >
-              <span className={`mindmap-variant-dot ${dotClass}`} aria-hidden="true" />
-              {word.word}
-            </Link>
+              <Link
+                href={`/word/${encodeURIComponent(word.word)}`}
+                aria-current={isCurrent ? 'true' : undefined}
+                className={`mindmap-leaf block px-2.5 py-1 rounded-full text-xs border transition-all whitespace-nowrap ${
+                  isCurrent
+                    ? 'mindmap-leaf--current bg-accent/15 border-accent text-accent'
+                    : viewed
+                      ? 'bg-accent/10 border-accent/30 text-accent'
+                      : 'bg-bg-surface border-border text-text-secondary hover:border-accent/30 hover:text-text-primary'
+                }${currentWord != null && !isCurrent ? ' mindmap-leaf--muted' : ''}`}
+              >
+                <span className={`mindmap-variant-dot ${dotClass}`} aria-hidden="true" />
+                {word.word}
+              </Link>
+            </div>
           </div>
         )
       })}
@@ -224,6 +270,96 @@ export function MindMap({ data, vocab, centerRoot, currentWord }: MindMapProps) 
 
   const relatedMid = Math.ceil(relatedRoots.length / 2)
 
+  // ── 词节点拖拽：偏移存组件内 state（nodeKey → dx/dy），拖后保持位置直到切词根/卸载 ──
+  const [offsets, setOffsets] = useState<Map<string, NodeOffset>>(new Map())
+  const [draggingKey, setDraggingKey] = useState<string | null>(null)
+  const dragStateRef = useRef<{ key: string; startX: number; startY: number; moved: boolean } | null>(null)
+  // 拖拽发生过时吞掉紧随的 click，避免误触叶子跳转；轻点（<4px）不置位，点击原样放行
+  const dragConsumedClickRef = useRef(false)
+
+  // centerRoot 变化（切词根）或组件卸载时清空全部节点偏移
+  useEffect(() => {
+    setOffsets(new Map())
+    setDraggingKey(null)
+    dragStateRef.current = null
+  }, [centerRoot])
+
+  const beginNodeDrag = useCallback((key: string, x: number, y: number) => {
+    dragStateRef.current = { key, startX: x, startY: y, moved: false }
+    setDraggingKey(key)
+  }, [])
+
+  const handleNodeMouseDown = useCallback(
+    (key: string, e: ReactMouseEvent<HTMLDivElement>) => {
+      if (e.button !== 0) return
+      // 阻止原生链接拖拽与文字选中；不影响后续 click 派发
+      e.preventDefault()
+      beginNodeDrag(key, e.clientX, e.clientY)
+    },
+    [beginNodeDrag]
+  )
+
+  const handleNodeTouchStart = useCallback(
+    (key: string, e: ReactTouchEvent<HTMLDivElement>) => {
+      const touch = e.touches[0]
+      if (!touch) return
+      beginNodeDrag(key, touch.clientX, touch.clientY)
+    },
+    [beginNodeDrag]
+  )
+
+  // 拖拽会话进行中：在 document 上监听移动与抬起；≥4px 实时更新该节点偏移，抬起结束会话
+  useEffect(() => {
+    if (!draggingKey) return
+    const applyMove = (x: number, y: number) => {
+      const drag = dragStateRef.current
+      if (!drag) return
+      const dx = x - drag.startX
+      const dy = y - drag.startY
+      if (dx * dx + dy * dy < DRAG_THRESHOLD_PX * DRAG_THRESHOLD_PX) return
+      drag.moved = true
+      dragConsumedClickRef.current = true
+      setOffsets((prev) => {
+        const next = new Map(prev)
+        next.set(drag.key, { dx, dy })
+        return next
+      })
+    }
+    const onMouseMove = (e: MouseEvent) => applyMove(e.clientX, e.clientY)
+    const onTouchMove = (e: TouchEvent) => {
+      const touch = e.touches[0]
+      if (touch) applyMove(touch.clientX, touch.clientY)
+      // 已判定为拖拽后拦下触摸滚动；阈值内的触摸不 preventDefault，页面照常滚动
+      if (dragStateRef.current?.moved) e.preventDefault()
+    }
+    const finish = () => {
+      dragStateRef.current = null
+      setDraggingKey(null)
+      // click 在 mouseup 之后同步派发，延后一拍再放行，保证拖拽后不触发链接跳转
+      window.setTimeout(() => {
+        dragConsumedClickRef.current = false
+      }, 0)
+    }
+    document.addEventListener('mousemove', onMouseMove)
+    document.addEventListener('mouseup', finish)
+    document.addEventListener('touchmove', onTouchMove, { passive: false })
+    document.addEventListener('touchend', finish)
+    document.addEventListener('touchcancel', finish)
+    return () => {
+      document.removeEventListener('mousemove', onMouseMove)
+      document.removeEventListener('mouseup', finish)
+      document.removeEventListener('touchmove', onTouchMove)
+      document.removeEventListener('touchend', finish)
+      document.removeEventListener('touchcancel', finish)
+    }
+  }, [draggingKey])
+
+  const handleNodeClickCapture = useCallback((e: ReactMouseEvent<HTMLDivElement>) => {
+    if (!dragConsumedClickRef.current) return
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       <MindMapPanel
@@ -234,6 +370,11 @@ export function MindMap({ data, vocab, centerRoot, currentWord }: MindMapProps) 
         aliases={centerRoot.aliases}
         currentWord={focusActive ? currentWord : undefined}
         dimmed={focusActive && !leftHasCurrent}
+        offsets={offsets}
+        draggingKey={draggingKey}
+        onMouseNodeDown={handleNodeMouseDown}
+        onTouchNodeStart={handleNodeTouchStart}
+        onNodeClickCapture={handleNodeClickCapture}
       />
       <MindMapPanel
         rootText={centerRoot.primaryText}
@@ -243,6 +384,11 @@ export function MindMap({ data, vocab, centerRoot, currentWord }: MindMapProps) 
         aliases={centerRoot.aliases}
         currentWord={focusActive ? currentWord : undefined}
         dimmed={focusActive && !rightHasCurrent}
+        offsets={offsets}
+        draggingKey={draggingKey}
+        onMouseNodeDown={handleNodeMouseDown}
+        onTouchNodeStart={handleNodeTouchStart}
+        onNodeClickCapture={handleNodeClickCapture}
       />
     </div>
   )
