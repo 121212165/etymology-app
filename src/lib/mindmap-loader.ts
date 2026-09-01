@@ -1,5 +1,6 @@
 // src/lib/mindmap-loader.ts
 import type { MindMapData, EnhancedRootNode } from './mindmap-types'
+import { orderRoots } from './root-ordering'
 
 let cachedMindMap: MindMapData | null = null
 let loadPromise: Promise<MindMapData> | null = null
@@ -33,11 +34,12 @@ export function getCachedMindMap(): MindMapData | null {
 }
 
 export function getCoreRoots(data: MindMapData): EnhancedRootNode[] {
-  return data.roots.filter(r => r.layer === 'core')
+  // 词根排列 v2：核心层走语义主题全序，首页「下一个词根」与词根云随之成线
+  return orderRoots(data.roots.filter(r => r.layer === 'core'))
 }
 
 export function getMiddleRoots(data: MindMapData): EnhancedRootNode[] {
-  return data.roots.filter(r => r.layer === 'middle')
+  return orderRoots(data.roots.filter(r => r.layer === 'middle'))
 }
 
 export function findRootByText(data: MindMapData, text: string): EnhancedRootNode | undefined {
