@@ -3,7 +3,7 @@
 import { SearchInput } from "@/components/search/SearchInput";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { MaskToggle } from "@/components/mask/MaskToggle";
-import { TreesIcon } from "lucide-react";
+import { Brain, TreesIcon } from "lucide-react";
 import Link from "next/link";
 
 export function TopBar() {
@@ -21,6 +21,14 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
+        <Link
+          href="/roots/memory"
+          title="词根记忆"
+          className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-text-secondary hover:text-text-primary hover:bg-bg-elevated transition-colors"
+        >
+          <Brain size={16} />
+          <span className="text-sm">记忆</span>
+        </Link>
         <MaskToggle />
         <ThemeToggle />
       </div>
