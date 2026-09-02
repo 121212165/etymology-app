@@ -27,7 +27,7 @@ import { VariantChips } from '@/components/root/VariantChips'
 import { SessionCelebrate } from '@/components/root/SessionCelebrate'
 import { QuizView } from '@/components/root/QuizView'
 import type { QuizMode } from '@/components/root/QuizView'
-import { useMembershipGate, GateBanner, PREVIEW_LIMIT } from '@/components/membership/MembershipGate'
+import { GateBanner, PREVIEW_LIMIT } from '@/components/membership/MembershipGate'
 import { useMe } from '@/hooks/useMe'
 
 interface RootSessionProps {

@@ -20,7 +20,6 @@ function LoginInner() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [code, setCode] = useState('')
-  const [codeSent, setCodeSent] = useState(false)
   const [needLoginCode, setNeedLoginCode] = useState(false)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState<string | null>(null)
@@ -44,7 +43,6 @@ function LoginInner() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || '发送失败')
-      setCodeSent(true)
       setMsg(data.via === 'console' ? '验证码已生成（未配置发信邮箱，查看服务器日志）' : '验证码已发送到你的邮箱')
     } catch (e) {
       setError(e instanceof Error ? e.message : '发送失败')
@@ -76,8 +74,7 @@ function LoginInner() {
         const data = await res.json()
         if (!res.ok) throw new Error(data.error || '登录失败')
         setNeedLoginCode(true)
-        setCodeSent(true)
-        setMsg('验证码已发送，完成二次验证')
+          setMsg('验证码已发送，完成二次验证')
       } else {
         const res = await fetch('/api/auth/login-verify', {
           method: 'POST',
@@ -127,7 +124,6 @@ function LoginInner() {
               onClick={() => {
                 setMode(m)
                 setNeedLoginCode(false)
-                setCodeSent(false)
                 setError(null)
                 setMsg(null)
               }}

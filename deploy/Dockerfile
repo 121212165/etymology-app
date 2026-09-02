@@ -2,6 +2,8 @@
 # 用 slim（glibc）而非 alpine：better-sqlite3 官方预编译产物只发 glibc，免编译直用
 FROM node:20-slim AS builder
 WORKDIR /app
+# better-sqlite3 预编译包托管在 GitHub（国内拉取易失败），失败会回退 node-gyp 源码编译——补齐工具链
+RUN apt-get update -qq && apt-get install -y -qq --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 COPY package.json package-lock.json ./
 # 锁文件里的 npmmirror 直链存在同步缺口（特定版本 404），统一重写回官方源
 RUN sed -i 's#https://registry.npmmirror.com#https://registry.npmjs.org#g' package-lock.json \
