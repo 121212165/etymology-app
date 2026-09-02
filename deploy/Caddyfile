@@ -1,0 +1,7 @@
+# 反代 Next 应用；备案下来后把域名加进来自动签 HTTPS：
+#   565734.xyz, www.565734.xyz {
+#       reverse_proxy app:3000
+#   }
+:80 {
+	reverse_proxy app:3000
+}
