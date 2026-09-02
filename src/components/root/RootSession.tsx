@@ -27,6 +27,8 @@ import { VariantChips } from '@/components/root/VariantChips'
 import { SessionCelebrate } from '@/components/root/SessionCelebrate'
 import { QuizView } from '@/components/root/QuizView'
 import type { QuizMode } from '@/components/root/QuizView'
+import { useMembershipGate, GateBanner, PREVIEW_LIMIT } from '@/components/membership/MembershipGate'
+import { useMe } from '@/hooks/useMe'
 
 interface RootSessionProps {
   rootText: string
@@ -114,13 +116,28 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
     [variantGroups, words]
   )
 
+  // ── 会员门控（预览版）：未登录/到期每词根只可学前 3 词 ──
+  // 无后端（Vercel 静态版）或状态加载中不门控，保持开放浏览；会员到期/未登录给解锁 CTA。
+  const { me: gateMe } = useMe()
+  const gateLimit = useMemo(
+    () =>
+      !gateMe || !gateMe.authAvailable || (gateMe.authenticated && !!gateMe.user?.membershipActive)
+        ? null
+        : PREVIEW_LIMIT,
+    [gateMe],
+  )
+  const visibleWords = useMemo(
+    () => (gateLimit != null ? displayWords.slice(0, gateLimit) : displayWords),
+    [gateLimit, displayWords],
+  )
+
   // 边界保护：currentIndex 可能因词根切换（上层未加 key 时）或词数变短而越界，
   // 此时回退到首词，避免 render 阶段读取 undefined.word 崩溃。
   // 注：词根切换的正确重置依赖 page 层的 key={displayRootText} 强制重挂载，
   //    此处仅作兜底防御，不替代 key。
-  const safeIndex = currentIndex < displayWords.length ? currentIndex : 0
-  const current = displayWords[safeIndex]
-  const isLast = safeIndex === displayWords.length - 1
+  const safeIndex = currentIndex < visibleWords.length ? currentIndex : 0
+  const current = visibleWords[safeIndex]
+  const isLast = safeIndex === visibleWords.length - 1
   const quizActive = quizMode !== null || quizSelecting
 
   // 当前词所属变体（chip 高亮用）；「其他」组为 null
@@ -178,9 +195,9 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
     }
     // 钳制到末词：index 越界后（safeIndex 兜底显示首词）若无此钳制，
     // 递增永远追不回长度，「完成」将不可达
-    setCurrentIndex(i => Math.min(i + 1, displayWords.length - 1))
+    setCurrentIndex(i => Math.min(i + 1, visibleWords.length - 1))
     setCelebrationTick(t => t + 1)
-  }, [isLast, markRootCompleted, rootText, displayWords.length])
+  }, [isLast, markRootCompleted, rootText, visibleWords.length])
 
   const handlePrev = useCallback(() => {
     setCurrentIndex(i => Math.max(i - 1, 0))
@@ -264,10 +281,10 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
     (variant: string | null) => {
       const group = variantGroups.find(g => g.text === variant)
       if (!group || group.words.length === 0) return
-      const idx = displayWords.findIndex(w => w.word === group.words[0].word)
+      const idx = visibleWords.findIndex(w => w.word === group.words[0].word)
       if (idx >= 0) setCurrentIndex(idx)
     },
-    [variantGroups, displayWords]
+    [variantGroups, visibleWords]
   )
 
   const startQuiz = (mode: QuizMode) => {
@@ -333,10 +350,15 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
         <div className="h-0.5 bg-bg-elevated rounded-full overflow-hidden">
           <div
             className="h-full bg-accent transition-all duration-300"
-            style={{ width: `${((safeIndex + 1) / displayWords.length) * 100}%` }}
+            style={{ width: `${((safeIndex + 1) / visibleWords.length) * 100}%` }}
           />
         </div>
       </div>
+
+      {/* ── 会员门控横幅：未登录/到期时置于学习区顶部 ── */}
+      {gateLimit != null && (
+        <GateBanner total={displayWords.length} visible={visibleWords.length} />
+      )}
 
       <hr className="editorial-divider mb-8" />
 
@@ -345,7 +367,7 @@ export function RootSession({ rootText, rootMeaning, words, enhancedRoot }: Root
         flipped={flipped}
         front={
           quizMode ? (
-            <QuizView words={displayWords} mode={quizMode} onExit={exitQuiz} />
+            <QuizView words={visibleWords} mode={quizMode} onExit={exitQuiz} />
           ) : quizSelecting ? (
             <div className="editorial-card p-6 lg:p-8" data-testid="quiz-mode-select">
               <p className="editorial-label mb-4">选择自测模式</p>

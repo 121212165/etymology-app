@@ -3,6 +3,7 @@
 import { SearchInput } from "@/components/search/SearchInput";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { MaskToggle } from "@/components/mask/MaskToggle";
+import { AuthMenu } from "@/components/auth/AuthMenu";
 import { Brain, TreesIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -30,6 +31,7 @@ export function TopBar() {
           <span className="text-sm">记忆</span>
         </Link>
         <MaskToggle />
+        <AuthMenu />
         <ThemeToggle />
       </div>
     </header>
