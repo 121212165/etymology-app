@@ -12,7 +12,8 @@
     "build:mindmap": "tsx scripts/build-mindmap-data.ts",
     "build:vocab2": "tsx scripts/build-vocab-v2.ts",
     "build:derivations": "tsx scripts/build-derivations.ts",
-    "build:kaoyan": "tsx scripts/build-kaoyan.ts"
+    "build:kaoyan": "tsx scripts/build-kaoyan.ts",
+    "build:kaoyan-merge": "tsx scripts/merge-kaoyan-vocab.ts"
   },
   "dependencies": {
     "@fontsource/noto-serif-sc": "^5.3.0",

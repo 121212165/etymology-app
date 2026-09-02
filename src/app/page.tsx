@@ -191,7 +191,7 @@ export default function HomePage() {
             林序
           </h1>
           <p className="text-text-secondary text-base lg:text-lg max-w-lg mx-auto leading-relaxed hero-in hero-d-3">
-            5011 个单词，按词根分组。从核心词根出发，三分钟看懂一组关联词。
+            {searchIndex.data.length} 个单词，按词根分组。从核心词根出发，三分钟看懂一组关联词。
           </p>
         </section>
 

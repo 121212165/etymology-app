@@ -24,6 +24,8 @@ export interface VocabEntry {
    * 展示时沿 stemWord 的 derivation 递归读取（限深）。
    */
   derivation?: { stemWord: string; suffix: string };
+  /** 来源标记：来自开源考研词库（kajweb/dict）并入的词条 */
+  kaoyan?: true;
 }
 
 export interface RootIndexEntry {

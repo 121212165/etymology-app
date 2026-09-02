@@ -20,7 +20,7 @@ const jetbrains = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "林序 - 英语词根词缀拆解",
-  description: "5011个英语单词的词根词缀拆解学习工具",
+  description: "6000+ 英语单词的词根词缀拆解学习工具，含考研词库",
 };
 
 export default function RootLayout({
