@@ -1,19 +1,45 @@
 // src/db/index.ts
-// SQLite 单文件库（自托管版专用）。Vercel 只读文件系统打不开写库时，
-// authAvailable=false，前端据此隐藏账号入口，两边平台都不报错。
-import Database from 'better-sqlite3'
+// SQLite 单文件库（自托管版专用），使用 Node 22+ 内置的 node:sqlite（零原生依赖，
+// 不再引入 better-sqlite3——其预编译/编译产物在部分容器环境 require 即段错误）。
+// Vercel 只读文件系统打不开写库时 authAvailable=false，前端据此隐藏账号入口。
+// 类型：@types/node@20 无 node:sqlite 声明，这里做最小手工声明。
 import { mkdirSync } from 'fs'
 import { join } from 'path'
 
 export const DB_PATH = process.env.DB_PATH || join(process.cwd(), 'data', 'etymology.db')
 
-let db: Database.Database | null = null
+interface SqliteStatement {
+  run: (...params: unknown[]) => { changes: number | bigint; lastInsertRowid: number | bigint }
+  get: (...params: unknown[]) => unknown
+  all: (...params: unknown[]) => unknown[]
+}
+
+interface SqliteDatabase {
+  exec: (sql: string) => void
+  prepare: (sql: string) => SqliteStatement
+  close: () => void
+}
+
+// node:sqlite 在 Node 22.5+ 可用（22.x 需 --experimental-sqlite，Dockerfile 已注入）；
+// 本地开发用 Node 24+ 时无需 flag。缺失时按库不可用降级。
+type SqliteCtor = new (path: string) => SqliteDatabase
+let DatabaseSync: SqliteCtor | null = null
+try {
+  // node:sqlite 为内置模块无类型声明；同步初始化必须用 require（动态 import 是异步的）
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  DatabaseSync = (require('node:sqlite') as { DatabaseSync: SqliteCtor }).DatabaseSync
+} catch {
+  DatabaseSync = null
+}
+
+let db: SqliteDatabase | null = null
 let initError: string | null = null
 
-function init(): Database.Database {
+function init(): SqliteDatabase {
+  if (!DatabaseSync) throw new Error('node:sqlite 不可用（需要 Node 22.5+ 并开启 --experimental-sqlite）')
   mkdirSync(join(DB_PATH, '..'), { recursive: true })
-  const d = new Database(DB_PATH)
-  d.pragma('journal_mode = WAL')
+  const d = new DatabaseSync(DB_PATH)
+  d.exec('PRAGMA journal_mode = WAL')
   d.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -60,7 +86,7 @@ function init(): Database.Database {
 }
 
 /** 库不可用（Vercel 只读 FS / 初始化失败）时返回 null，调用方走降级分支 */
-export function getDb(): Database.Database | null {
+export function getDb(): SqliteDatabase | null {
   if (db) return db
   if (initError) return null
   try {
