@@ -37,7 +37,8 @@ export function calculateNextReview(
 ): RootProgress {
   const q = Math.max(0, Math.min(5, quality));
   const prevStatus = current.status;
-  let { easeFactor, interval, correctStreak, reviewCount } = current;
+  let { easeFactor, interval, correctStreak } = current;
+  const { reviewCount } = current;
 
   if (q >= 3) {
     correctStreak += 1;

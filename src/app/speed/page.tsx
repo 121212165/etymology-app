@@ -28,6 +28,11 @@ export default function SpeedPage() {
     return buildSidebarGroups(searchIndex.rootIndex);
   }, [searchIndex]);
 
+  const sidebarRoots = useMemo(
+    () => sidebarGroups.flatMap((g) => g.roots),
+    [sidebarGroups]
+  );
+
   const entries = useMemo(() => {
     if (!searchIndex) return [];
     return filteredIndices.slice(0, shown).map((idx) => ({
@@ -86,7 +91,7 @@ export default function SpeedPage() {
 
       <div className="flex">
         {/* Desktop sidebar */}
-        <Sidebar groups={sidebarGroups} />
+        <Sidebar roots={sidebarRoots} />
 
         <main className="flex-1 min-w-0 p-3 lg:p-5">
           {/* Stats bar */}
