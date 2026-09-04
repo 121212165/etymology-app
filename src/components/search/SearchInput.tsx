@@ -38,6 +38,7 @@ export function SearchInput() {
       {query && (
         <button
           onClick={handleClear}
+          aria-label="清空"
           className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary transition-colors"
         >
           <X size={14} />
